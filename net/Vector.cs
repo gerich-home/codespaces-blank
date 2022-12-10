@@ -25,22 +25,22 @@ namespace Engine
 	
 
 
-		Vector operator /(GO_FLOAT alpha) const
+		Vector operator /(double alpha) const
 		{
-			GO_FLOAT factor = 1 / alpha;
+			double factor = 1 / alpha;
 			return Vector(x * factor, alpha * factor, alpha * factor);
 		}
 
-		Vector& operator /=(GO_FLOAT alpha)
+		Vector& operator /=(double alpha)
 		{
-			GO_FLOAT factor = 1 / alpha;
+			double factor = 1 / alpha;
 			x *= factor;
 			y *= factor;
 			z *= factor;
 			return *this;
 		}
 
-		Vector& operator =(const Vector& vector)
+		Vector& operator =(Vector vector)
 		{
 			x = vector.x;
 			y = vector.y;
@@ -48,7 +48,7 @@ namespace Engine
 			return *this;
 		}
 		
-		const GO_FLOAT& operator[](short index) const
+		double operator[](short index) const
 		{
 			switch(index)
 			{
@@ -64,17 +64,17 @@ namespace Engine
 			}
 		}
 
-		Vector CrossProduct(const Vector& vector) const
+		Vector CrossProduct(Vector vector) const
 		{
 			return Vector(y * vector.z - vector.y * z, z * vector.x - vector.z * x, x * vector.y - vector.x * y);
 		}
 
-		GO_FLOAT DotProduct(const Vector& vector) const
+		double DotProduct(Vector vector) const
 		{
 			return vector.x * x + vector.y * y + vector.z * z;
 		}
 
-		Vector Transform(const Vector& axis) const
+		Vector Transform(Vector axis) const
 		{
 			Vector t = axis;
 			Vector M1;

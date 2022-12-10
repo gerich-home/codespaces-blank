@@ -1,6 +1,5 @@
 #pragma once
 
-#include "IShape.h"
 
 namespace Shapes
 {
@@ -8,15 +7,14 @@ namespace Shapes
 
 	class Sphere : public IShape
 	{
-	public:
-		Sphere(const Vector& center, GO_FLOAT r, const IMaterial* material);
+		Sphere(Vector center, double r, IMaterial material);
 	
-		virtual const HitPoint* Intersection(const Vector& start, const Vector& direction) const;
+		HitPoint Intersection(Vector start, Vector direction) const;
 
 	private:
-		const GO_FLOAT r2;
-		const GO_FLOAT rinv;
+		const double r2;
+		const double rinv;
 		const Vector center;
-		const IMaterial* material;
+		IMaterial material;
 	};
 }

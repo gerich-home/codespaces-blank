@@ -1,9 +1,7 @@
-#include "StdAfx.h"
-#include "Triangle.h"
 
 using namespace Engine;
 
-Shapes::Triangle::Triangle(const Vector a, const Vector b, const Vector c, const IMaterial* material): 
+Shapes::Triangle::Triangle(const Vector a, const Vector b, const Vector c, IMaterial material): 
 	a(a),
 	ba(b - a),
 	ca(c - a),
@@ -13,21 +11,21 @@ Shapes::Triangle::Triangle(const Vector a, const Vector b, const Vector c, const
 {
 }
 
-const HitPoint* Shapes::Triangle::Intersection(const Vector& start, const Vector& direction) const
+HitPoint Shapes::Triangle::Intersection(Vector start, Vector direction) const
 {
-	GO_FLOAT t = 0;
-	GO_FLOAT t1 = 0;
-	GO_FLOAT t2 = 0;
+	double t = 0;
+	double t1 = 0;
+	double t2 = 0;
 	
 
-	GO_FLOAT divident = - direction.DotProduct(normal);
+	double divident = - direction.DotProduct(normal);
 	
 	if(!divident)
 	{
 		return NULL;
 	}
 
-	GO_FLOAT factor = 1 / divident;
+	double factor = 1 / divident;
 
 	Vector sa = start - a;
 	Vector saxdir = sa.CrossProduct(direction);
@@ -52,7 +50,7 @@ const HitPoint* Shapes::Triangle::Intersection(const Vector& start, const Vector
 	
 	t = sa.DotProduct(normal) * factor;
 
-	if(t < GO_FLOAT_EPSILON)
+	if(t < double_EPSILON)
 	{
 		return NULL;
 	}

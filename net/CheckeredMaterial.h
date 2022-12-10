@@ -1,7 +1,5 @@
 #pragma once
 
-#include "ITexturedMaterial.h"
-#include "IMaterial.h"
 
 using namespace Engine;
 
@@ -9,8 +7,7 @@ namespace Materials
 {
 	class CheckeredMaterial: public ITexturedMaterial
 	{
-	public:
-		CheckeredMaterial(int N, int M, const IMaterial* m1, const IMaterial* m2) :
+		CheckeredMaterial(int N, int M, IMaterial m1, IMaterial m2) :
 			N(N),
 			M(M),
 			m1(m1),
@@ -18,7 +15,7 @@ namespace Materials
 		{
 		}
 
-		virtual const IMaterial* MaterialAt(GO_FLOAT t1, GO_FLOAT t2) const
+		IMaterial MaterialAt(double t1, double t2) const
 		{
 			if(((int)(t1 * N) + (int)(t2 * M)) % 2)
 			{
@@ -31,7 +28,7 @@ namespace Materials
 	private:
 		const int N;
 		const int M;
-		const IMaterial* m1;
-		const IMaterial* m2;
+		IMaterial m1;
+		IMaterial m2;
 	};
 }

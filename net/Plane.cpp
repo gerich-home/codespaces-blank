@@ -1,9 +1,7 @@
-#include "StdAfx.h"
-#include "Plane.h"
 
 using namespace Engine;
 
-Shapes::Plane::Plane(const Vector& normal, GO_FLOAT d, const IMaterial* material) :
+Shapes::Plane::Plane(Vector normal, double d, IMaterial material) :
 	normal(normal),
 	d(d),
 	A( (normal.x != 0 ? -d / normal.x : 0                                              ),
@@ -14,7 +12,7 @@ Shapes::Plane::Plane(const Vector& normal, GO_FLOAT d, const IMaterial* material
 {
 }
 
-Shapes::Plane::Plane(const Vector& a, const Vector& b, const Vector& A, const IMaterial* material) :
+Shapes::Plane::Plane(Vector a, Vector b, Vector A, IMaterial material) :
 	normal(a.CrossProduct(b).Normalize()),
 	A(A),
 	material(material)
@@ -22,7 +20,7 @@ Shapes::Plane::Plane(const Vector& a, const Vector& b, const Vector& A, const IM
 	d = A.DotProduct(normal);
 }
 
-Shapes::Plane::Plane(GO_FLOAT a, GO_FLOAT b, GO_FLOAT c, GO_FLOAT d, const IMaterial* material):
+Shapes::Plane::Plane(double a, double b, double c, double d, IMaterial material):
 	normal(Vector(a, b, c).Normalize()),
 	d(d),
 	material(material),
@@ -33,16 +31,16 @@ Shapes::Plane::Plane(GO_FLOAT a, GO_FLOAT b, GO_FLOAT c, GO_FLOAT d, const IMate
 {
 }
 
-const HitPoint* Shapes::Plane::Intersection(const Vector& start, const Vector& direction) const
+HitPoint Shapes::Plane::Intersection(Vector start, Vector direction) const
 {
-	GO_FLOAT divident = normal.DotProduct(direction);
+	double divident = normal.DotProduct(direction);
 
 	if(divident == 0)
 	{
 		return NULL;
 	}
 
-	GO_FLOAT t = (start.DotProduct(normal) + d) / normal.DotProduct(direction);
+	double t = (start.DotProduct(normal) + d) / normal.DotProduct(direction);
 
 	if(t < 0)
 	{

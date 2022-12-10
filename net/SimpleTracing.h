@@ -1,6 +1,5 @@
 #pragma once
 
-#include "IEngine.h"
 
 class Engine::Vector;
 class Engine::Luminance;
@@ -14,7 +13,6 @@ namespace Engines
 
 	class SimpleTracing: public IEngine
 	{
-	public:
-		virtual Luminance L(const HitPoint& hp, const Vector& point, const Vector& direction, const IShape& scene, const IShape& diffuse, const IShape& glossy, const ILightSource& lights) const;
+		Luminance L(HitPoint hp, Vector point, Vector direction, IShape scene, IShape diffuse, IShape glossy, ILightSource lights) const;
 	};
 }

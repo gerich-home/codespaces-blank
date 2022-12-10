@@ -1,16 +1,14 @@
-#include "StdAfx.h"
-#include "Scene.h"
 
 using namespace Engine;
 
-Shapes::Scene::Scene(int nshapes, const IShape* shapes[]) :
+Shapes::Scene::Scene(int nshapes, IShape shapes[]) :
 	nshapes(nshapes)
 {
-	this->shapes = new const IShape*[nshapes];
+	this.shapes = new IShape[nshapes];
 
 	for(int i = 0; i < nshapes; i++)
 	{
-		this->shapes[i] = shapes[i];
+		this.shapes[i] = shapes[i];
 	}
 }
 
@@ -19,15 +17,15 @@ Shapes::Scene::~Scene()
 	delete[] shapes;
 }
 
-const HitPoint* Shapes::Scene::Intersection(const Vector& start, const Vector& direction) const
+HitPoint Shapes::Scene::Intersection(Vector start, Vector direction) const
 {
-	const HitPoint* bestHitPoint = NULL;
-	const HitPoint* hitPoint;
+	HitPoint bestHitPoint = NULL;
+	HitPoint hitPoint;
 
 	for(int i = 0; i < nshapes; i++)
 	{
-		hitPoint = shapes[i]->Intersection(start, direction);
-		if(hitPoint != NULL && (bestHitPoint ? hitPoint->t < bestHitPoint->t : TRUE))
+		hitPoint = shapes[i].Intersection(start, direction);
+		if(hitPoint != NULL && (bestHitPoint ? hitPoint.t < bestHitPoint.t : TRUE))
 		{
 			delete bestHitPoint;
 			bestHitPoint = hitPoint;

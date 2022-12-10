@@ -1,12 +1,9 @@
-#include "StdAfx.h"
 
 #define _USE_MATH_DEFINES
-#include <math.h>
-#include "SphereLight.h"
 
 using namespace Engine;
 
-Lights::Sphere::Sphere(const Vector& center, GO_FLOAT r, const Luminance& le) :
+Lights::Sphere::Sphere(Vector center, double r, Luminance le) :
 	center(center),
 	r(r),
 	probability(1 / (4 * M_PI * r * r)),
@@ -14,11 +11,11 @@ Lights::Sphere::Sphere(const Vector& center, GO_FLOAT r, const Luminance& le) :
 {
 }
 
-const LightPoint Lights::Sphere::SampleLightPoint(const Vector& point) const
+const LightPoint Lights::Sphere::SampleLightPoint(Vector point) const
 {	
-	GO_FLOAT cosa = (GO_FLOAT) rand() / RAND_MAX;
-	GO_FLOAT sina = sqrt(1 - cosa * cosa);
-	GO_FLOAT b = 2 * M_PI * (GO_FLOAT) rand() / RAND_MAX;
+	double cosa = (double) rand() / RAND_MAX;
+	double sina = sqrt(1 - cosa * cosa);
+	double b = 2 * M_PI * (double) rand() / RAND_MAX;
 
 	const Vector normal = Vector(cosa * cos(b), cosa * sin(b), sina);
 
@@ -30,15 +27,15 @@ void Lights::Sphere::EmitPhotons(int nphotons, Photon photons[]) const
 	Luminance energy = le / nphotons;
 	for(int i = 0; i < nphotons; i++)
 	{		
-		GO_FLOAT sina = (GO_FLOAT) rand() / RAND_MAX;
-		GO_FLOAT cosa = sqrt(1 - sina * sina);
-		GO_FLOAT b = 2 * M_PI * (GO_FLOAT) rand() / RAND_MAX;
+		double sina = (double) rand() / RAND_MAX;
+		double cosa = sqrt(1 - sina * sina);
+		double b = 2 * M_PI * (double) rand() / RAND_MAX;
 
 		const Vector normal = Vector(cosa * cos(b), cosa * sin(b), sina);
 		
-		cosa = (GO_FLOAT) rand() / RAND_MAX;
+		cosa = (double) rand() / RAND_MAX;
 		sina = sqrt(1 - cosa * cosa);
-		b = 2 * M_PI * (GO_FLOAT) rand() / RAND_MAX;
+		b = 2 * M_PI * (double) rand() / RAND_MAX;
 
 		Vector direction = Vector(sina * cos(b), sina * sin(b), cosa).Transform(normal);
 

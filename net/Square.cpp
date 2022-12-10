@@ -1,10 +1,7 @@
-#include "StdAfx.h"
-#include "Square.h"
-#include "TexturedMaterialAdapter.h"
 
 using namespace Engine;
 
-Shapes::Square::Square(const Vector a, const Vector b, const Vector c, const ITexturedMaterial* material):
+Shapes::Square::Square(const Vector a, const Vector b, const Vector c, ITexturedMaterial material):
 	a(a),
 	ba(b - a),
 	ca(c - a),
@@ -14,7 +11,7 @@ Shapes::Square::Square(const Vector a, const Vector b, const Vector c, const ITe
 {
 }
 	
-Shapes::Square::Square(const Vector a, const Vector b, const Vector c, const IMaterial* material):
+Shapes::Square::Square(const Vector a, const Vector b, const Vector c, IMaterial material):
 	a(a),
 	ba(b - a),
 	ca(c - a),
@@ -24,21 +21,21 @@ Shapes::Square::Square(const Vector a, const Vector b, const Vector c, const IMa
 {
 }
 
-const HitPoint* Shapes::Square::Intersection(const Vector& start, const Vector& direction) const
+HitPoint Shapes::Square::Intersection(Vector start, Vector direction) const
 {
-	GO_FLOAT t = 0;
-	GO_FLOAT t1 = 0;
-	GO_FLOAT t2 = 0;
+	double t = 0;
+	double t1 = 0;
+	double t2 = 0;
 	
 
-	GO_FLOAT divident = - direction.DotProduct(normal);
+	double divident = - direction.DotProduct(normal);
 	
 	if(!divident)
 	{
 		return NULL;
 	}
 
-	GO_FLOAT factor = 1 / divident;
+	double factor = 1 / divident;
 
 	Vector sa = start - a;
 	Vector saxdir = sa.CrossProduct(direction);
@@ -58,10 +55,10 @@ const HitPoint* Shapes::Square::Intersection(const Vector& start, const Vector& 
 	
 	t = sa.DotProduct(normal) * factor;
 
-	if(t < 100 * GO_FLOAT_EPSILON)
+	if(t < 100 * double_EPSILON)
 	{
 		return NULL;
 	}
 
-	return new HitPoint(t, n, material->MaterialAt(t1, t2));
+	return new HitPoint(t, n, material.MaterialAt(t1, t2));
 }

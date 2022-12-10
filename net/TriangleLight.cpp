@@ -1,13 +1,6 @@
-#include "StdAfx.h"
-#include "TriangleLight.h"
-
-#include <stdlib.h>
-#define _USE_MATH_DEFINES
-#include <math.h>
-
 using namespace Engine;
 
-Lights::Triangle::Triangle(const Vector a, const Vector b, const Vector c, const Luminance& Le): 
+Lights::Triangle::Triangle(const Vector a, const Vector b, const Vector c, Luminance Le): 
 	a(a),
 	ba(b - a),
 	ca(c - a),
@@ -17,10 +10,10 @@ Lights::Triangle::Triangle(const Vector a, const Vector b, const Vector c, const
 {
 }
 
-const LightPoint Lights::Triangle::SampleLightPoint(const Vector& point) const
+const LightPoint Lights::Triangle::SampleLightPoint(Vector point) const
 {
-	GO_FLOAT t1 = (GO_FLOAT) rand() / RAND_MAX;
-	GO_FLOAT t2 = (GO_FLOAT) rand() / RAND_MAX;
+	double t1 = (double) rand() / RAND_MAX;
+	double t2 = (double) rand() / RAND_MAX;
 
 	if(t1 + t2 > 1)
 	{
@@ -37,12 +30,12 @@ void Lights::Triangle::EmitPhotons(int nphotons, Photon photons[]) const
 	Luminance energy = le / nphotons;
 	for(int i = 0; i < nphotons; i++)
 	{
-		GO_FLOAT t1 = (GO_FLOAT) rand() / RAND_MAX;
-		GO_FLOAT t2 = (GO_FLOAT) rand() / RAND_MAX;
+		double t1 = (double) rand() / RAND_MAX;
+		double t2 = (double) rand() / RAND_MAX;
 		
-		GO_FLOAT cosa = (GO_FLOAT) rand() / RAND_MAX;
-		GO_FLOAT sina = sqrt(1 - cosa * cosa);
-		GO_FLOAT b = 2 * M_PI * (GO_FLOAT) rand() / RAND_MAX;
+		double cosa = (double) rand() / RAND_MAX;
+		double sina = sqrt(1 - cosa * cosa);
+		double b = 2 * M_PI * (double) rand() / RAND_MAX;
 
 		Vector direction = Vector(sina * cos(b), sina * sin(b), cosa).Transform(normal);
 

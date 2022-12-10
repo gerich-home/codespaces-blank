@@ -1,12 +1,10 @@
-#include "StdAfx.h"
-#include "PhotonMapTracing.h"
 
 using namespace Engine;
 
 #define SHADOW_RAYS 10
 #define ABSOPTION 0.01
 /*
-Luminance Engines::PhotonMapTracing::L(const HitPoint& hp, const Vector& point, const Vector& direction, const IShape& scene, const IShape& diffuse, const IShape& glossy, const ILightSource& lights) const
+Luminance Engines::PhotonMapTracing::L(HitPoint hp, Vector point, Vector direction, IShape scene, IShape diffuse, IShape glossy, ILightSource lights) const
 {
 	Luminance result;
 	Luminance factor(1, 1, 1);
@@ -20,38 +18,38 @@ Luminance Engines::PhotonMapTracing::L(const HitPoint& hp, const Vector& point, 
 
 		for(int i = 0; i < SHADOW_RAYS; i++)
 		{	
-			const LightPoint& lp = lights.SampleLightPoint(current_point);
+			LightPoint lp = lights.SampleLightPoint(current_point);
 			Vector ndirection = lp.point - current_point;
 
-			GO_FLOAT cos_dir_normal = current_hp.normal.DotProduct(ndirection);
+			double cos_dir_normal = current_hp.normal.DotProduct(ndirection);
 
 			if(cos_dir_normal < 0)
 			{
 				continue;
 			}
 
-			GO_FLOAT cos_dir_lnormal = -(ndirection.DotProduct(lp.normal));
+			double cos_dir_lnormal = -(ndirection.DotProduct(lp.normal));
 			if(cos_dir_lnormal < 0)
 			{
 				continue;
 			}
 
-			GO_FLOAT l = ndirection.Length();
-			if(l * l < GO_FLOAT_EPSILON)
+			double l = ndirection.Length();
+			if(l * l < double_EPSILON)
 			{
 				continue;
 			}
 
-			GO_FLOAT linv = 1 / l;
+			double linv = 1 / l;
 			ndirection *= linv;
 			cos_dir_normal *= linv;
 			cos_dir_lnormal *= linv;
 
-			const HitPoint* nhp = scene.Intersection(current_point, ndirection);
+			HitPoint nhp = scene.Intersection(current_point, ndirection);
 
 			if(nhp)
 			{
-				if(nhp->t > l - GO_FLOAT_EPSILON)
+				if(nhp.t > l - double_EPSILON)
 				{
 					delete nhp;
 				}
@@ -62,7 +60,7 @@ Luminance Engines::PhotonMapTracing::L(const HitPoint& hp, const Vector& point, 
 				}
 			}
 
-			direct += lp.Le * current_hp.material->BRDF(current_direction, ndirection, current_hp.normal) * (cos_dir_normal * cos_dir_lnormal / (lp.probability * l * l));
+			direct += lp.Le * current_hp.material.BRDF(current_direction, ndirection, current_hp.normal) * (cos_dir_normal * cos_dir_lnormal / (lp.probability * l * l));
 		}
 		direct /= SHADOW_RAYS;
 		
@@ -70,7 +68,7 @@ Luminance Engines::PhotonMapTracing::L(const HitPoint& hp, const Vector& point, 
 		
 		//Compute indirect luminancy
 		
-		const RandomDirection rndd = current_hp.material->SampleDirection(current_direction, current_point, current_hp.normal, scene, ABSOPTION);
+		const RandomDirection rndd = current_hp.material.SampleDirection(current_direction, current_point, current_hp.normal, scene, ABSOPTION);
 			
 		if(!rndd.hp)
 		{

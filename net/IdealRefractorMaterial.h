@@ -1,10 +1,7 @@
 #pragma once
 
-#include "Luminance.h"
-#include "IMaterial.h"
 
 #define _USE_MATH_DEFINES
-#include <math.h>
 
 using namespace Engine;
 
@@ -12,31 +9,30 @@ namespace Materials
 {
 	class IdealRefractorMaterial: public IMaterial
 	{
-	public:
-		IdealRefractorMaterial(GO_FLOAT rd[], GO_FLOAT refract) :
+		IdealRefractorMaterial(double rd[], double refract) :
 			rd(rd),
 			refract(refract)
 		{
 		}
 
-		const Luminance BRDF(const Vector& direction, const Vector& ndirection, const Vector& normal) const
+		const Luminance BRDF(Vector direction, Vector ndirection, Vector normal) const
 		{
 			int n = 500;
 
-			GO_FLOAT cosa = -direction.DotProduct(normal);
-			GO_FLOAT factor = refract;
+			double cosa = -direction.DotProduct(normal);
+			double factor = refract;
 			if(cosa < 0)
 			{
 				factor = 1 / factor;
 			}
 
-			GO_FLOAT cosb = 1 - (1 - cosa * cosa) * factor * factor;
+			double cosb = 1 - (1 - cosa * cosa) * factor * factor;
 
 			if(cosb < 0)
 			{
 				const Vector R = direction + 2 * cosa * normal;
 				
-				const GO_FLOAT cosphi = ndirection.DotProduct(R);
+				const double cosphi = ndirection.DotProduct(R);
 			
 				if(cosphi > 0)
 				{
@@ -54,20 +50,20 @@ namespace Materials
 
 			cosb = sqrt(cosb);
 
-			GO_FLOAT cosabs = abs(cosa);
-			GO_FLOAT Rs = (factor * cosabs - cosb) / (factor * cosabs  + cosb);
+			double cosabs = abs(cosa);
+			double Rs = (factor * cosabs - cosb) / (factor * cosabs  + cosb);
 			Rs *= Rs;
 
-			GO_FLOAT Rt = (factor * cosb - cosabs) / (factor * cosb + cosabs);
+			double Rt = (factor * cosb - cosabs) / (factor * cosb + cosabs);
 			Rt *= Rt;
 			
-			GO_FLOAT qreflect = (Rs + Rt) / 2;
+			double qreflect = (Rs + Rt) / 2;
 			
 			Luminance result;
 			
 			{
 				const Vector R = direction + 2 * cosa * normal;
-				const GO_FLOAT cosphi = ndirection.DotProduct(R);
+				const double cosphi = ndirection.DotProduct(R);
 			
 				if(cosphi > 0)
 				{
@@ -90,7 +86,7 @@ namespace Materials
 					R = cosb * normal + factor * (cosa * normal + direction);
 				}
 				
-				const GO_FLOAT cosphi = ndirection.DotProduct(R);
+				const double cosphi = ndirection.DotProduct(R);
 			
 				if(cosphi > 0)
 				{
@@ -105,16 +101,16 @@ namespace Materials
 			return result;
 		}
 
-		const RandomDirection SampleDirection(const Vector& direction, const Vector& normal, GO_FLOAT ksi) const
+		const RandomDirection SampleDirection(Vector direction, Vector normal, double ksi) const
 		{	
-			GO_FLOAT cosa = -direction.DotProduct(normal);
-			GO_FLOAT factor = refract;
+			double cosa = -direction.DotProduct(normal);
+			double factor = refract;
 			if(cosa < 0)
 			{
 				factor = 1 / factor;
 			}
 
-			GO_FLOAT cosb = 1 - (1 - cosa * cosa) * factor * factor;
+			double cosb = 1 - (1 - cosa * cosa) * factor * factor;
 
 			if(cosb < 0)
 			{
@@ -124,14 +120,14 @@ namespace Materials
 
 			cosb = sqrt(cosb);
 
-			GO_FLOAT cosabs = abs(cosa);
-			GO_FLOAT Rs = (factor * cosabs - cosb) / (factor * cosabs  + cosb);
+			double cosabs = abs(cosa);
+			double Rs = (factor * cosabs - cosb) / (factor * cosabs  + cosb);
 			Rs *= Rs;
 
-			GO_FLOAT Rt = (factor * cosb - cosabs) / (factor * cosb + cosabs);
+			double Rt = (factor * cosb - cosabs) / (factor * cosb + cosabs);
 			Rt *= Rt;
 			
-			GO_FLOAT qreflect = (Rs + Rt) / 2;
+			double qreflect = (Rs + Rt) / 2;
 			
 			if(ksi < qreflect)
 			{
@@ -156,6 +152,6 @@ namespace Materials
 
 	private:
 		const Luminance rd;
-		const GO_FLOAT refract;
+		const double refract;
 	};
 }

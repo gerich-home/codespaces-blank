@@ -1,14 +1,10 @@
 #pragma once
-#include "defines.h"
-#include "IMaterial.h"
 
 namespace Engine
 {
-	class IMaterial;
-
-	class ITexturedMaterial
+	
+	interface ITexturedMaterial
 	{
-	public:
-		virtual const IMaterial* MaterialAt(GO_FLOAT t1, GO_FLOAT t2) const = 0;
+		IMaterial MaterialAt(double t1, double t2);
 	};
 }

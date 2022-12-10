@@ -1,7 +1,5 @@
 #pragma once
 
-#include "IEngine.h"
-#include "PhotonMap.h"
 
 	
 class Engine::Vector;
@@ -17,17 +15,16 @@ namespace Engines
 
 	class PhotonMapTracing: public IEngine
 	{
-	public:
-		PhotonMapTracing(const PhotonMap* globalMap, const PhotonMap* causticsMap) :
+		PhotonMapTracing(PhotonMap globalMap, PhotonMap causticsMap) :
 			globalMap(globalMap),
 			causticsMap(causticsMap)
 		{
 		}
 
-		virtual Luminance L(const HitPoint& hp, const Vector& point, const Vector& direction, const IShape& scene, const IShape& diffuse, const IShape& glossy, const ILightSource& lights) const;
+		Luminance L(HitPoint hp, Vector point, Vector direction, IShape scene, IShape diffuse, IShape glossy, ILightSource lights) const;
 
 	private:
-		const PhotonMap* globalMap;
-		const PhotonMap* causticsMap;
+		PhotonMap globalMap;
+		PhotonMap causticsMap;
 	};
 }

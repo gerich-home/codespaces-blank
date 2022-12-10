@@ -1,12 +1,9 @@
-#include "StdAfx.h"
 
 #define _USE_MATH_DEFINES
-#include <math.h>
-#include "Sphere.h"
 
 using namespace Engine;
 
-Shapes::Sphere::Sphere(const Vector& center, GO_FLOAT r, const IMaterial* material) :
+Shapes::Sphere::Sphere(Vector center, double r, IMaterial material) :
 	center(center),
 	material(material),
 	r2(r * r),
@@ -14,14 +11,14 @@ Shapes::Sphere::Sphere(const Vector& center, GO_FLOAT r, const IMaterial* materi
 {
 }
 
-const HitPoint* Shapes::Sphere::Intersection(const Vector& start, const Vector& direction) const
+HitPoint Shapes::Sphere::Intersection(Vector start, Vector direction) const
 {
 	Vector ac = start - center;
 	
-	GO_FLOAT b = ac.DotProduct(direction);
-	GO_FLOAT c = ac.Norm() - r2;
+	double b = ac.DotProduct(direction);
+	double c = ac.Norm() - r2;
 
-	GO_FLOAT D = b * b - c;
+	double D = b * b - c;
 
 	if(D < 0)
 	{
@@ -29,13 +26,13 @@ const HitPoint* Shapes::Sphere::Intersection(const Vector& start, const Vector& 
 	}
 
 	D = sqrt(D);
-	GO_FLOAT t = -b - D;
+	double t = -b - D;
 	
-	if(t < GO_FLOAT_EPSILON)
+	if(t < double_EPSILON)
 	{
 		t = -b + D;
 	
-		if(t < GO_FLOAT_EPSILON)
+		if(t < double_EPSILON)
 		{
 			return NULL;
 		}

@@ -1,29 +1,11 @@
-// GlobalLighting.cpp: определяет точку входа для приложения.
+// GlobalLighting.cpp: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
 //
 
-#include "stdafx.h"
-#include "GlobalLighting.h"
 
-#include "SimpleTracing.h"
-#include "Rasterizer.h"
 
-#include "Sphere.h"
-#include "Plane.h"
-#include "Triangle.h"
-#include "Square.h"
-#include "Scene.h"
 
-#include "SphereLight.h"
-#include "TriangleLight.h"
-#include "SquareLight.h"
-#include "CompositeLightSource.h"
 
-#include "DiffuseSpecularMaterial.h"
-#include "IdealMirrorMaterial.h"
-#include "IdealRefractorMaterial.h"
-#include "CheckeredMaterial.h"
 
-#include <time.h>
 
 using namespace Engine;
 
@@ -51,17 +33,16 @@ bool inited = false;
 bool busy[H];
 int frame[H];
 
-#include "MemoryManager.h"
 
 #define MAX_LOADSTRING 100
 
-// Глобальные переменные:
-HINSTANCE hInst;								// текущий экземпляр
+// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ:
+HINSTANCE hInst;								// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 volatile HWND hWnd;
-TCHAR szTitle[MAX_LOADSTRING];					// Текст строки заголовка
-TCHAR szWindowClass[MAX_LOADSTRING];			// имя класса главного окна
+TCHAR szTitle[MAX_LOADSTRING];					// пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+TCHAR szWindowClass[MAX_LOADSTRING];			// пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 
-// Отправить объявления функций, включенных в этот модуль кода:
+// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ:
 ATOM				MyRegisterClass(HINSTANCE hInstance);
 BOOL				InitInstance(HINSTANCE, int);
 LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
@@ -70,72 +51,72 @@ INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
 
 void InitScene()
 {
-	GO_FLOAT kd_black[] = {0, 0, 0};
-	GO_FLOAT ks_black[] = {0, 0, 0.2};
+	double kd_black[] = {0, 0, 0};
+	double ks_black[] = {0, 0, 0.2};
 	int      n_black[]  = {1, 1, 1};
-	const IMaterial* m_black = new Materials::DuffuseSpecularMaterial(kd_black, ks_black, n_black);
+	IMaterial m_black = new Materials::DuffuseSpecularMaterial(kd_black, ks_black, n_black);
 
-	GO_FLOAT kd_white[] = {1, 1, 0.8};
-	GO_FLOAT ks_white[] = {0, 0, 0.2};
+	double kd_white[] = {1, 1, 0.8};
+	double ks_white[] = {0, 0, 0.2};
 	int      n_white[]  = {1, 1, 1};
-	const IMaterial* m_white = new Materials::DuffuseSpecularMaterial(kd_white, ks_white, n_white);
+	IMaterial m_white = new Materials::DuffuseSpecularMaterial(kd_white, ks_white, n_white);
 
-	const ITexturedMaterial* m_chess = new Materials::CheckeredMaterial(10, 10, m_white, m_black);
+	ITexturedMaterial m_chess = new Materials::CheckeredMaterial(10, 10, m_white, m_black);
 	
-	GO_FLOAT kd_red[] = {1, 0, 0};
-	GO_FLOAT ks_red[] = {0, 0, 0};
+	double kd_red[] = {1, 0, 0};
+	double ks_red[] = {0, 0, 0};
 	int      n_red[]  = {0, 0, 0};
-	const IMaterial* m_red = new Materials::DuffuseSpecularMaterial(kd_red, ks_red, n_red);
+	IMaterial m_red = new Materials::DuffuseSpecularMaterial(kd_red, ks_red, n_red);
 	
-	GO_FLOAT kd_blue[] = {0, 0, 1};
-	GO_FLOAT ks_blue[] = {0, 0, 0};
+	double kd_blue[] = {0, 0, 1};
+	double ks_blue[] = {0, 0, 0};
 	int      n_blue[]  = {0, 0, 0};
-	const IMaterial* m_blue = new Materials::DuffuseSpecularMaterial(kd_blue, ks_blue, n_blue);
+	IMaterial m_blue = new Materials::DuffuseSpecularMaterial(kd_blue, ks_blue, n_blue);
 	
-	GO_FLOAT kd_green[] = {0, 1, 0};
-	GO_FLOAT ks_green[] = {0, 0, 0};
+	double kd_green[] = {0, 1, 0};
+	double ks_green[] = {0, 0, 0};
 	int      n_green[]  = {0, 0, 0};
-	const IMaterial* m_green = new Materials::DuffuseSpecularMaterial(kd_green, ks_green, n_green);
+	IMaterial m_green = new Materials::DuffuseSpecularMaterial(kd_green, ks_green, n_green);
 
-	GO_FLOAT kd_yellow[] = {1, 1, 0};
-	GO_FLOAT ks_yellow[] = {0, 0, 0};
+	double kd_yellow[] = {1, 1, 0};
+	double ks_yellow[] = {0, 0, 0};
 	int      n_yellow[]  = {0, 0, 0};
-	const IMaterial* m_yellow = new Materials::DuffuseSpecularMaterial(kd_yellow, ks_yellow, n_yellow);
+	IMaterial m_yellow = new Materials::DuffuseSpecularMaterial(kd_yellow, ks_yellow, n_yellow);
 
-	GO_FLOAT kd1[] = {0.9, 0.6, 0.3};
-	GO_FLOAT ks1[] = {0, 0, 0};
+	double kd1[] = {0.9, 0.6, 0.3};
+	double ks1[] = {0, 0, 0};
 	int      n1[]  = {0, 0, 0};
-	const IMaterial* m1 = new Materials::DuffuseSpecularMaterial(kd1, ks1, n1);
+	IMaterial m1 = new Materials::DuffuseSpecularMaterial(kd1, ks1, n1);
 
-	GO_FLOAT kd2[] = {0.6, 0.1, 1};
-	GO_FLOAT ks2[] = {0, 0, 0};
+	double kd2[] = {0.6, 0.1, 1};
+	double ks2[] = {0, 0, 0};
 	int      n2[]  = {0, 0, 0};
-	const IMaterial* m2 = new Materials::DuffuseSpecularMaterial(kd2, ks2, n2);
+	IMaterial m2 = new Materials::DuffuseSpecularMaterial(kd2, ks2, n2);
 	
-	GO_FLOAT kd3[] = {0, 0, 0};
-	GO_FLOAT ks3[] = {1, 1, 1};
+	double kd3[] = {0, 0, 0};
+	double ks3[] = {1, 1, 1};
 	int      n3[]  = {1, 1, 1};
-	const IMaterial* m3 = new Materials::DuffuseSpecularMaterial(kd3, ks3, n3);
+	IMaterial m3 = new Materials::DuffuseSpecularMaterial(kd3, ks3, n3);
 	
-	GO_FLOAT rrefract[] = {1, 1, 1};
-	GO_FLOAT refract = 1 / 2.0;
-	const IMaterial* m_refractor = new Materials::IdealRefractorMaterial(rrefract, refract);
+	double rrefract[] = {1, 1, 1};
+	double refract = 1 / 2.0;
+	IMaterial m_refractor = new Materials::IdealRefractorMaterial(rrefract, refract);
 	
-	const ITexturedMaterial* m_chess2 = new Materials::CheckeredMaterial(10, 1, m_red, m_green);
+	ITexturedMaterial m_chess2 = new Materials::CheckeredMaterial(10, 1, m_red, m_green);
 
-	GO_FLOAT Le1[] = {25, 25, 25};
+	double Le1[] = {25, 25, 25};
 	
-	const IShape* floor     = new Shapes::Square(Vector(-0.5, -0.5, 1), Vector(-0.5, -0.5, 2), Vector( 0.5, -0.5, 1), m_chess);
-	const IShape* ceiling   = new Shapes::Square(Vector(-0.5,  0.5, 1), Vector( 0.5,  0.5, 1), Vector(-0.5,  0.5, 2), m_yellow);
-	const IShape* backWall  = new Shapes::Square(Vector(-0.5, -0.5, 2), Vector(-0.5,  0.5, 2), Vector( 0.5, -0.5, 2), m_refractor);
-	const IShape* leftWall  = new Shapes::Square(Vector(-0.5,  0.5, 1), Vector(-0.5,  0.5, 2), Vector(-0.5, -0.5, 1), m_green);
-	const IShape* rightWall = new Shapes::Square(Vector( 0.5,  0.5, 1), Vector( 0.5, -0.5, 1), Vector( 0.5,  0.5, 2), m_refractor);
+	IShape floor     = new Shapes::Square(Vector(-0.5, -0.5, 1), Vector(-0.5, -0.5, 2), Vector( 0.5, -0.5, 1), m_chess);
+	IShape ceiling   = new Shapes::Square(Vector(-0.5,  0.5, 1), Vector( 0.5,  0.5, 1), Vector(-0.5,  0.5, 2), m_yellow);
+	IShape backWall  = new Shapes::Square(Vector(-0.5, -0.5, 2), Vector(-0.5,  0.5, 2), Vector( 0.5, -0.5, 2), m_refractor);
+	IShape leftWall  = new Shapes::Square(Vector(-0.5,  0.5, 1), Vector(-0.5,  0.5, 2), Vector(-0.5, -0.5, 1), m_green);
+	IShape rightWall = new Shapes::Square(Vector( 0.5,  0.5, 1), Vector( 0.5, -0.5, 1), Vector( 0.5,  0.5, 2), m_refractor);
 
-	const IShape* ball1 = new Shapes::Sphere(Vector(   0, -0.4, 1.3), 0.1,  m1);
-	const IShape* ball2 = new Shapes::Sphere(Vector(-0.23, 0, 1.3), 0.1, m2);
-	const IShape* ball3 = new Shapes::Sphere(Vector(0.3, -0.3, 1.5), 0.15, m_refractor);
+	IShape ball1 = new Shapes::Sphere(Vector(   0, -0.4, 1.3), 0.1,  m1);
+	IShape ball2 = new Shapes::Sphere(Vector(-0.23, 0, 1.3), 0.1, m2);
+	IShape ball3 = new Shapes::Sphere(Vector(0.3, -0.3, 1.5), 0.15, m_refractor);
 
-	const IShape* shapes[] = {
+	IShape shapes[] = {
 		floor,
 		ceiling,
 		backWall,
@@ -147,7 +128,7 @@ void InitScene()
 		ball3,
 	};
 	
-	const IShape* glossyShapes[] = {
+	IShape glossyShapes[] = {
 		//floor,
 		//ceiling,
 		//backWall,
@@ -159,7 +140,7 @@ void InitScene()
 		ball3,
 	};
 	
-	const IShape* diffuseShapes[] = {
+	IShape diffuseShapes[] = {
 		floor,
 		ceiling,
 		backWall,
@@ -171,8 +152,8 @@ void InitScene()
 		//ball3,
 	};
 	
-	const ILightSource* lightSources[] = {
-		new Lights::Square(Vector(-0.15, 0.5 - GO_FLOAT_EPSILON, 1.35), Vector(0.15,  0.5 - GO_FLOAT_EPSILON, 1.35), Vector(-0.15, 0.5 - GO_FLOAT_EPSILON, 1.65), Luminance(Le1)),
+	ILightSource lightSources[] = {
+		new Lights::Square(Vector(-0.15, 0.5 - double_EPSILON, 1.35), Vector(0.15,  0.5 - double_EPSILON, 1.35), Vector(-0.15, 0.5 - double_EPSILON, 1.65), Luminance(Le1)),
 		//new Lights::Square(Vector(-0.15, 0.45, 8.35), Vector(0.15,  0.45, 8.35), Vector(-0.15, 0.45, 8.65), Luminance(Le1)),
 		//new Lights::Sphere(Vector(0, 0.5, 1.5), 0.1, Luminance(Le1)),
 		//new Lights::Sphere(Vector(-0.3, -0.3, 1.5), 0.05, Luminance(Le1)),
@@ -192,16 +173,16 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
-	// TODO: разместите код здесь.
+	// TODO: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ.
 	MSG msg;
 	HACCEL hAccelTable;
 
-	// Инициализация глобальных строк
+	// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 	LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
 	LoadString(hInstance, IDC_GLOBALLIGHTING, szWindowClass, MAX_LOADSTRING);
 	MyRegisterClass(hInstance);
 
-	// Выполнить инициализацию приложения:
+	// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ:
 	if (!InitInstance (hInstance, nCmdShow))
 	{
 		return FALSE;
@@ -209,7 +190,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_GLOBALLIGHTING));
 
-	// Цикл основного сообщения:
+	// пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ:
 	while (GetMessage(&msg, NULL, 0, 0))
 	{
 		if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
@@ -225,17 +206,17 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
 
 //
-//  ФУНКЦИЯ: MyRegisterClass()
+//  пїЅпїЅпїЅпїЅпїЅпїЅпїЅ: MyRegisterClass()
 //
-//  НАЗНАЧЕНИЕ: регистрирует класс окна.
+//  пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ.
 //
-//  КОММЕНТАРИИ:
+//  пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ:
 //
-//    Эта функция и ее использование необходимы только в случае, если нужно, чтобы данный код
-//    был совместим с системами Win32, не имеющими функции RegisterClassEx'
-//    которая была добавлена в Windows 95. Вызов этой функции важен для того,
-//    чтобы приложение получило "качественные" мелкие значки и установило связь
-//    с ними.
+//    пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ
+//    пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ Win32, пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ RegisterClassEx'
+//    пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ Windows 95. пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ,
+//    пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ" пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+//    пїЅ пїЅпїЅпїЅпїЅ.
 //
 ATOM MyRegisterClass(HINSTANCE hInstance)
 {
@@ -259,18 +240,18 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 }
 
 //
-//   ФУНКЦИЯ: InitInstance(HINSTANCE, int)
+//   пїЅпїЅпїЅпїЅпїЅпїЅпїЅ: InitInstance(HINSTANCE, int)
 //
-//   НАЗНАЧЕНИЕ: сохраняет обработку экземпляра и создает главное окно.
+//   пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ.
 //
-//   КОММЕНТАРИИ:
+//   пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ:
 //
-//        В данной функции дескриптор экземпляра сохраняется в глобальной переменной, а также
-//        создается и выводится на экран главное окно программы.
+//        пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅ пїЅпїЅпїЅпїЅпїЅ
+//        пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
 //
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
-	hInst = hInstance; // Сохранить дескриптор экземпляра в глобальной переменной
+	hInst = hInstance; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
 	hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
 		50, 20, W, H + 20, NULL, NULL, hInstance, NULL);
@@ -305,13 +286,13 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 }
 
 //
-//  ФУНКЦИЯ: WndProc(HWND, UINT, WPARAM, LPARAM)
+//  пїЅпїЅпїЅпїЅпїЅпїЅпїЅ: WndProc(HWND, UINT, WPARAM, LPARAM)
 //
-//  НАЗНАЧЕНИЕ:  обрабатывает сообщения в главном окне.
+//  пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ:  пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ.
 //
-//  WM_COMMAND	- обработка меню приложения
-//  WM_PAINT	-Закрасить главное окно
-//  WM_DESTROY	 - ввести сообщение о выходе и вернуться.
+//  WM_COMMAND	- пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+//  WM_PAINT	-пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
+//  WM_DESTROY	 - пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
 //
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -326,7 +307,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_COMMAND:
 		wmId    = LOWORD(wParam);
 		wmEvent = HIWORD(wParam);
-		// Разобрать выбор в меню:
+		// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ:
 		switch (wmId)
 		{
 		case IDM_ABOUT:
@@ -383,7 +364,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-// Обработчик сообщений для окна "О программе".
+// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ "пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ".
 INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	UNREFERENCED_PARAMETER(lParam);

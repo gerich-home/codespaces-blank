@@ -1,13 +1,9 @@
-#include "StdAfx.h"
-#include "SquareLight.h"
 
-#include <stdlib.h>
 #define _USE_MATH_DEFINES
-#include <math.h>
 
 using namespace Engine;
 
-Lights::Square::Square(const Vector a, const Vector b, const Vector c, const Luminance& le):
+Lights::Square::Square(const Vector a, const Vector b, const Vector c, Luminance le):
 	a(a),
 	ba(b - a),
 	ca(c - a),
@@ -17,10 +13,10 @@ Lights::Square::Square(const Vector a, const Vector b, const Vector c, const Lum
 {
 }
 
-const LightPoint Lights::Square::SampleLightPoint(const Vector& point) const
+const LightPoint Lights::Square::SampleLightPoint(Vector point) const
 {
-	GO_FLOAT t1 = (GO_FLOAT) rand() / RAND_MAX;
-	GO_FLOAT t2 = (GO_FLOAT) rand() / RAND_MAX;
+	double t1 = (double) rand() / RAND_MAX;
+	double t2 = (double) rand() / RAND_MAX;
 
 	return LightPoint(a + t1 * ba + t2 * ca, normal, probability, le);
 }
@@ -30,12 +26,12 @@ void Lights::Square::EmitPhotons(int nphotons, Photon photons[]) const
 	Luminance energy = le / nphotons;
 	for(int i = 0; i < nphotons; i++)
 	{
-		GO_FLOAT t1 = (GO_FLOAT) rand() / RAND_MAX;
-		GO_FLOAT t2 = (GO_FLOAT) rand() / RAND_MAX;
+		double t1 = (double) rand() / RAND_MAX;
+		double t2 = (double) rand() / RAND_MAX;
 		
-		GO_FLOAT cosa = (GO_FLOAT) rand() / RAND_MAX;
-		GO_FLOAT sina = sqrt(1 - cosa * cosa);
-		GO_FLOAT b = 2 * M_PI * (GO_FLOAT) rand() / RAND_MAX;
+		double cosa = (double) rand() / RAND_MAX;
+		double sina = sqrt(1 - cosa * cosa);
+		double b = 2 * M_PI * (double) rand() / RAND_MAX;
 
 		Vector direction = Vector(sina * cos(b), sina * sin(b), cosa).Transform(normal);
 

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "IPhotonMapBuilder.h"
 
 namespace PhotonMapBuilders
 {
@@ -8,7 +7,6 @@ namespace PhotonMapBuilders
 
 	class CausticPhotonMapBuilder : public IPhotonMapBuilder
 	{
-	public:
-		virtual const PhotonMap BuildPhotonMap(const IShape& scene, const IShape& diffuse, const IShape& glossy, const ILightSource& lights) const;
+		PhotonMap BuildPhotonMap(IShape scene, IShape diffuse, IShape glossy, ILightSource lights) const;
 	};
 }

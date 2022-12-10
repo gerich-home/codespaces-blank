@@ -1,10 +1,7 @@
-#include "stdafx.h"
-#include "stdio.h"
-#include "MemoryManager.h"
 
 #undef new
 
-const char* __file__ = "";
+char __file__ = "";
 size_t __line__ = 0;
 
 CRITICAL_SECTION cs;
@@ -55,11 +52,11 @@ void PrintMemoryTable()
 	memoryRecord* current = memoryList.next;
 	while(current)
 	{
-		fprintf(file,"%s;",current->file);
-		fprintf(file,"%i;",current->line);
-		fprintf(file,"%i;",current->size);
-		fprintf(file,"%x\n",current->ptr);
-		current = current->next;
+		fprintf(file,"%s;",current.file);
+		fprintf(file,"%i;",current.line);
+		fprintf(file,"%i;",current.size);
+		fprintf(file,"%x\n",current.ptr);
+		current = current.next;
 	}
 
 	fclose(file);
@@ -82,18 +79,18 @@ void* __Malloc(size_t size, const char * file, size_t line)
 	EnterCriticalSection(&cs);
 
 	memoryRecord* newItem =(memoryRecord*)malloc(sizeof(memoryRecord));
-	newItem->size = size;
-	newItem->ptr = malloc(size);
-	newItem->file = file;
-	newItem->line = line;
-	newItem->next = memoryList.next;
+	newItem.size = size;
+	newItem.ptr = malloc(size);
+	newItem.file = file;
+	newItem.line = line;
+	newItem.next = memoryList.next;
 	memoryList.next = newItem;
 
 	memoryusage += size; 
 	
 	LeaveCriticalSection(&cs);
 
-	return newItem->ptr;
+	return newItem.ptr;
 }
 
 void __Free(void* ptr)
@@ -106,15 +103,15 @@ void __Free(void* ptr)
 
 	while(current)
 	{
-		if(current->ptr == ptr)
+		if(current.ptr == ptr)
 		{	
-			memoryusage -= current->size;
-			prev->next = current->next;
+			memoryusage -= current.size;
+			prev.next = current.next;
 			free(current);
 			break;
 		}
 		prev = current;
-		current = current->next;
+		current = current.next;
 	}
 	
 	LeaveCriticalSection(&cs);
@@ -142,19 +139,19 @@ void* __Realloc(void* ptr, size_t newsize, const char * file, size_t line)
 
 	while(current)
 	{
-		if(current->ptr == ptr)
+		if(current.ptr == ptr)
 		{	
-			current->ptr = realloc(ptr,newsize);
-			memoryusage += newsize - current->size;
-			current->size = newsize;
+			current.ptr = realloc(ptr,newsize);
+			memoryusage += newsize - current.size;
+			current.size = newsize;
 			break;
 		}
-		current = current->next;
+		current = current.next;
 	}
 	
 	LeaveCriticalSection(&cs);
 
-	return current->ptr;
+	return current.ptr;
 }
 
 
