@@ -1,7 +1,7 @@
 
 using namespace Engine;
 
-Shapes::Plane::Plane(Vector normal, double d, IMaterial material) :
+Shapes.Plane.Plane(Vector normal, double d, IMaterial material) :
 	normal(normal),
 	d(d),
 	A( (normal.x != 0 ? -d / normal.x : 0                                              ),
@@ -12,16 +12,16 @@ Shapes::Plane::Plane(Vector normal, double d, IMaterial material) :
 {
 }
 
-Shapes::Plane::Plane(Vector a, Vector b, Vector A, IMaterial material) :
-	normal(a.CrossProduct(b).Normalize()),
+Shapes.Plane.Plane(Vector a, Vector b, Vector A, IMaterial material) :
+	normal(a.CrossProduct(b).Normalized),
 	A(A),
 	material(material)
 {
 	d = A.DotProduct(normal);
 }
 
-Shapes::Plane::Plane(double a, double b, double c, double d, IMaterial material):
-	normal(Vector(a, b, c).Normalize()),
+Shapes.Plane.Plane(double a, double b, double c, double d, IMaterial material):
+	normal(new Vector(a, b, c).Normalized),
 	d(d),
 	material(material),
 	A( (a != 0 ? -d / a : 0                         ),
@@ -31,7 +31,7 @@ Shapes::Plane::Plane(double a, double b, double c, double d, IMaterial material)
 {
 }
 
-HitPoint Shapes::Plane::Intersection(Vector start, Vector direction) const
+HitPoint Shapes.Plane.Intersection(Vector start, Vector direction)
 {
 	double divident = normal.DotProduct(direction);
 

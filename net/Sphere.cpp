@@ -3,7 +3,7 @@
 
 using namespace Engine;
 
-Shapes::Sphere::Sphere(Vector center, double r, IMaterial material) :
+Shapes.Sphere.Sphere(Vector center, double r, IMaterial material) :
 	center(center),
 	material(material),
 	r2(r * r),
@@ -11,12 +11,12 @@ Shapes::Sphere::Sphere(Vector center, double r, IMaterial material) :
 {
 }
 
-HitPoint Shapes::Sphere::Intersection(Vector start, Vector direction) const
+HitPoint Shapes.Sphere.Intersection(Vector start, Vector direction)
 {
 	Vector ac = start - center;
 	
 	double b = ac.DotProduct(direction);
-	double c = ac.Norm() - r2;
+	double c = ac.Norm - r2;
 
 	double D = b * b - c;
 
@@ -25,14 +25,14 @@ HitPoint Shapes::Sphere::Intersection(Vector start, Vector direction) const
 		return NULL;
 	}
 
-	D = sqrt(D);
+	D = Math.Sqrt(D);
 	double t = -b - D;
 	
-	if(t < double_EPSILON)
+	if(t < double.Epsilon)
 	{
 		t = -b + D;
 	
-		if(t < double_EPSILON)
+		if(t < double.Epsilon)
 		{
 			return NULL;
 		}

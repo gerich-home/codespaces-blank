@@ -5,19 +5,18 @@ using namespace Engine;
 
 namespace Materials
 {
-	class TexturedMaterialAdapter: public ITexturedMaterial
+	public class TexturedMaterialAdapter : ITexturedMaterial
 	{
-		TexturedMaterialAdapter(IMaterial m) :
-			m(m)
+		public readonly IMaterial m;
+
+		public TexturedMaterialAdapter(IMaterial m)
 		{
+			this.m = m;
 		}
 
-		IMaterial MaterialAt(double t1, double t2) const
+		public IMaterial MaterialAt(double t1, double t2)
 		{
 			return m;
 		}
-
-	private:
-		IMaterial m;
 	};
 }

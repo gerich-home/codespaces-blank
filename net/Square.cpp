@@ -1,27 +1,27 @@
 
 using namespace Engine;
 
-Shapes::Square::Square(const Vector a, const Vector b, const Vector c, ITexturedMaterial material):
+Shapes.Square.Square(Vector a, Vector b, Vector c, ITexturedMaterial material):
 	a(a),
 	ba(b - a),
 	ca(c - a),
 	normal((b - a).CrossProduct(c - a)),
-	n((b - a).CrossProduct(c - a).Normalize()),
+	n((b - a).CrossProduct(c - a).Normalized),
 	material(material)
 {
 }
 	
-Shapes::Square::Square(const Vector a, const Vector b, const Vector c, IMaterial material):
+Shapes.Square.Square(Vector a, Vector b, Vector c, IMaterial material):
 	a(a),
 	ba(b - a),
 	ca(c - a),
 	normal((b - a).CrossProduct(c - a)),
-	n((b - a).CrossProduct(c - a).Normalize()),
-	material(new Materials::TexturedMaterialAdapter(material))
+	n((b - a).CrossProduct(c - a).Normalized),
+	material(new Materials.TexturedMaterialAdapter(material))
 {
 }
 
-HitPoint Shapes::Square::Intersection(Vector start, Vector direction) const
+HitPoint Shapes.Square.Intersection(Vector start, Vector direction)
 {
 	double t = 0;
 	double t1 = 0;
@@ -55,7 +55,7 @@ HitPoint Shapes::Square::Intersection(Vector start, Vector direction) const
 	
 	t = sa.DotProduct(normal) * factor;
 
-	if(t < 100 * double_EPSILON)
+	if(t < 100 * double.Epsilon)
 	{
 		return NULL;
 	}

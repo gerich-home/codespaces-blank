@@ -15,7 +15,7 @@ namespace Materials
 		{
 		}
 
-		const Luminance BRDF(Vector direction, Vector ndirection, Vector normal) const
+		Luminance BRDF(Vector direction, Vector ndirection, Vector normal)
 		{
 			int n = 500;
 
@@ -30,27 +30,27 @@ namespace Materials
 
 			if(cosb < 0)
 			{
-				const Vector R = direction + 2 * cosa * normal;
+				readonly Vector R = direction + 2 * cosa * normal;
 				
-				const double cosphi = ndirection.DotProduct(R);
+				readonly double cosphi = ndirection.DotProduct(R);
 			
 				if(cosphi > 0)
 				{
-					return Luminance(
-						rd.colors[L_R] == 0 ? 0 : rd.colors[L_R] * (n + 2) * pow(cosphi, n),
-						rd.colors[L_G] == 0 ? 0 : rd.colors[L_G] * (n + 2) * pow(cosphi, n),
-						rd.colors[L_B] == 0 ? 0 : rd.colors[L_B] * (n + 2) * pow(cosphi, n)
-						) / (2 * M_PI);	
+					return new Luminance(
+						rd.colors[L_R] == 0 ? 0 : rd.colors[L_R] * (n + 2) * Math.Pow(cosphi, n),
+						rd.colors[L_G] == 0 ? 0 : rd.colors[L_G] * (n + 2) * Math.Pow(cosphi, n),
+						rd.colors[L_B] == 0 ? 0 : rd.colors[L_B] * (n + 2) * Math.Pow(cosphi, n)
+						) / (2 * Math.PI);	
 				}
 				else
 				{
-					return Luminance();
+					return new Luminance();
 				}
 			}
 
-			cosb = sqrt(cosb);
+			cosb = Math.Sqrt(cosb);
 
-			double cosabs = abs(cosa);
+			double cosabs = Math.Abs(cosa);
 			double Rs = (factor * cosabs - cosb) / (factor * cosabs  + cosb);
 			Rs *= Rs;
 
@@ -62,16 +62,16 @@ namespace Materials
 			Luminance result;
 			
 			{
-				const Vector R = direction + 2 * cosa * normal;
-				const double cosphi = ndirection.DotProduct(R);
+				readonly Vector R = direction + 2 * cosa * normal;
+				readonly double cosphi = ndirection.DotProduct(R);
 			
 				if(cosphi > 0)
 				{
-					result = qreflect * Luminance(
-						rd.colors[L_R] == 0 ? 0 : rd.colors[L_R] * (n + 2) * pow(cosphi, n),
-						rd.colors[L_G] == 0 ? 0 : rd.colors[L_G] * (n + 2) * pow(cosphi, n),
-						rd.colors[L_B] == 0 ? 0 : rd.colors[L_B] * (n + 2) * pow(cosphi, n)
-						) / (2 * M_PI);
+					result = qreflect * new Luminance(
+						rd.colors[L_R] == 0 ? 0 : rd.colors[L_R] * (n + 2) * Math.Pow(cosphi, n),
+						rd.colors[L_G] == 0 ? 0 : rd.colors[L_G] * (n + 2) * Math.Pow(cosphi, n),
+						rd.colors[L_B] == 0 ? 0 : rd.colors[L_B] * (n + 2) * Math.Pow(cosphi, n)
+						) / (2 * Math.PI);
 				}
 			}
 
@@ -86,22 +86,22 @@ namespace Materials
 					R = cosb * normal + factor * (cosa * normal + direction);
 				}
 				
-				const double cosphi = ndirection.DotProduct(R);
+				readonly double cosphi = ndirection.DotProduct(R);
 			
 				if(cosphi > 0)
 				{
-					result = (1 - qreflect) * Luminance(
-						rd.colors[L_R] == 0 ? 0 : rd.colors[L_R] * (n + 2) * pow(cosphi, n),
-						rd.colors[L_G] == 0 ? 0 : rd.colors[L_G] * (n + 2) * pow(cosphi, n),
-						rd.colors[L_B] == 0 ? 0 : rd.colors[L_B] * (n + 2) * pow(cosphi, n)
-						) / (2 * M_PI);
+					result = (1 - qreflect) * new Luminance()
+						rd.colors[L_R] == 0 ? 0 : rd.colors[L_R] * (n + 2) * Math.Pow(cosphi, n),
+						rd.colors[L_G] == 0 ? 0 : rd.colors[L_G] * (n + 2) * Math.Pow(cosphi, n),
+						rd.colors[L_B] == 0 ? 0 : rd.colors[L_B] * (n + 2) * Math.Pow(cosphi, n)
+						) / (2 * Math.PI);
 				}
 			}
 
 			return result;
 		}
 
-		const RandomDirection SampleDirection(Vector direction, Vector normal, double ksi) const
+		RandomDirection SampleDirection(Vector direction, Vector normal, double ksi)
 		{	
 			double cosa = -direction.DotProduct(normal);
 			double factor = refract;
@@ -114,13 +114,13 @@ namespace Materials
 
 			if(cosb < 0)
 			{
-				const Vector R = direction + 2 * cosa * normal;
-				return RandomDirection(rd, R);	
+				readonly Vector R = direction + 2 * cosa * normal;
+				return new RandomDirection(rd, R);	
 			}
 
-			cosb = sqrt(cosb);
+			cosb = Math.Sqrt(cosb);
 
-			double cosabs = abs(cosa);
+			double cosabs = Math.Abs(cosa);
 			double Rs = (factor * cosabs - cosb) / (factor * cosabs  + cosb);
 			Rs *= Rs;
 
@@ -131,8 +131,8 @@ namespace Materials
 			
 			if(ksi < qreflect)
 			{
-				const Vector R = direction + 2 * cosa * normal;
-				return RandomDirection(rd, R);	
+				readonly Vector R = direction + 2 * cosa * normal;
+				return new RandomDirection(rd, R);	
 			}
 			else
 			{
@@ -146,12 +146,12 @@ namespace Materials
 					R = cosb * normal + factor * (cosa * normal + direction);
 				}
 				
-				return RandomDirection(rd, R);
+				return new RandomDirection(rd, R);
 			}
 		}
 
 	private:
-		const Luminance rd;
-		const double refract;
+		readonly Luminance rd;
+		readonly double refract;
 	};
 }

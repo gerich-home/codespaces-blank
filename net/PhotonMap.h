@@ -13,12 +13,12 @@ namespace Engine
 		void Build();
 		void Clear();
 		bool Add(Photon photon);
-		double FindNearest(Vector x, int count, Photon** result) const;
+		double FindNearest(Vector x, int count, Photon** result);
 
 	private:
 		void QSort(int left, int right, short axis);
 		PhotonMapNode* CreateSubTree(int left, int right);
-		void GoDown(PhotonMapNode* node, ParamsForFind& paramsForFind) const;
+		void GoDown(PhotonMapNode* node, ParamsForFind& paramsForFind);
 		PhotonMapNode* root;
 		int nphotons;
 		Photon* photons;

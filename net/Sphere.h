@@ -9,12 +9,12 @@ namespace Shapes
 	{
 		Sphere(Vector center, double r, IMaterial material);
 	
-		HitPoint Intersection(Vector start, Vector direction) const;
+		HitPoint Intersection(Vector start, Vector direction);
 
 	private:
-		const double r2;
-		const double rinv;
-		const Vector center;
+		readonly double r2;
+		readonly double rinv;
+		readonly Vector center;
 		IMaterial material;
 	};
 }

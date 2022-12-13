@@ -4,7 +4,7 @@ using namespace Engine;
 #define SHADOW_RAYS 10
 #define ABSOPTION 0.3
 
-Luminance Engines::SimpleTracing::L(HitPoint hp, Vector point, Vector direction, IShape scene, IShape diffuse, IShape glossy, ILightSource lights) const
+Luminance Engines.SimpleTracing.L(HitPoint hp, Vector point, Vector direction, IShape scene, IShape diffuse, IShape glossy, ILightSource lights)
 {
 	Luminance result;
 	Luminance factor(1, 1, 1);
@@ -34,8 +34,8 @@ Luminance Engines::SimpleTracing::L(HitPoint hp, Vector point, Vector direction,
 				continue;
 			}
 
-			double l = ndirection.Length();
-			if(l * l < double_EPSILON)
+			double l = ndirection.Length;
+			if(l * l < double.Epsilon)
 			{
 				continue;
 			}
@@ -49,7 +49,7 @@ Luminance Engines::SimpleTracing::L(HitPoint hp, Vector point, Vector direction,
 
 			if(nhp)
 			{
-				if(nhp.t > l - double_EPSILON)
+				if(nhp.t > l - double.Epsilon)
 				{
 					delete nhp;
 				}
@@ -77,7 +77,7 @@ Luminance Engines::SimpleTracing::L(HitPoint hp, Vector point, Vector direction,
 
 		ksi = (ksi - ABSOPTION) / (1 - ABSOPTION);
 
-		const RandomDirection rndd = current_hp.material.SampleDirection(current_direction, current_hp.normal, ksi);
+		readonly RandomDirection rndd = current_hp.material.SampleDirection(current_direction, current_hp.normal, ksi);
 		
 		if(rndd.factor.colors[L_R] == 0 && rndd.factor.colors[L_G] == 0 && rndd.factor.colors[L_B] == 0)
 		{

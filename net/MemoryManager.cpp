@@ -20,7 +20,7 @@ struct memoryRecord
 {
 	void *ptr;
 	size_t size;
-	const char *file;
+	readonly char *file;
 	size_t line;
 	
 	memoryRecord *next;
@@ -72,7 +72,7 @@ void PrintMemoryUsage()
 	fclose(file);
 }
 
-void* __Malloc(size_t size, const char * file, size_t line)
+void* __Malloc(size_t size, char * file, size_t line)
 {
 	InitMutex();
     
@@ -119,7 +119,7 @@ void __Free(void* ptr)
 	free(ptr);
 }
 
-void* __Realloc(void* ptr, size_t newsize, const char * file, size_t line)
+void* __Realloc(void* ptr, size_t newsize, char * file, size_t line)
 {
 	InitMutex();
 	EnterCriticalSection(&cs);

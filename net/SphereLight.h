@@ -9,14 +9,14 @@ namespace Lights
 	{
 		Sphere(Vector center, double r, Luminance le);
 
-		LightPoint SampleLightPoint(Vector point) const;
-		void EmitPhotons(int nphotons, Photon photons[]) const;
-		Luminance Le() const;
+		LightPoint SampleLightPoint(Vector point);
+		void EmitPhotons(int nphotons, Photon photons[]);
+		Luminance Le();
 
 	private:
-		const double r;
-		const double probability;
-		const Vector center;
-		const Luminance le;
+		readonly double r;
+		readonly double probability;
+		readonly Vector center;
+		readonly Luminance le;
 	};
 }

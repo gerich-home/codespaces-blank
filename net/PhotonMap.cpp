@@ -1,7 +1,7 @@
 
 using namespace Engine;
 
-class Engine::PhotonMapNode
+class Engine.PhotonMapNode
 {
 	PhotonMapNode(Photon photon, PhotonMapNode* left, PhotonMapNode* right, short axis) :
 		photon(photon),
@@ -30,7 +30,7 @@ class Engine::PhotonMapNode
 };
 
 
-class Engine::ParamsForFind
+class Engine.ParamsForFind
 {
 	ParamsForFind(Vector x, int count, Photon** result):
 		x(x),
@@ -45,7 +45,7 @@ class Engine::ParamsForFind
 		delete[] distances;
 	}
 
-	const Vector x;
+	readonly Vector x;
 	int count; 
 	int currentCount; 
 	Photon** result; 
@@ -53,7 +53,7 @@ class Engine::ParamsForFind
 	double r2;
 };
 
-void PhotonMap::QSort(int left, int right, short axis)
+void PhotonMap.QSort(int left, int right, short axis)
 {
     int l = left;
     int r = right;
@@ -78,7 +78,7 @@ void PhotonMap::QSort(int left, int right, short axis)
     if (l < right) QSort(l, right, axis);
 }
 
-PhotonMapNode* PhotonMap::CreateSubTree(int left, int right)
+PhotonMapNode* PhotonMap.CreateSubTree(int left, int right)
 {
 	int count = right - left + 1;
 
@@ -150,7 +150,7 @@ PhotonMapNode* PhotonMap::CreateSubTree(int left, int right)
 	}
 }
 
-void PhotonMap::Build()
+void PhotonMap.Build()
 {
 	indexes[0] = new int[nphotons];
 	indexes[1] = new int[nphotons];
@@ -175,30 +175,30 @@ void PhotonMap::Build()
 	delete[] photons;
 }
 
-bool PhotonMap::Add(Photon photon)
+bool PhotonMap.Add(Photon photon)
 {
 	photons[current] = photon;
 
 	return (++current < nphotons);
 }
 
-PhotonMap::PhotonMap(int nphotons) :
+PhotonMap.PhotonMap(int nphotons) :
 	nphotons(nphotons)
 {
 	photons = new Photon[nphotons];
 	current = 0;
 }
 
-PhotonMap::~PhotonMap()
+PhotonMap.~PhotonMap()
 {
 	
 }
 
-void PhotonMap::Clear()
+void PhotonMap.Clear()
 {
 	delete root;
 }
-void PhotonMap::GoDown(PhotonMapNode* node, ParamsForFind& paramsForFind) const
+void PhotonMap.GoDown(PhotonMapNode* node, ParamsForFind& paramsForFind)
 {
 	short axis = node.axis;
 	
@@ -235,7 +235,7 @@ void PhotonMap::GoDown(PhotonMapNode* node, ParamsForFind& paramsForFind) const
 		}
 	}
 
-	delta = (node.photon.point - paramsForFind.x).Norm();
+	delta = (node.photon.point - paramsForFind.x).Norm;
 
 	if(paramsForFind.currentCount < paramsForFind.count)
 	{
@@ -262,7 +262,7 @@ void PhotonMap::GoDown(PhotonMapNode* node, ParamsForFind& paramsForFind) const
 	}
 }
 
-double PhotonMap::FindNearest(Vector x, int count, Photon** result) const
+double PhotonMap.FindNearest(Vector x, int count, Photon** result)
 {
 	ParamsForFind p(x, count, result);
 	GoDown(root, p);

@@ -1,7 +1,7 @@
 
 using namespace Engine;
 
-Shapes::Scene::Scene(int nshapes, IShape shapes[]) :
+Shapes.Scene.Scene(int nshapes, IShape shapes[]) :
 	nshapes(nshapes)
 {
 	this.shapes = new IShape[nshapes];
@@ -12,12 +12,12 @@ Shapes::Scene::Scene(int nshapes, IShape shapes[]) :
 	}
 }
 
-Shapes::Scene::~Scene()
+Shapes.Scene.~Scene()
 {
 	delete[] shapes;
 }
 
-HitPoint Shapes::Scene::Intersection(Vector start, Vector direction) const
+HitPoint Shapes.Scene.Intersection(Vector start, Vector direction)
 {
 	HitPoint bestHitPoint = NULL;
 	HitPoint hitPoint;

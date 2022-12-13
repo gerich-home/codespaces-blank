@@ -2,12 +2,12 @@
 
 
 	
-class Engine::Vector;
-class Engine::Luminance;
-class Engine::IEngine;
-class Engine::ILightSource;
-class Engine::IShape;
-class Engine::PhotonMap;
+class Engine.Vector;
+class Engine.Luminance;
+class Engine.IEngine;
+class Engine.ILightSource;
+class Engine.IShape;
+class Engine.PhotonMap;
 
 namespace Engines
 {
@@ -21,7 +21,7 @@ namespace Engines
 		{
 		}
 
-		Luminance L(HitPoint hp, Vector point, Vector direction, IShape scene, IShape diffuse, IShape glossy, ILightSource lights) const;
+		Luminance L(HitPoint hp, Vector point, Vector direction, IShape scene, IShape diffuse, IShape glossy, ILightSource lights);
 
 	private:
 		PhotonMap globalMap;

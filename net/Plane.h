@@ -11,12 +11,12 @@ namespace Shapes
 		Plane(Vector a, Vector b, Vector A, IMaterial material);
 		Plane(double a, double b, double c, double d, IMaterial material);
 
-		HitPoint Intersection(Vector start, Vector direction) const;
+		HitPoint Intersection(Vector start, Vector direction);
 
 	private:
 		double d;
-		const Vector normal;
-		const Vector A;
+		readonly Vector normal;
+		readonly Vector A;
 		IMaterial material;
 	};
 };

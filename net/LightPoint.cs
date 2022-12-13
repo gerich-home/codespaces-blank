@@ -2,10 +2,10 @@ namespace Engine
 {
 	class LightPoint
 	{	
-		readonly Vector point;
-		readonly Vector normal;
-		readonly double probability;
-		readonly Luminance Le;
+		public readonly Vector point;
+		public readonly Vector normal;
+		public readonly double probability;
+		public readonly Luminance Le;
 
 		LightPoint(Vector point, Vector normal, double probability, Luminance Le)
 		{

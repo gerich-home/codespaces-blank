@@ -14,19 +14,19 @@ namespace Materials
 		{
 		}
 
-		const Luminance BRDF(Vector direction, Vector ndirection, Vector normal) const
+		Luminance BRDF(Vector direction, Vector ndirection, Vector normal)
 		{
-			return Luminance();
+			return new Luminance();
 		}
 
-		const RandomDirection SampleDirection(Vector direction, Vector normal, double ksi) const
+		RandomDirection SampleDirection(Vector direction, Vector normal, double ksi)
 		{
-			const Vector R = direction - 2 * normal.DotProduct(direction) * normal;
+			readonly Vector R = direction - 2 * normal.DotProduct(direction) * normal;
 
-			return RandomDirection(rs, R);
+			return new RandomDirection(rs, R);
 		}
 
 	private:
-		const Luminance rs; //koefficient specular reflection
+		readonly Luminance rs; //koefficient specular reflection
 	};
 }

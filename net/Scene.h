@@ -10,7 +10,7 @@ namespace Shapes
 		Scene(int nshapes, IShape shapes[]);
 		~Scene();
 	
-		HitPoint Intersection(Vector start, Vector direction) const;
+		HitPoint Intersection(Vector start, Vector direction);
 
 	private:
 		IShape* shapes;

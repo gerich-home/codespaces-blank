@@ -3,47 +3,47 @@
 
 using namespace Engine;
 
-Lights::Sphere::Sphere(Vector center, double r, Luminance le) :
+Lights.Sphere.Sphere(Vector center, double r, Luminance le) :
 	center(center),
 	r(r),
-	probability(1 / (4 * M_PI * r * r)),
+	probability(1 / (4 * Math.PI * r * r)),
 	le(le)
 {
 }
 
-const LightPoint Lights::Sphere::SampleLightPoint(Vector point) const
+readonly LightPoint Lights.Sphere.SampleLightPoint(Vector point)
 {	
-	double cosa = (double) rand() / RAND_MAX;
-	double sina = sqrt(1 - cosa * cosa);
-	double b = 2 * M_PI * (double) rand() / RAND_MAX;
+	double cosa = rnd.NextDouble();
+	double sina = Math.Sqrt(1 - cosa * cosa);
+	double b = 2 * Math.PI * rnd.NextDouble();
 
-	const Vector normal = Vector(cosa * cos(b), cosa * sin(b), sina);
+	readonly Vector normal = new Vector(cosa * Math.Cos(b), cosa * Math.Sin(b), sina);
 
-	return LightPoint(center + r * normal, normal, probability, le);
+	return new LightPoint(center + r * normal, normal, probability, le);
 }
 
-void Lights::Sphere::EmitPhotons(int nphotons, Photon photons[]) const
+void Lights.Sphere.EmitPhotons(int nphotons, Photon photons[])
 {
 	Luminance energy = le / nphotons;
 	for(int i = 0; i < nphotons; i++)
 	{		
-		double sina = (double) rand() / RAND_MAX;
-		double cosa = sqrt(1 - sina * sina);
-		double b = 2 * M_PI * (double) rand() / RAND_MAX;
+		double sina = rnd.NextDouble();
+		double cosa = Math.Sqrt(1 - sina * sina);
+		double b = 2 * Math.PI * rnd.NextDouble();
 
-		const Vector normal = Vector(cosa * cos(b), cosa * sin(b), sina);
+		readonly Vector normal = new Vector(cosa * Math.Cos(b), cosa * Math.Sin(b), sina);
 		
-		cosa = (double) rand() / RAND_MAX;
-		sina = sqrt(1 - cosa * cosa);
-		b = 2 * M_PI * (double) rand() / RAND_MAX;
+		cosa = rnd.NextDouble();
+		sina = Math.Sqrt(1 - cosa * cosa);
+		b = 2 * Math.PI * rnd.NextDouble();
 
-		Vector direction = Vector(sina * cos(b), sina * sin(b), cosa).Transform(normal);
+		Vector direction = new Vector(sina * Math.Cos(b), sina * Math.Sin(b), cosa).Transform(normal);
 
 		photons[i] = Photon(center + r * normal, normal, direction, energy);
 	}
 }
 
-Luminance Lights::Sphere::Le() const 
+Luminance Lights.Sphere.Le() 
 {
 	return le;
 }

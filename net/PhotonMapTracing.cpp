@@ -4,7 +4,7 @@ using namespace Engine;
 #define SHADOW_RAYS 10
 #define ABSOPTION 0.01
 /*
-Luminance Engines::PhotonMapTracing::L(HitPoint hp, Vector point, Vector direction, IShape scene, IShape diffuse, IShape glossy, ILightSource lights) const
+Luminance Engines.PhotonMapTracing.L(HitPoint hp, Vector point, Vector direction, IShape scene, IShape diffuse, IShape glossy, ILightSource lights)
 {
 	Luminance result;
 	Luminance factor(1, 1, 1);
@@ -34,8 +34,8 @@ Luminance Engines::PhotonMapTracing::L(HitPoint hp, Vector point, Vector directi
 				continue;
 			}
 
-			double l = ndirection.Length();
-			if(l * l < double_EPSILON)
+			double l = ndirection.Length;
+			if(l * l < double.Epsilon)
 			{
 				continue;
 			}
@@ -49,7 +49,7 @@ Luminance Engines::PhotonMapTracing::L(HitPoint hp, Vector point, Vector directi
 
 			if(nhp)
 			{
-				if(nhp.t > l - double_EPSILON)
+				if(nhp.t > l - double.Epsilon)
 				{
 					delete nhp;
 				}
@@ -68,7 +68,7 @@ Luminance Engines::PhotonMapTracing::L(HitPoint hp, Vector point, Vector directi
 		
 		//Compute indirect luminancy
 		
-		const RandomDirection rndd = current_hp.material.SampleDirection(current_direction, current_point, current_hp.normal, scene, ABSOPTION);
+		readonly RandomDirection rndd = current_hp.material.SampleDirection(current_direction, current_point, current_hp.normal, scene, ABSOPTION);
 			
 		if(!rndd.hp)
 		{

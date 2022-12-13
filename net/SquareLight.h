@@ -7,18 +7,18 @@ namespace Lights
 
 	class Square: public ILightSource
 	{
-		Square(const Vector a, const Vector b, const Vector c, Luminance le);
+		Square(Vector a, Vector b, Vector c, Luminance le);
 
-		LightPoint SampleLightPoint(Vector point) const;
-		void EmitPhotons(int nphotons, Photon photons[]) const;
-		Luminance Le() const;
+		LightPoint SampleLightPoint(Vector point);
+		void EmitPhotons(int nphotons, Photon photons[]);
+		Luminance Le();
 
 	private:
-		const Vector a;
-		const Vector ba;
-		const Vector ca;
-		const Vector normal;
-		const double probability;
-		const Luminance le;
+		readonly Vector a;
+		readonly Vector ba;
+		readonly Vector ca;
+		readonly Vector normal;
+		readonly double probability;
+		readonly Luminance le;
 	};
 }
