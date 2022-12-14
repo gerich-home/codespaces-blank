@@ -1,10 +1,7 @@
-#pragma once
-
-
 namespace Engine
 {
-	interface IShape
+	public interface IShape
 	{
 		HitPoint Intersection(Vector start, Vector direction);
-	};
+	}
 }

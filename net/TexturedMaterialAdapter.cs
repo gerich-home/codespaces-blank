@@ -1,7 +1,4 @@
-#pragma once
-
-
-using namespace Engine;
+using Engine;
 
 namespace Materials
 {
@@ -18,5 +15,5 @@ namespace Materials
 		{
 			return m;
 		}
-	};
+	}
 }

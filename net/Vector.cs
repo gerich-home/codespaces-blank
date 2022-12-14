@@ -70,6 +70,6 @@ namespace Engine
 			1 => y,
 			2 => z,
 			_ => throw new Exception()
-		}
+		};
 	}
 }

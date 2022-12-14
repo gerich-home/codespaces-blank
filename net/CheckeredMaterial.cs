@@ -1,15 +1,15 @@
-using namespace Engine;
+using Engine;
 
 namespace Materials
 {
-	class CheckeredMaterial : ITexturedMaterial
+	public class CheckeredMaterial : ITexturedMaterial
 	{
-		readonly int N;
-		readonly int M;
-		readonly IMaterial m1;
-		readonly IMaterial m2;
+		public readonly int N;
+		public readonly int M;
+		public readonly IMaterial m1;
+		public readonly IMaterial m2;
 
-		CheckeredMaterial(int N, int M, IMaterial m1, IMaterial m2) 
+		public CheckeredMaterial(int N, int M, IMaterial m1, IMaterial m2) 
 		{
 			this.N = N;
 			this.M = M;
@@ -17,7 +17,7 @@ namespace Materials
 			this.m2 = m2;
 		}
 
-		IMaterial MaterialAt(double t1, double t2)
+		public IMaterial MaterialAt(double t1, double t2)
 		{
 			if(((int)(t1 * N) + (int)(t2 * M)) % 2)
 			{

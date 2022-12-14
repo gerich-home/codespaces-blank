@@ -1,24 +1,23 @@
-using System;
 using Engine;
 
 namespace Lights
 {
-	public class Triangle : ILightSource
+	public class Square: ILightSource
 	{
-		public readonly double probability;
+		public readonly Vector a;
 		public readonly Vector ba;
 		public readonly Vector ca;
-		public readonly Vector a;
 		public readonly Vector normal;
+		public readonly double probability;
 		public readonly Luminance le;
 
-		public Triangle(Vector a, Vector b, Vector c, Luminance Le)
+		public Square(Vector a, Vector b, Vector c, Luminance le)
 		{
 			this.a = a;
 			this.ba = b - a;
 			this.ca = c - a;
 			this.normal = (b - a).CrossProduct(c - a).Normalized;
-			this.probability = 2 / (b - a).CrossProduct(c - a).Length;
+			this.probability = 1 / (b - a).CrossProduct(c - a).Length;
 			this.le = le;
 		}
 
@@ -27,14 +26,7 @@ namespace Lights
 			double t1 = rnd.NextDouble();
 			double t2 = rnd.NextDouble();
 
-			if(t1 + t2 > 1)
-			{
-				t1 = 1 - t1;
-				t2 = 1 - t2;
-			}
-
-			Vector p = a + t1 * ba + t2 * ca;
-			return new LightPoint(p, normal, probability, le);
+			return new LightPoint(a + t1 * ba + t2 * ca, normal, probability, le);
 		}
 
 		public void EmitPhotons(Random rnd, int nphotons, Photon[] photons)

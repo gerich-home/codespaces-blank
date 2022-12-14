@@ -1,26 +1,23 @@
+using System;
 using Engine;
 
 namespace Materials
 {
-	class DuffuseSpecularMaterial : IMaterial
+	public class DuffuseSpecularMaterial : IMaterial
 	{
-		readonly Luminance rd;
-		readonly Luminance rs;
-		readonly int[] n;
+		public readonly Luminance rd;
+		public readonly Luminance rs;
+		public readonly int[] n;
 
-		DuffuseSpecularMaterial(double rd[], double rs[], int n[])
+		public DuffuseSpecularMaterial(double[] rd, double[] rs, int[] n)
 		{
-			this.rd = rd;
-			this.rs = rs;
-			this.n = new int[3];
-			this.n[L_R] = n[L_R];
-			this.n[L_G] = n[L_G];
-			this.n[L_B] = n[L_B];
+			this.rd = new Luminance(rd);
+			this.rs = new Luminance(rs);
+			this.n = n;
 		}
 
-		Luminance BRDF(Vector direction, Vector ndirection, Vector normal)
+		public Luminance BRDF(Vector direction, Vector ndirection, Vector normal)
 		{
-
 			Luminance result = rd / Math.PI; 
 			
 			Vector R = 2 * normal.DotProduct(ndirection) * normal - ndirection;
@@ -29,19 +26,19 @@ namespace Materials
 			if(cosphi > 0)
 			{
 				result += new Luminance(
-					rs.colors[L_R] == 0 ? 0 : rs.colors[L_R] * (n[L_R] + 2) * Math.Pow(cosphi, n[L_R]),
-					rs.colors[L_G] == 0 ? 0 : rs.colors[L_G] * (n[L_G] + 2) * Math.Pow(cosphi, n[L_G]),
-					rs.colors[L_B] == 0 ? 0 : rs.colors[L_B] * (n[L_B] + 2) * Math.Pow(cosphi, n[L_B])
+					rs.r == 0 ? 0 : rs.r * (n[0] + 2) * Math.Pow(cosphi, n[0]),
+					rs.g == 0 ? 0 : rs.g * (n[1] + 2) * Math.Pow(cosphi, n[1]),
+					rs.b == 0 ? 0 : rs.b * (n[2] + 2) * Math.Pow(cosphi, n[2])
 					) / (2 * Math.PI);
 			}
 
 			return result;
 		}
 
-		RandomDirection SampleDirection(Vector direction, Vector normal, double ksi)
+		public RandomDirection SampleDirection(Random rnd, Vector direction, Vector normal, double ksi)
 		{	
-			double qd = (rd.colors[L_R] + rd.colors[L_G] + rd.colors[L_B]) / 3;
-			double qs = (rs.colors[L_R] + rs.colors[L_G] + rs.colors[L_B]) / 3;
+			double qd = (rd.r + rd.g + rd.b) / 3;
+			double qs = (rs.r + rs.g + rs.b) / 3;
 
 			if(qd + qs != 1)
 			{
@@ -65,7 +62,7 @@ namespace Materials
 			}
 			else
 			{
-				double selectedn = Math.Min(n[L_R], Math.Min(n[L_G], n[L_B]));
+				double selectedn = Math.Min(n[0], Math.Min(n[1], n[2]));
 		
 				double cosa = Math.Pow(rnd.NextDouble(), 1 / (selectedn + 1));
 				double sina = Math.Sqrt(1 - cosa * cosa);
@@ -80,9 +77,9 @@ namespace Materials
 				}
 
 				return new RandomDirection(new Luminance(
-					rs.colors[L_R] == 0 ? 0 : rs.colors[L_R] * (n[L_R] + 2) * Math.Pow(cosa, n[L_R] - selectedn),
-					rs.colors[L_G] == 0 ? 0 : rs.colors[L_G] * (n[L_G] + 2) * Math.Pow(cosa, n[L_G] - selectedn),
-					rs.colors[L_B] == 0 ? 0 : rs.colors[L_B] * (n[L_B] + 2) * Math.Pow(cosa, n[L_B] - selectedn)
+					rs.r == 0 ? 0 : rs.r * (n[0] + 2) * Math.Pow(cosa, n[0] - selectedn),
+					rs.g == 0 ? 0 : rs.g * (n[1] + 2) * Math.Pow(cosa, n[1] - selectedn),
+					rs.b == 0 ? 0 : rs.b * (n[2] + 2) * Math.Pow(cosa, n[2] - selectedn)
 					) * normal.DotProduct(ndirection) / (qs * (selectedn + 2)), ndirection);
 			}
 		}

@@ -1,18 +1,19 @@
+using System;
 using Engine;
 
 namespace PhotonMapBuilders
 {
-	class CausticPhotonMapBuilder : IPhotonMapBuilder
+	public class CausticPhotonMapBuilder : IPhotonMapBuilder
 	{
-		const int NPHOTONS = 100;
-		const double ABSOPTION = 0.3;
+		public const int NPHOTONS = 100;
+		public const double ABSOPTION = 0.3;
 
-		PhotonMap BuildPhotonMap(IShape scene, IShape diffuse, IShape glossy, ILightSource lights)
+		public PhotonMap BuildPhotonMap(Random rnd, IShape scene, IShape diffuse, IShape glossy, ILightSource lights)
 		{
 			PhotonMap pm = PhotonMap(NPHOTONS);
 			Photon[] emitted_photons = new Photon[NPHOTONS];
 
-			lights.EmitPhotons(NPHOTONS, emitted_photons);
+			lights.EmitPhotons(rnd, NPHOTONS, emitted_photons);
 
 			for(int i = 0; i < NPHOTONS; i++)
 			{
@@ -79,7 +80,7 @@ namespace PhotonMapBuilders
 						}
 					}
 
-					double ksi = (double) rand() / (RAND_MAX + 1);
+					double ksi = rnd.NextDouble();
 
 					if(ksi < ABSOPTION)
 					{
@@ -88,9 +89,9 @@ namespace PhotonMapBuilders
 
 					ksi = (ksi - ABSOPTION) / (1 - ABSOPTION);
 
-					RandomDirection rndd = hp.material.SampleDirection(current_photon.direction, hp.normal, ksi);
+					RandomDirection rndd = hp.material.SampleDirection(rnd, current_photon.direction, hp.normal, ksi);
 				
-					if(rndd.factor.colors[L_R] == 0 && rndd.factor.colors[L_G] == 0 && rndd.factor.colors[L_B] == 0)
+					if(rndd.factor.r == 0 && rndd.factor.g == 0 && rndd.factor.b == 0)
 					{
 						break;
 					}

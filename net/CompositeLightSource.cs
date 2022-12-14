@@ -1,55 +1,50 @@
+using System;
 using Engine;
 
 namespace Lights
 {
-	class CompositeLightSource : ILightSource
+	public class CompositeLightSource : ILightSource
 	{
-		public readonly ILightSource lights;
+		public readonly ILightSource[] lights;
 		public readonly double[] probabilities;
-		public readonly int nlights;
 
-		CompositeLightSource(int nlights, ILightSource lights[])
+		public CompositeLightSource(ILightSource[] lights)
 		{
-			this.nlights = nlights;
-			this.lights = new ILightSource[nlights];
-			this.probabilities = new double[nlights];
+			this.lights = lights;
+			this.probabilities = new double[lights.Length];
 			
-			double p = 1 / (double)nlights;
+			double p = 1.0 / lights.Length;
 
-			for(int i = 0; i < nlights; i++)
+			for(int i = 0; i < lights.Length; i++)
 			{
-				this.lights[i] = lights[i];
 				this.probabilities[i] = p;
 			}
 		}
 
-		CompositeLightSource(int nlights, ILightSource lights[], double probabilities[])
+		public CompositeLightSource(ILightSource[] lights, double[] probabilities)
 		{
-			this.nlights = nlights;
-			this.lights = new ILightSource[nlights];
-			this.probabilities = new double[nlights];
+			this.lights = lights;
+			this.probabilities = probabilities;
 			
 			double sum = 0;
 
-			for(int i = 0; i < nlights; i++)
+			for(int i = 0; i < lights.Length; i++)
 			{
-				this.lights[i] = lights[i];
-				this.probabilities[i] = probabilities[i];
 				sum += probabilities[i];
 			}
 			
 			sum = 1 / sum;
-			for(int i = 0; i < nlights; i++)
+			for(int i = 0; i < lights.Length; i++)
 			{
 				this.probabilities[i] *= sum;
 			}
 		}
 
-		LightPoint SampleLightPoint(Vector point)
+		public LightPoint SampleLightPoint(Vector point)
 		{
-			double ksi = (double) rand() / (RAND_MAX + 1);
+			double ksi = rnd.NextDouble();
 
-			for(int i = 0; i < nlights; i++)
+			for(int i = 0; i < lights.Length; i++)
 			{
 				if(ksi < probabilities[i])
 				{
@@ -63,24 +58,24 @@ namespace Lights
 			}
 		}
 
-		void EmitPhotons(int nphotons, Photon photons[])
+		public void EmitPhotons(Random rnd, Photon[] photons)
 		{
-			double[] energy = new double[nlights];
+			double[] energy = new double[lights.Length];
 			
-			Luminance totalLe;
-			for(int i = 0; i < nlights; i++)
+			Luminance totalLe = new Luminance(0, 0, 0);
+			for(int i = 0; i < lights.Length; i++)
 			{
-				readonly Luminance lei = lights[i].Le();
+				Luminance lei = lights[i].Le();
 				totalLe += lei;
-				energy[i] = (lei.r() + lei.g() + lei.b()) / 3;
+				energy[i] = (lei.r + lei.g + lei.b) / 3;
 			}
 
-			double factor = nphotons * 3 / (totalLe.r() + totalLe.g() + totalLe.b());
+			double factor = nphotons * 3 / (totalLe.r + totalLe.g + totalLe.b);
 
-			int[] nphotonsPerLight = new int[nlights];
+			int[] nphotonsPerLight = new int[lights.Length];
 			int remainedPhotons = 0;
 
-			for(int i = 0; i < nlights; i++)
+			for(int i = 0; i < lights.Length; i++)
 			{
 				nphotonsPerLight[i] = factor * energy[i];
 				remainedPhotons += nphotonsPerLight[i];
@@ -95,18 +90,18 @@ namespace Lights
 
 			int offset = 0;
 
-			for(int i = 0; i < nlights; i++)
+			for(int i = 0; i < lights.Length; i++)
 			{
-				lights[i].EmitPhotons(nphotonsPerLight[i], photons + offset);
+				lights[i].EmitPhotons(rnd, nphotonsPerLight[i], photons + offset);
 				offset += nphotonsPerLight[i];
 			}
 		}
 
-		Luminance Le()
+		public Luminance Le()
 		{
-			Luminance Le;
+			Luminance Le = new Luminance(0, 0, 0);
 
-			for(int i = 0; i < nlights; i++)
+			for(int i = 0; i < lights.Length; i++)
 			{
 				Le += lights[i].Le();
 			}

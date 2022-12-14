@@ -1,21 +1,19 @@
-#pragma once
-
-
-#define _USE_MATH_DEFINES
-
-using namespace Engine;
+using Engine;
 
 namespace Materials
 {
-	class IdealRefractorMaterial: public IMaterial
+	public class IdealRefractorMaterial: IMaterial
 	{
-		IdealRefractorMaterial(double rd[], double refract) :
-			rd(rd),
-			refract(refract)
+		public readonly Luminance rd;
+		public readonly double refract;
+
+		public IdealRefractorMaterial(Luminance rd, double refract)
 		{
+			this.rd = rd;
+			this.refract = refract;
 		}
 
-		Luminance BRDF(Vector direction, Vector ndirection, Vector normal)
+		public Luminance BRDF(Vector direction, Vector ndirection, Vector normal)
 		{
 			int n = 500;
 
@@ -30,16 +28,16 @@ namespace Materials
 
 			if(cosb < 0)
 			{
-				readonly Vector R = direction + 2 * cosa * normal;
+				Vector R = direction + 2 * cosa * normal;
 				
-				readonly double cosphi = ndirection.DotProduct(R);
+				double cosphi = ndirection.DotProduct(R);
 			
 				if(cosphi > 0)
 				{
 					return new Luminance(
-						rd.colors[L_R] == 0 ? 0 : rd.colors[L_R] * (n + 2) * Math.Pow(cosphi, n),
-						rd.colors[L_G] == 0 ? 0 : rd.colors[L_G] * (n + 2) * Math.Pow(cosphi, n),
-						rd.colors[L_B] == 0 ? 0 : rd.colors[L_B] * (n + 2) * Math.Pow(cosphi, n)
+						rd.r == 0 ? 0 : rd.r * (n + 2) * Math.Pow(cosphi, n),
+						rd.g == 0 ? 0 : rd.g * (n + 2) * Math.Pow(cosphi, n),
+						rd.b == 0 ? 0 : rd.b * (n + 2) * Math.Pow(cosphi, n)
 						) / (2 * Math.PI);	
 				}
 				else
@@ -62,15 +60,15 @@ namespace Materials
 			Luminance result;
 			
 			{
-				readonly Vector R = direction + 2 * cosa * normal;
-				readonly double cosphi = ndirection.DotProduct(R);
+				Vector R = direction + 2 * cosa * normal;
+				double cosphi = ndirection.DotProduct(R);
 			
 				if(cosphi > 0)
 				{
 					result = qreflect * new Luminance(
-						rd.colors[L_R] == 0 ? 0 : rd.colors[L_R] * (n + 2) * Math.Pow(cosphi, n),
-						rd.colors[L_G] == 0 ? 0 : rd.colors[L_G] * (n + 2) * Math.Pow(cosphi, n),
-						rd.colors[L_B] == 0 ? 0 : rd.colors[L_B] * (n + 2) * Math.Pow(cosphi, n)
+						rd.r == 0 ? 0 : rd.r * (n + 2) * Math.Pow(cosphi, n),
+						rd.g == 0 ? 0 : rd.g * (n + 2) * Math.Pow(cosphi, n),
+						rd.b == 0 ? 0 : rd.b * (n + 2) * Math.Pow(cosphi, n)
 						) / (2 * Math.PI);
 				}
 			}
@@ -86,14 +84,14 @@ namespace Materials
 					R = cosb * normal + factor * (cosa * normal + direction);
 				}
 				
-				readonly double cosphi = ndirection.DotProduct(R);
+				double cosphi = ndirection.DotProduct(R);
 			
 				if(cosphi > 0)
 				{
-					result = (1 - qreflect) * new Luminance()
-						rd.colors[L_R] == 0 ? 0 : rd.colors[L_R] * (n + 2) * Math.Pow(cosphi, n),
-						rd.colors[L_G] == 0 ? 0 : rd.colors[L_G] * (n + 2) * Math.Pow(cosphi, n),
-						rd.colors[L_B] == 0 ? 0 : rd.colors[L_B] * (n + 2) * Math.Pow(cosphi, n)
+					result = (1 - qreflect) * new Luminance(
+						rd.r == 0 ? 0 : rd.r * (n + 2) * Math.Pow(cosphi, n),
+						rd.g == 0 ? 0 : rd.g * (n + 2) * Math.Pow(cosphi, n),
+						rd.b == 0 ? 0 : rd.b * (n + 2) * Math.Pow(cosphi, n)
 						) / (2 * Math.PI);
 				}
 			}
@@ -101,7 +99,7 @@ namespace Materials
 			return result;
 		}
 
-		RandomDirection SampleDirection(Vector direction, Vector normal, double ksi)
+		public RandomDirection SampleDirection(Random rnd, Vector direction, Vector normal, double ksi)
 		{	
 			double cosa = -direction.DotProduct(normal);
 			double factor = refract;
@@ -114,7 +112,7 @@ namespace Materials
 
 			if(cosb < 0)
 			{
-				readonly Vector R = direction + 2 * cosa * normal;
+				Vector R = direction + 2 * cosa * normal;
 				return new RandomDirection(rd, R);	
 			}
 
@@ -131,7 +129,7 @@ namespace Materials
 			
 			if(ksi < qreflect)
 			{
-				readonly Vector R = direction + 2 * cosa * normal;
+				Vector R = direction + 2 * cosa * normal;
 				return new RandomDirection(rd, R);	
 			}
 			else
@@ -149,9 +147,5 @@ namespace Materials
 				return new RandomDirection(rd, R);
 			}
 		}
-
-	private:
-		readonly Luminance rd;
-		readonly double refract;
 	};
 }
