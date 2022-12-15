@@ -40,7 +40,7 @@ namespace Lights
 			}
 		}
 
-		public LightPoint SampleLightPoint(Vector point)
+		public LightPoint SampleLightPoint(Random rnd, Vector point)
 		{
 			double ksi = rnd.NextDouble();
 
@@ -48,7 +48,7 @@ namespace Lights
 			{
 				if(ksi < probabilities[i])
 				{
-					LightPoint lp = lights[i].SampleLightPoint(point);
+					LightPoint lp = lights[i].SampleLightPoint(rnd, point);
 					return new LightPoint(lp.point, lp.normal, probabilities[i] * lp.probability, lp.Le);
 				}
 				else
@@ -56,9 +56,11 @@ namespace Lights
 					ksi -= probabilities[i];
 				}
 			}
+
+			throw new Exception();
 		}
 
-		public void EmitPhotons(Random rnd, Photon[] photons)
+		public Photon[] EmitPhotons(Random rnd, int nphotons)
 		{
 			double[] energy = new double[lights.Length];
 			
@@ -77,7 +79,7 @@ namespace Lights
 
 			for(int i = 0; i < lights.Length; i++)
 			{
-				nphotonsPerLight[i] = factor * energy[i];
+				nphotonsPerLight[i] = (int)(factor * energy[i]);
 				remainedPhotons += nphotonsPerLight[i];
 			}
 
@@ -88,13 +90,9 @@ namespace Lights
 				nphotonsPerLight[i]++;
 			}
 
-			int offset = 0;
-
-			for(int i = 0; i < lights.Length; i++)
-			{
-				lights[i].EmitPhotons(rnd, nphotonsPerLight[i], photons + offset);
-				offset += nphotonsPerLight[i];
-			}
+			return lights
+				.SelectMany((light, i) => light.EmitPhotons(rnd, nphotonsPerLight[i]))
+				.ToArray();
 		}
 
 		public Luminance Le()

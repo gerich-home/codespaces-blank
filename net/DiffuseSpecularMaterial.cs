@@ -9,10 +9,10 @@ namespace Materials
 		public readonly Luminance rs;
 		public readonly int[] n;
 
-		public DuffuseSpecularMaterial(double[] rd, double[] rs, int[] n)
+		public DuffuseSpecularMaterial(Luminance rd, Luminance rs, int[] n)
 		{
-			this.rd = new Luminance(rd);
-			this.rs = new Luminance(rs);
+			this.rd = rd;
+			this.rs = rs;
 			this.n = n;
 		}
 
@@ -43,8 +43,10 @@ namespace Materials
 			if(qd + qs != 1)
 			{
 				if(qd + qs == 0)
-					return new RandomDirection();
-
+				{
+					return new RandomDirection(new Luminance(0, 0, 0), new Vector(0, 0, 0));
+				}
+				
 				double k = 1 / (qd + qs);
 				qd *= k;
 				qs *= k;
@@ -73,7 +75,7 @@ namespace Materials
 
 				if(normal.DotProduct(ndirection) <= 0)
 				{
-					return new RandomDirection();
+					return new RandomDirection(new Luminance(0, 0, 0), new Vector(0, 0, 0));
 				}
 
 				return new RandomDirection(new Luminance(

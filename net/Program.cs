@@ -1,3 +1,5 @@
+using System;
+
 namespace Engine
 {
 	public class Program
@@ -13,15 +15,9 @@ namespace Engine
 		const double CAM_Z = 0.0000001;
 		const double CAM_SIZE = (0.55 * CAM_Z / (1 + CAM_Z));
 		const double PIXEL_SIZE = 1.05;
-		const int WORKERS = 8;
-		const int SEED = 0;
 
 		public Luminance[] L = new Luminance[W * H];
 
-		bool destroyed = false;
-		bool inited = false;
-		bool[] busy = new bool[H];
-		int[] frame = new int[H];
 
 		public void InitScene()
 		{
@@ -127,7 +123,7 @@ namespace Engine
 			};
 			
 			ILightSource[] lightSources = {
-				new Lights.Square(new Vector(-0.15, 0.5 - double.Epsilon, 1.35), new Vector(0.15,  0.5 - double.Epsilon, 1.35), new Vector(-0.15, 0.5 - double.Epsilon, 1.65), new Luminance(Le1)),
+				new Lights.Square(new Vector(-0.15, 0.5 - double.Epsilon, 1.35), new Vector(0.15,  0.5 - double.Epsilon, 1.35), new Vector(-0.15, 0.5 - double.Epsilon, 1.65), Le1),
 				//new Lights.Square(new Vector(-0.15, 0.45, 8.35), new Vector(0.15,  0.45, 8.35), new Vector(-0.15, 0.45, 8.65), new Luminance(Le1)),
 				//new Lights.Sphere(new Vector(0, 0.5, 1.5), 0.1, new Luminance(Le1)),
 				//new Lights.Sphere(new Vector(-0.3, -0.3, 1.5), 0.05, new Luminance(Le1)),
@@ -141,26 +137,33 @@ namespace Engine
 
 		public static void Main()
 		{
+			new Program().Run();
+		}
+
+		public void Run()
+		{
 			InitScene();
 
 			engine = new Engines.SimpleTracing();
-
+			var rnd = new Random();
 
 			for(int j = 0; j < H; j++)
 			{
-				frame[j] = 1;
-
 				for(int i = 0; i < W; i++)
 				{
-					L[i * H + j] += ColorAtPixel(i + PIXEL_SIZE * rnd.NextDouble() - PIXEL_SIZE * 0.5, j + PIXEL_SIZE * rnd.NextDouble() - PIXEL_SIZE * 0.5, W, H, CAM_Z, CAM_SIZE, scene, diffuse, glossy, lights, engine);
-					Luminance l = L[i * H + j] * (255.0 / frame[j]);
-					SetPixel(hdc, i, j, RGB(l.r > 255 ? 255 : l.r,
-											l.g > 255 ? 255 : l.g,
-											l.b > 255 ? 255 : l.b
-											));
+					L[i * H + j] = new Luminance(0, 0, 0);
 				}
+			}
 
-				//SetPixel(hdc, 10, j, RGB((frame[j] % 2) * 255, 0, ((frame[j] + 1) % 2) * 255));
+			for(int frame = 1; frame < 100; frame++)
+			for(int j = 0; j < H; j++)
+			{
+				for(int i = 0; i < W; i++)
+				{
+					L[i * H + j] += Rasterizer.ColorAtPixel(rnd, i + PIXEL_SIZE * rnd.NextDouble() - PIXEL_SIZE * 0.5, j + PIXEL_SIZE * rnd.NextDouble() - PIXEL_SIZE * 0.5, W, H, CAM_Z, CAM_SIZE, scene, diffuse, glossy, lights, engine);
+					Luminance l = L[i * H + j] * (255.0 / frame);
+					Console.WriteLine($"{i},{j} -> {(l.r > 255 ? 255 : (int)l.r)} {(l.g > 255 ? 255 : (int)l.g)} {(l.b > 255 ? 255 : (int)l.b)}");
+				}
 			}
 		}
 	}

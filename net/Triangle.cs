@@ -2,7 +2,7 @@ using Engine;
 
 namespace Shapes
 {
-	class Triangle: IShape
+	public class Triangle: IShape
 	{
 		public readonly Vector normal;
 		public readonly Vector n;
@@ -11,7 +11,7 @@ namespace Shapes
 		public readonly Vector a;
 		public readonly IMaterial material;
 
-		Triangle(Vector a, Vector b, Vector c, IMaterial material)
+		public Triangle(Vector a, Vector b, Vector c, IMaterial material)
 		{
 			this.a = a;
 			this.ba = b - a;
@@ -21,16 +21,16 @@ namespace Shapes
 			this.material = material;
 		}
 
-		HitPoint Intersection(Vector start, Vector direction)
+		public HitPoint Intersection(Vector start, Vector direction)
 		{
 			double t = 0;
 			double t1 = 0;
 			double t2 = 0;
 			
 
-			double divident = - direction.DotProduct(normal);
+			double divident = -direction.DotProduct(normal);
 			
-			if(!divident)
+			if(divident == 0)
 			{
 				return null;
 			}

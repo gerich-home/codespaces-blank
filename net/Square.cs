@@ -38,9 +38,9 @@ namespace Shapes
 			double t2 = 0;
 			
 
-			double divident = - direction.DotProduct(normal);
+			double divident = -direction.DotProduct(normal);
 			
-			if(!divident)
+			if(divident == 0)
 			{
 				return null;
 			}

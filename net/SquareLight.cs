@@ -29,8 +29,9 @@ namespace Lights
 			return new LightPoint(a + t1 * ba + t2 * ca, normal, probability, le);
 		}
 
-		public void EmitPhotons(Random rnd, int nphotons, Photon[] photons)
+		public Photon[] EmitPhotons(Random rnd, int nphotons)
 		{
+			Photon[] photons = new Photon[nphotons];
 			Luminance energy = le / nphotons;
 			for(int i = 0; i < nphotons; i++)
 			{
@@ -43,8 +44,10 @@ namespace Lights
 
 				Vector direction = new Vector(sina * Math.Cos(b), sina * Math.Sin(b), cosa).Transform(normal);
 
-				photons[i] = Photon(a + t1 * ba + t2 * ca, normal, direction, energy);
+				photons[i] = new Photon(a + t1 * ba + t2 * ca, normal, direction, energy);
 			}
+
+			return photons; 
 		}
 
 		public Luminance Le() 

@@ -1,6 +1,6 @@
 namespace Engine
 {
-	public readonly record struct Vector(double x, double y, double z)
+	public record class Vector(double x, double y, double z)
 	{
 		public Vector Normalized => this / Length;
 
@@ -20,11 +20,8 @@ namespace Engine
 		public static Vector operator *(double factor, Vector a) =>
 			new Vector(a.x * factor, a.y * factor, a.z * factor);
 
-		public static Vector operator *(double factor, Vector a) =>
-			new Vector(a.x * factor, a.y * factor, a.z * factor);
-
 		public static Vector operator /(Vector a, double factor) =>
-			a * (1 / alpha);
+			a * (1 / factor);
 
 		public Vector CrossProduct(Vector vector) =>
 			new Vector(
@@ -36,7 +33,7 @@ namespace Engine
 		public double DotProduct(Vector vector) =>
 			vector.x * x + vector.y * y + vector.z * z;
 
-		Vector Transform(Vector axis)
+		public Vector Transform(Vector axis)
 		{
 			Vector t;
 

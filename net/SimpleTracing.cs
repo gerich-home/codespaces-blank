@@ -1,3 +1,4 @@
+using System;
 using Engine;
 
 namespace Engines
@@ -7,9 +8,9 @@ namespace Engines
 		public const int SHADOW_RAYS = 10;
 		public const double ABSOPTION = 0.3;
 
-		Luminance L(HitPoint hp, Vector point, Vector direction, IShape scene, IShape diffuse, IShape glossy, ILightSource lights)
+		public Luminance L(Random rnd, HitPoint hp, Vector point, Vector direction, IShape scene, IShape diffuse, IShape glossy, ILightSource lights)
 		{
-			Luminance result;
+			Luminance result = new Luminance(0, 0, 0);
 			Luminance factor = new Luminance(1, 1, 1);
 			Vector current_point = point;
 			Vector current_direction = direction;
@@ -17,11 +18,11 @@ namespace Engines
 
 			while(true)
 			{
-				Luminance direct;
+				Luminance direct = new Luminance(0, 0, 0);
 
 				for(int i = 0; i < SHADOW_RAYS; i++)
 				{	
-					LightPoint lp = lights.SampleLightPoint(current_point);
+					LightPoint lp = lights.SampleLightPoint(rnd, current_point);
 					Vector ndirection = lp.point - current_point;
 
 					double cos_dir_normal = current_hp.normal.DotProduct(ndirection);
@@ -50,7 +51,7 @@ namespace Engines
 
 					HitPoint nhp = scene.Intersection(current_point, ndirection);
 
-					if(nhp)
+					if(nhp != null)
 					{
 						if(nhp.t <= l - double.Epsilon)
 						{
@@ -82,9 +83,9 @@ namespace Engines
 					break;
 				}
 
-				HitPoint nhp = scene.Intersection(current_point, rndd.direction);
+				HitPoint nhp1 = scene.Intersection(current_point, rndd.direction);
 				
-				if(!nhp)
+				if(nhp1 == null)
 				{
 					break;
 				}
@@ -92,7 +93,7 @@ namespace Engines
 				factor *= rndd.factor / (1 - ABSOPTION);
 				
 				current_direction = rndd.direction;
-				current_hp = *nhp;
+				current_hp = nhp1;
 				current_point += current_direction * current_hp.t;
 			}
 

@@ -10,28 +10,26 @@ namespace PhotonMapBuilders
 
 		public PhotonMap BuildPhotonMap(Random rnd, IShape scene, IShape diffuse, IShape glossy, ILightSource lights)
 		{
-			PhotonMap pm = PhotonMap(NPHOTONS);
-			Photon[] emitted_photons = new Photon[NPHOTONS];
-
-			lights.EmitPhotons(rnd, NPHOTONS, emitted_photons);
+			PhotonMap pm = new PhotonMap(NPHOTONS);
+			Photon[] emitted_photons = lights.EmitPhotons(rnd, NPHOTONS);
 
 			for(int i = 0; i < NPHOTONS; i++)
 			{
 				bool isDiffuse = false;
 				Photon current_photon = emitted_photons[i];
 				
-				HitPoint ghp = glossy.Intersection(current_photon.point, current_photon.direction);
+				HitPoint ghp1 = glossy.Intersection(current_photon.point, current_photon.direction);
 				
-				if(!ghp)
+				if(ghp1 == null)
 				{
 					continue;
 				}
 				
-				HitPoint dhp = diffuse.Intersection(current_photon.point, current_photon.direction);
+				HitPoint dhp1 = diffuse.Intersection(current_photon.point, current_photon.direction);
 				
-				if(dhp)
+				if(dhp1 != null)
 				{
-					if(dhp.t < ghp.t)
+					if(dhp1.t < ghp1.t)
 					{
 						continue;
 					}
@@ -48,9 +46,9 @@ namespace PhotonMapBuilders
 					HitPoint ghp = glossy.Intersection(current_photon.point, current_photon.direction);
 					HitPoint dhp = diffuse.Intersection(current_photon.point, current_photon.direction);
 				
-					if(dhp)
+					if(dhp != null)
 					{
-						if(ghp)
+						if(ghp != null)
 						{
 							if(dhp.t <= ghp.t)
 							{
@@ -70,7 +68,7 @@ namespace PhotonMapBuilders
 					}
 					else
 					{
-						if(ghp)
+						if(ghp != null)
 						{
 							hp = ghp;
 						}
@@ -97,13 +95,17 @@ namespace PhotonMapBuilders
 					}
 					
 
-					current_photon.point += hp.t * current_photon.direction;
-					current_photon.direction = rndd.direction;
-					current_photon.energy *= rndd.factor / (1 - ABSOPTION);
+					current_photon = current_photon with {
+						point = current_photon.point + hp.t * current_photon.direction,
+						direction = rndd.direction,
+						energy = current_photon.energy * rndd.factor / (1 - ABSOPTION)
+					};
 					
 					if(isDiffuse)
 					{
-						current_photon.normal = hp.normal;
+						current_photon = current_photon with {
+							normal = hp.normal
+						};
 						if(!pm.Add(current_photon))
 						{
 							isNotFull = false;

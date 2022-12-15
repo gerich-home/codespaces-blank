@@ -1,6 +1,6 @@
 namespace Engine
 {
-	readonly record struct Luminance(double r, double g, double b)
+	public record class Luminance(double r, double g, double b)
 	{
 		public static Luminance operator +(Luminance a, Luminance b) =>
 			new Luminance(a.r + b.r, a.g + b.g, a.b + b.b);
@@ -18,6 +18,6 @@ namespace Engine
 			new Luminance(a.r * b.r, a.g * b.g, a.b * b.b);
 
 		public static Luminance operator /(Luminance a, double factor) =>
-			a * (1 / alpha);
+			a * (1 / factor);
 	}
 }

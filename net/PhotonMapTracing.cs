@@ -1,3 +1,4 @@
+using System;
 using Engine;
 
 namespace Engines
@@ -16,9 +17,9 @@ namespace Engines
 			this.causticsMap = causticsMap;
 		}
 
-		public Luminance L(HitPoint hp, Vector point, Vector direction, IShape scene, IShape diffuse, IShape glossy, ILightSource lights)
+		public Luminance L(Random rnd, HitPoint hp, Vector point, Vector direction, IShape scene, IShape diffuse, IShape glossy, ILightSource lights)
 		{
-			Luminance result;
+			Luminance result = new Luminance(0, 0, 0);
 			Luminance factor = new Luminance(1, 1, 1);
 			Vector current_point = point;
 			Vector current_direction = direction;
@@ -26,11 +27,11 @@ namespace Engines
 
 			while(true)
 			{
-				Luminance direct;
+				Luminance direct = new Luminance(0, 0, 0);
 
 				for(int i = 0; i < SHADOW_RAYS; i++)
 				{	
-					LightPoint lp = lights.SampleLightPoint(current_point);
+					LightPoint lp = lights.SampleLightPoint(rnd, current_point);
 					Vector ndirection = lp.point - current_point;
 
 					double cos_dir_normal = current_hp.normal.DotProduct(ndirection);
@@ -59,7 +60,7 @@ namespace Engines
 
 					HitPoint nhp = scene.Intersection(current_point, ndirection);
 
-					if(nhp)
+					if(nhp != null)
 					{
 						if(nhp.t <= l - double.Epsilon)
 						{
@@ -75,12 +76,13 @@ namespace Engines
 				
 				//Compute indirect luminancy
 				
-				RandomDirection rndd = current_hp.material.SampleDirection(rnd, current_direction, current_point, current_hp.normal, scene, ABSOPTION);
+				RandomDirection rndd = current_hp.material.SampleDirection(rnd, current_direction, current_hp.normal, ABSOPTION);
 					
-				if(!rndd.hp)
-				{
-					break;
-				}
+				// the whole file was commented before
+				//if(rndd.hp == null)
+				//{
+				//	break;
+				//}
 
 				if(rndd.factor.r == 0 && rndd.factor.g == 0 && rndd.factor.b == 0)
 				{
@@ -90,8 +92,9 @@ namespace Engines
 				factor *= rndd.factor;
 				
 				current_direction = rndd.direction;
-				current_hp = *rndd.hp;
-				current_point += current_direction * current_hp.t;
+				// the whole file was commented before
+				//current_hp = rndd.hp;
+				//current_point += current_direction * current_hp.t;
 			}
 
 			return result;

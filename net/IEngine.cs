@@ -1,7 +1,9 @@
+using System;
+
 namespace Engine
 {
-	interface IEngine
+	public interface IEngine
 	{
-		Luminance L(HitPoint hp, Vector point, Vector direction, IShape scene, IShape diffuse, IShape glossy, ILightSource lights);
+		Luminance L(Random rnd, HitPoint hp, Vector point, Vector direction, IShape scene, IShape diffuse, IShape glossy, ILightSource lights);
 	}
 }

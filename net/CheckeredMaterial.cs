@@ -19,7 +19,7 @@ namespace Materials
 
 		public IMaterial MaterialAt(double t1, double t2)
 		{
-			if(((int)(t1 * N) + (int)(t2 * M)) % 2)
+			if(((int)(t1 * N) + (int)(t2 * M)) % 2 == 1)
 			{
 				return m1;
 			}

@@ -1,4 +1,4 @@
 namespace Engine
 {
-	readonly record struct RandomDirection(Luminance factor, Vector direction);
+	public record class RandomDirection(Luminance factor, Vector direction);
 }

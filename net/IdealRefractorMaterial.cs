@@ -42,7 +42,7 @@ namespace Materials
 				}
 				else
 				{
-					return new Luminance();
+					return new Luminance(0, 0, 0);
 				}
 			}
 
@@ -57,7 +57,7 @@ namespace Materials
 			
 			double qreflect = (Rs + Rt) / 2;
 			
-			Luminance result;
+			Luminance result = new Luminance(0, 0, 0);
 			
 			{
 				Vector R = direction + 2 * cosa * normal;
