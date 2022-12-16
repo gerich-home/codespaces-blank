@@ -10,12 +10,19 @@ public record class PhotonMapTracingEngine(
 	const int SHADOW_RAYS = 10;
 	const double ABSOPTION = 0.01;
 
-	public Luminance L(HitPoint hp, Vector point, Vector direction)
+	public Luminance L(Ray ray)
 	{
+		HitPoint hp = sceneSetup.scene.Intersection(ray);
+	
+		if (hp == null)
+		{
+			return Luminance.Zero;
+		}
+
 		Luminance result = Luminance.Zero;
 		Luminance factor = new Luminance(1, 1, 1);
-		Vector current_point = point;
-		Vector current_direction = direction;
+		Vector current_point = hp.hitPoint;
+		Vector current_direction = hp.ray.direction;
 		HitPoint current_hp = hp;
 
 		while(true)
@@ -51,7 +58,7 @@ public record class PhotonMapTracingEngine(
 				cos_dir_normal *= linv;
 				cos_dir_lnormal *= linv;
 
-				HitPoint nhp = sceneSetup.scene.Intersection(current_point, ndirection);
+				HitPoint nhp = sceneSetup.scene.Intersection(current_point.RayAlong(ndirection));
 
 				if(nhp != null)
 				{

@@ -46,7 +46,7 @@ public class SquareLight : ILightSource
 
 			Vector direction = new Vector(sina * Math.Cos(b), sina * Math.Sin(b), cosa).Transform(normal);
 
-			photons[i] = new Photon(a + t1 * ba + t2 * ca, normal, direction, energy);
+			photons[i] = new Photon((a + t1 * ba + t2 * ca).RayAlong(direction), normal, energy);
 		}
 
 		return photons; 

@@ -23,14 +23,14 @@ public class CausticPhotonMapBuilder : IPhotonMapBuilder
 			bool isDiffuse = false;
 			Photon current_photon = emitted_photons[i];
 			
-			HitPoint ghp1 = glossy.Intersection(current_photon.point, current_photon.direction);
+			HitPoint ghp1 = glossy.Intersection(current_photon.ray);
 			
 			if(ghp1 == null)
 			{
 				continue;
 			}
 			
-			HitPoint dhp1 = diffuse.Intersection(current_photon.point, current_photon.direction);
+			HitPoint dhp1 = diffuse.Intersection(current_photon.ray);
 			
 			if(dhp1 != null)
 			{
@@ -48,8 +48,8 @@ public class CausticPhotonMapBuilder : IPhotonMapBuilder
 
 				HitPoint hp;
 
-				HitPoint ghp = glossy.Intersection(current_photon.point, current_photon.direction);
-				HitPoint dhp = diffuse.Intersection(current_photon.point, current_photon.direction);
+				HitPoint ghp = glossy.Intersection(current_photon.ray);
+				HitPoint dhp = diffuse.Intersection(current_photon.ray);
 			
 				if(dhp != null)
 				{
@@ -92,7 +92,7 @@ public class CausticPhotonMapBuilder : IPhotonMapBuilder
 
 				ksi = (ksi - ABSOPTION) / (1 - ABSOPTION);
 
-				RandomDirection rndd = hp.material.SampleDirection(current_photon.direction, hp.normal, ksi);
+				RandomDirection rndd = hp.material.SampleDirection(current_photon.ray.direction, hp.normal, ksi);
 			
 				if(rndd.factor.r == 0 && rndd.factor.g == 0 && rndd.factor.b == 0)
 				{
@@ -101,8 +101,10 @@ public class CausticPhotonMapBuilder : IPhotonMapBuilder
 				
 
 				current_photon = current_photon with {
-					point = current_photon.point + hp.t * current_photon.direction,
-					direction = rndd.direction,
+					ray = current_photon.ray with {
+						start = current_photon.ray.PointAt(hp.t),
+						direction = rndd.direction,
+					},
 					energy = current_photon.energy * rndd.factor / (1 - ABSOPTION)
 				};
 				

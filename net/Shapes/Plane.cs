@@ -41,22 +41,22 @@ public class Plane : IShape
 			);
 	}
 
-	public HitPoint Intersection(Vector start, Vector direction)
+	public HitPoint Intersection(Ray ray)
 	{
-		double divident = normal.DotProduct(direction);
+		double divident = normal.DotProduct(ray.direction);
 
 		if(divident == 0)
 		{
 			return null;
 		}
 
-		double t = (start.DotProduct(normal) + d) / normal.DotProduct(direction);
+		double t = (ray.start.DotProduct(normal) + d) / normal.DotProduct(ray.direction);
 
 		if(t < 0)
 		{
 			return null;
 		}
 
-		return new HitPoint(t, normal, material);
+		return new HitPoint(ray, t, normal, material);
 	}
 }

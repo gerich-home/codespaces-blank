@@ -1,8 +1,7 @@
 namespace Engine;
 
 public record class Photon(
-	Vector point,
+	Ray ray,
 	Vector normal,
-	Vector direction,
 	Luminance energy
 );

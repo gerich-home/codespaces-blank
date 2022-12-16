@@ -21,8 +21,8 @@ public class PhotonMap
 
 		while (l <= r)
 		{
-			while (photons[indexes[axis][l]].point[axis] < photons[indexes[axis][m]].point[axis] && l < right) l++;
-			while (photons[indexes[axis][m]].point[axis] < photons[indexes[axis][r]].point[axis] && r > left) r--;
+			while (photons[indexes[axis][l]].ray.start[axis] < photons[indexes[axis][m]].ray.start[axis] && l < right) l++;
+			while (photons[indexes[axis][m]].ray.start[axis] < photons[indexes[axis][r]].ray.start[axis] && r > left) r--;
 
 			if (l <= r)
 			{
@@ -49,9 +49,9 @@ public class PhotonMap
 		else
 		{
 			double[] distance = new double[3];
-			distance[0] = photons[indexes[0][right]].point.x - photons[indexes[0][left]].point.x;
-			distance[1] = photons[indexes[1][right]].point.y - photons[indexes[1][left]].point.y;
-			distance[2] = photons[indexes[2][right]].point.z - photons[indexes[2][left]].point.z;
+			distance[0] = photons[indexes[0][right]].ray.start.x - photons[indexes[0][left]].ray.start.x;
+			distance[1] = photons[indexes[1][right]].ray.start.y - photons[indexes[1][left]].ray.start.y;
+			distance[2] = photons[indexes[2][right]].ray.start.z - photons[indexes[2][left]].ray.start.z;
 
 			//axis = 0 for x, 1 for y, 2 for z
 			short axis;
@@ -151,7 +151,7 @@ public class PhotonMap
 	{
 		short axis = node.axis;
 		
-		double delta = paramsForFind.x[axis] - node.photon.point[axis];
+		double delta = paramsForFind.x[axis] - node.photon.ray.start[axis];
 
 		if(delta <= 0)
 		{
@@ -184,7 +184,7 @@ public class PhotonMap
 			}
 		}
 
-		delta = (node.photon.point - paramsForFind.x).Norm;
+		delta = (node.photon.ray.start - paramsForFind.x).Norm;
 
 		if(paramsForFind.currentCount < paramsForFind.count)
 		{

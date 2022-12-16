@@ -21,14 +21,14 @@ public class Triangle: IShape
 		this.material = material;
 	}
 
-	public HitPoint Intersection(Vector start, Vector direction)
+	public HitPoint Intersection(Ray ray)
 	{
 		double t = 0;
 		double t1 = 0;
 		double t2 = 0;
 		
 
-		double divident = -direction.DotProduct(normal);
+		double divident = -ray.direction.DotProduct(normal);
 		
 		if(divident == 0)
 		{
@@ -37,8 +37,8 @@ public class Triangle: IShape
 
 		double factor = 1 / divident;
 
-		Vector sa = start - a;
-		Vector saxdir = sa.CrossProduct(direction);
+		Vector sa = ray.start - a;
+		Vector saxdir = sa.CrossProduct(ray.direction);
 		t1 = -ba.DotProduct(saxdir) * factor;
 		
 		if((t1 < 0) || (1 < t1))
@@ -65,6 +65,6 @@ public class Triangle: IShape
 			return null;
 		}
 
-		return new HitPoint(t, n, material);
+		return new HitPoint(ray, t, n, material);
 	}
 }

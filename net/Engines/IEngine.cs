@@ -7,5 +7,5 @@ public interface IEngineFactory
 
 public interface IEngine
 {
-	Luminance L(HitPoint hp, Vector point, Vector direction);
+	Luminance L(Ray ray);
 }

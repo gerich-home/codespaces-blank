@@ -17,11 +17,11 @@ public class Sphere : IShape
 		this.rinv = 1 / r;
 	}
 
-	public HitPoint Intersection(Vector start, Vector direction)
+	public HitPoint Intersection(Ray ray)
 	{
-		Vector ac = start - center;
+		Vector ac = ray.start - center;
 		
-		double b = ac.DotProduct(direction);
+		double b = ac.DotProduct(ray.direction);
 		double c = ac.Norm - r2;
 
 		double D = b * b - c;
@@ -44,6 +44,6 @@ public class Sphere : IShape
 			}
 		}
 
-		return new HitPoint(t, (start + t * direction - center) * rinv, material);
+		return new HitPoint(ray, t, (ray.PointAt(t) - center) * rinv, material);
 	}
 }

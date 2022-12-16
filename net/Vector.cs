@@ -2,6 +2,9 @@ namespace Engine;
 
 public readonly record struct Vector(double x, double y, double z)
 {
+	public Ray RayAlong(Vector direction) =>
+		new Ray(this, direction);
+
 	public static Vector Zero => new Vector(0, 0, 0);
 
 	public Vector Normalized => this / Length;

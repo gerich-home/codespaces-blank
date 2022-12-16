@@ -48,7 +48,7 @@ public class SphereLight : ILightSource
 
 			Vector direction = new Vector(sina * Math.Cos(b), sina * Math.Sin(b), cosa).Transform(normal);
 
-			photons[i] = new Photon(center + r * normal, normal, direction, energy);
+			photons[i] = new Photon((center + r * normal).RayAlong(direction), normal, energy);
 		}
 
 		return photons;
