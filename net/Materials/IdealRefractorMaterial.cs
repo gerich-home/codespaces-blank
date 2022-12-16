@@ -2,17 +2,10 @@ using Engine;
 
 namespace Materials;
 
-public class IdealRefractorMaterial: IMaterial
-{
-	public readonly Luminance rd;
-	public readonly double refract;
-
-	public IdealRefractorMaterial(Luminance rd, double refract)
-	{
-		this.rd = rd;
-		this.refract = refract;
-	}
-
+public record class IdealRefractorMaterial(
+	Luminance rd,
+	double refract
+): IMaterial {
 	public Luminance BRDF(Vector direction, Vector ndirection, Vector normal)
 	{
 		int n = 500;
@@ -32,18 +25,16 @@ public class IdealRefractorMaterial: IMaterial
 			
 			double cosphi = ndirection.DotProduct(R);
 		
-			if(cosphi > 0)
-			{
-				return new Luminance(
-					rd.r == 0 ? 0 : rd.r * (n + 2) * Math.Pow(cosphi, n),
-					rd.g == 0 ? 0 : rd.g * (n + 2) * Math.Pow(cosphi, n),
-					rd.b == 0 ? 0 : rd.b * (n + 2) * Math.Pow(cosphi, n)
-					) / (2 * Math.PI);	
-			}
-			else
+			if(cosphi <= 0)
 			{
 				return Luminance.Zero;
 			}
+			
+			return new Luminance(
+				rd.r == 0 ? 0 : rd.r * (n + 2) * Math.Pow(cosphi, n),
+				rd.g == 0 ? 0 : rd.g * (n + 2) * Math.Pow(cosphi, n),
+				rd.b == 0 ? 0 : rd.b * (n + 2) * Math.Pow(cosphi, n)
+				) / (2 * Math.PI);	
 		}
 
 		cosb = Math.Sqrt(cosb);
@@ -99,7 +90,10 @@ public class IdealRefractorMaterial: IMaterial
 		return result;
 	}
 
-	public RandomDirection SampleDirection(Vector direction, Vector normal, double ksi)
+	public RandomDirection SampleDirection(Vector direction, Vector normal, double ksi) =>
+		new RandomDirection(rd, SampleDirectionVector(direction, normal, ksi));
+
+	private Vector SampleDirectionVector(Vector direction, Vector normal, double ksi)
 	{	
 		double cosa = -direction.DotProduct(normal);
 		double factor = refract;
@@ -112,8 +106,7 @@ public class IdealRefractorMaterial: IMaterial
 
 		if(cosb < 0)
 		{
-			Vector R = direction + 2 * cosa * normal;
-			return new RandomDirection(rd, R);	
+			return direction + 2 * cosa * normal;
 		}
 
 		cosb = Math.Sqrt(cosb);
@@ -129,22 +122,16 @@ public class IdealRefractorMaterial: IMaterial
 		
 		if(ksi < qreflect)
 		{
-			Vector R = direction + 2 * cosa * normal;
-			return new RandomDirection(rd, R);	
+			return direction + 2 * cosa * normal;
+		}
+	
+		if(cosa > 0)
+		{
+			return -cosb * normal + factor * (cosa * normal + direction);
 		}
 		else
 		{
-			Vector R;
-			if(cosa > 0)
-			{
-				R = -cosb * normal + factor * (cosa * normal + direction);
-			}
-			else
-			{
-				R = cosb * normal + factor * (cosa * normal + direction);
-			}
-			
-			return new RandomDirection(rd, R);
+			return cosb * normal + factor * (cosa * normal + direction);
 		}
 	}
 }

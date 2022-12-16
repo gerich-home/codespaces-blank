@@ -1,4 +1,5 @@
 using Engine;
+using Materials;
 
 namespace Shapes;
 
@@ -28,7 +29,7 @@ public class Square: IShape
 		this.ca = c - a;
 		this.normal = (b - a).CrossProduct(c - a);
 		this.n = (b - a).CrossProduct(c - a).Normalized;
-		this.material = new Materials.TexturedMaterialAdapter(material);
+		this.material = new TexturedMaterialAdapter(material);
 	}
 
 	public HitPoint Intersection(Vector start, Vector direction)

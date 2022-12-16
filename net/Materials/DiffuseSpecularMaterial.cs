@@ -2,21 +2,12 @@ using Engine;
 
 namespace Materials;
 
-public class DuffuseSpecularMaterial : IMaterial
-{
-	public readonly Luminance rd;
-	public readonly Luminance rs;
-	public readonly int[] n;
-	public readonly Random rnd;
-
-	public DuffuseSpecularMaterial(Random rnd, Luminance rd, Luminance rs, int[] n)
-	{
-		this.rnd = rnd;
-		this.rd = rd;
-		this.rs = rs;
-		this.n = n;
-	}
-
+public record class DuffuseSpecularMaterial(
+	Random rnd,
+	Luminance rd,
+	Luminance rs,
+	int[] n
+) : IMaterial {
 	public Luminance BRDF(Vector direction, Vector ndirection, Vector normal)
 	{
 		Luminance result = rd / Math.PI; 

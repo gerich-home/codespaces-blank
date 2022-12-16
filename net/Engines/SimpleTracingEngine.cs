@@ -2,18 +2,14 @@ using Engine;
 
 namespace Engines;
 
-public class SimpleTracing : IEngine
-{
+public record class SimpleTracingEngine(
+	Random rnd,
+	SceneSetup sceneSetup
+): IEngine {
 	public const int SHADOW_RAYS = 10;
 	public const double ABSOPTION = 0.3;
-	public readonly Random rnd;
 
-	public SimpleTracing(Random rnd)
-	{
-		this.rnd = rnd;
-	}
-
-	public Luminance L(HitPoint hp, Vector point, Vector direction, IShape scene, IShape diffuse, IShape glossy, ILightSource lights)
+	public Luminance L(HitPoint hp, Vector point, Vector direction)
 	{
 		Luminance result = Luminance.Zero;
 		Luminance factor = new Luminance(1, 1, 1);
@@ -27,7 +23,7 @@ public class SimpleTracing : IEngine
 
 			for(int i = 0; i < SHADOW_RAYS; i++)
 			{	
-				LightPoint lp = lights.SampleLightPoint();
+				LightPoint lp = sceneSetup.lights.SampleLightPoint();
 				Vector ndirection = lp.point - current_point;
 
 				double cos_dir_normal = current_hp.normal.DotProduct(ndirection);
@@ -54,7 +50,7 @@ public class SimpleTracing : IEngine
 				cos_dir_normal *= linv;
 				cos_dir_lnormal *= linv;
 
-				HitPoint nhp = scene.Intersection(current_point, ndirection);
+				HitPoint nhp = sceneSetup.scene.Intersection(current_point, ndirection);
 
 				if(nhp != null)
 				{
@@ -88,7 +84,7 @@ public class SimpleTracing : IEngine
 				break;
 			}
 
-			HitPoint nhp1 = scene.Intersection(current_point, rndd.direction);
+			HitPoint nhp1 = sceneSetup.scene.Intersection(current_point, rndd.direction);
 			
 			if(nhp1 == null)
 			{

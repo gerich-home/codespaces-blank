@@ -2,7 +2,7 @@ using Engine;
 
 namespace Lights;
 
-public class SquareLight: ILightSource
+public class SquareLight : ILightSource
 {
 	public readonly Vector a;
 	public readonly Vector ba;

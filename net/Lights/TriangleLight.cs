@@ -12,7 +12,7 @@ public class Triangle : ILightSource
 	public readonly Luminance le;
 	public readonly Random rnd;
 
-	public Triangle(Random rnd, Vector a, Vector b, Vector c, Luminance Le)
+	public Triangle(Random rnd, Vector a, Vector b, Vector c, Luminance le)
 	{
 		this.rnd = rnd;
 		this.a = a;

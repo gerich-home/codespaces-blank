@@ -2,21 +2,15 @@ using Engine;
 
 namespace Engines;
 
-public class PhotonMapTracing: IEngine
-{
+public record class PhotonMapTracingEngine(
+	PhotonMap globalMap,
+	PhotonMap causticsMap,
+	SceneSetup sceneSetup
+): IEngine {
 	const int SHADOW_RAYS = 10;
 	const double ABSOPTION = 0.01;
 
-	public readonly PhotonMap globalMap;
-	public readonly PhotonMap causticsMap;
-
-	public PhotonMapTracing(PhotonMap globalMap, PhotonMap causticsMap)
-	{
-		this.globalMap = globalMap;
-		this.causticsMap = causticsMap;
-	}
-
-	public Luminance L(HitPoint hp, Vector point, Vector direction, IShape scene, IShape diffuse, IShape glossy, ILightSource lights)
+	public Luminance L(HitPoint hp, Vector point, Vector direction)
 	{
 		Luminance result = Luminance.Zero;
 		Luminance factor = new Luminance(1, 1, 1);
@@ -30,7 +24,7 @@ public class PhotonMapTracing: IEngine
 
 			for(int i = 0; i < SHADOW_RAYS; i++)
 			{	
-				LightPoint lp = lights.SampleLightPoint();
+				LightPoint lp = sceneSetup.lights.SampleLightPoint();
 				Vector ndirection = lp.point - current_point;
 
 				double cos_dir_normal = current_hp.normal.DotProduct(ndirection);
@@ -57,7 +51,7 @@ public class PhotonMapTracing: IEngine
 				cos_dir_normal *= linv;
 				cos_dir_lnormal *= linv;
 
-				HitPoint nhp = scene.Intersection(current_point, ndirection);
+				HitPoint nhp = sceneSetup.scene.Intersection(current_point, ndirection);
 
 				if(nhp != null)
 				{

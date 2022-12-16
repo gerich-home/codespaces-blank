@@ -3,17 +3,12 @@ using SixLabors.ImageSharp.PixelFormats;
 using Materials;
 using Lights;
 using Shapes;
+using Engines;
 
 namespace Engine;
 
 public class Program
 {
-	public IShape scene;
-	public IShape diffuse;
-	public IShape glossy;
-	public ILightSource lights;
-	public IEngine engine;
-
 	const int W = 640;
 	const int H = 640;
 	const double CAM_Z = 0.0000001;
@@ -21,8 +16,7 @@ public class Program
 	const double PIXEL_SIZE = 1.05;
 	const int NFRAMES = 10;
 
-
-	public void InitScene(Random rnd)
+	public SceneSetup InitScene(Random rnd)
 	{
 		Luminance kd_black = Luminance.Zero;
 		Luminance ks_black = new Luminance(0, 0, 0.2);
@@ -132,10 +126,12 @@ public class Program
 			//new SphereLight(new Vector(-0.3, -0.3, 1.5), 0.05, Le1),
 		};
 		
-		scene = new Scene(shapes);
-		glossy = new Scene(glossyShapes);
-		diffuse = new Scene(diffuseShapes);
-		lights = new CompositeLightSource(rnd, lightSources);
+		var scene = new Scene(shapes);
+		var glossy = new Scene(glossyShapes);
+		var diffuse = new Scene(diffuseShapes);
+		var lights = new CompositeLightSource(rnd, lightSources);
+
+		return new SceneSetup(scene, diffuse, glossy, lights);
 	}
 
 	public static void Main()
@@ -146,10 +142,12 @@ public class Program
 	public void Run()
 	{
 		var rnd = new Random();
-		InitScene(rnd);
+		var sceneSetup = InitScene(rnd);
 
-		engine = new Engines.SimpleTracing(rnd);
-		var rasterizer = new Rasterizer(rnd, PIXEL_SIZE, W, H, CAM_Z, CAM_SIZE, scene, diffuse, glossy, lights, engine);
+		var engineFactory = new SimpleTracingEngineFactory();
+
+		var engine = engineFactory.CreateEngine(rnd, sceneSetup);
+		var rasterizer = new Rasterizer(rnd, PIXEL_SIZE, W, H, CAM_Z, CAM_SIZE, engine, sceneSetup);
 
 		using(var image = new Image<Rgb24>(W, H))
 		{
