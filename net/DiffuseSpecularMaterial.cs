@@ -36,8 +36,8 @@ public class DuffuseSpecularMaterial : IMaterial
 
 	public RandomDirection SampleDirection(Random rnd, Vector direction, Vector normal, double ksi)
 	{	
-		double qd = (rd.r + rd.g + rd.b) / 3;
-		double qs = (rs.r + rs.g + rs.b) / 3;
+		double qd = rd.Energy;
+		double qs = rs.Energy;
 
 		if(qd + qs != 1)
 		{

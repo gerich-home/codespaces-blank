@@ -56,8 +56,5 @@ public class Triangle : ILightSource
 		return photons;
 	}
 
-	public Luminance Le() 
-	{
-		return le;
-	}
+    public Luminance Le => le;
 }

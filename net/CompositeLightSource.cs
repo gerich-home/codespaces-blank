@@ -61,30 +61,15 @@ public class CompositeLightSource : ILightSource
 
 	public Photon[] EmitPhotons(Random rnd, int nphotons)
 	{
-		double[] energy = new double[lights.Length];
+		double factor = nphotons / Le.Energy;
+
+		int[] nphotonsPerLight = lights
+			.Select(light => (int)(factor * light.Le.Energy))
+			.ToArray();
+
+		int remainingPhotons = nphotons - nphotonsPerLight.Sum();
 		
-		Luminance totalLe = Luminance.Zero;
-		for(int i = 0; i < lights.Length; i++)
-		{
-			Luminance lei = lights[i].Le();
-			totalLe += lei;
-			energy[i] = (lei.r + lei.g + lei.b) / 3;
-		}
-
-		double factor = nphotons * 3 / (totalLe.r + totalLe.g + totalLe.b);
-
-		int[] nphotonsPerLight = new int[lights.Length];
-		int remainedPhotons = 0;
-
-		for(int i = 0; i < lights.Length; i++)
-		{
-			nphotonsPerLight[i] = (int)(factor * energy[i]);
-			remainedPhotons += nphotonsPerLight[i];
-		}
-
-		remainedPhotons = nphotons - remainedPhotons;
-		
-		for(int i = 0; i < remainedPhotons; i++)
+		for(int i = 0; i < remainingPhotons; i++)
 		{
 			nphotonsPerLight[i]++;
 		}
@@ -94,15 +79,8 @@ public class CompositeLightSource : ILightSource
 			.ToArray();
 	}
 
-	public Luminance Le()
-	{
-		Luminance Le = Luminance.Zero;
-
-		for(int i = 0; i < lights.Length; i++)
-		{
-			Le += lights[i].Le();
-		}
-		
-		return Le;
-	}
+    public Luminance Le =>
+		lights
+			.Select(ls => ls.Le)
+			.Aggregate(Luminance.Zero, (a, b) => a + b);
 }

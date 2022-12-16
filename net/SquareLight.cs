@@ -50,8 +50,5 @@ public class Square: ILightSource
 		return photons; 
 	}
 
-	public Luminance Le() 
-	{
-		return le;
-	}
+    public Luminance Le => le;
 }
