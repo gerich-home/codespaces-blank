@@ -12,7 +12,7 @@ public static class Rasterizer
 	
 		if(hp == null)
 		{
-			return new Luminance(0, 0, 0);
+			return Luminance.Zero;
 		}
 
 		Vector point = start + direction * hp.t;

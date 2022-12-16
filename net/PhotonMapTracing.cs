@@ -18,7 +18,7 @@ public class PhotonMapTracing: IEngine
 
 	public Luminance L(Random rnd, HitPoint hp, Vector point, Vector direction, IShape scene, IShape diffuse, IShape glossy, ILightSource lights)
 	{
-		Luminance result = new Luminance(0, 0, 0);
+		Luminance result = Luminance.Zero;
 		Luminance factor = new Luminance(1, 1, 1);
 		Vector current_point = point;
 		Vector current_direction = direction;
@@ -26,11 +26,11 @@ public class PhotonMapTracing: IEngine
 
 		while(true)
 		{
-			Luminance direct = new Luminance(0, 0, 0);
+			Luminance direct = Luminance.Zero;
 
 			for(int i = 0; i < SHADOW_RAYS; i++)
 			{	
-				LightPoint lp = lights.SampleLightPoint(rnd, current_point);
+				LightPoint lp = lights.SampleLightPoint(rnd);
 				Vector ndirection = lp.point - current_point;
 
 				double cos_dir_normal = current_hp.normal.DotProduct(ndirection);

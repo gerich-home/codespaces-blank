@@ -2,7 +2,7 @@ namespace Engine;
 
 public interface ILightSource
 {
-	LightPoint SampleLightPoint(Random rnd, Vector point);
+	LightPoint SampleLightPoint(Random rnd);
 	Photon[] EmitPhotons(Random rnd, int nphotons);
 	Luminance Le();
 }

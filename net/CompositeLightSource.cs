@@ -39,7 +39,7 @@ public class CompositeLightSource : ILightSource
 		}
 	}
 
-	public LightPoint SampleLightPoint(Random rnd, Vector point)
+	public LightPoint SampleLightPoint(Random rnd)
 	{
 		double ksi = rnd.NextDouble();
 
@@ -47,7 +47,7 @@ public class CompositeLightSource : ILightSource
 		{
 			if(ksi < probabilities[i])
 			{
-				LightPoint lp = lights[i].SampleLightPoint(rnd, point);
+				LightPoint lp = lights[i].SampleLightPoint(rnd);
 				return new LightPoint(lp.point, lp.normal, probabilities[i] * lp.probability, lp.Le);
 			}
 			else
@@ -63,7 +63,7 @@ public class CompositeLightSource : ILightSource
 	{
 		double[] energy = new double[lights.Length];
 		
-		Luminance totalLe = new Luminance(0, 0, 0);
+		Luminance totalLe = Luminance.Zero;
 		for(int i = 0; i < lights.Length; i++)
 		{
 			Luminance lei = lights[i].Le();
@@ -96,7 +96,7 @@ public class CompositeLightSource : ILightSource
 
 	public Luminance Le()
 	{
-		Luminance Le = new Luminance(0, 0, 0);
+		Luminance Le = Luminance.Zero;
 
 		for(int i = 0; i < lights.Length; i++)
 		{

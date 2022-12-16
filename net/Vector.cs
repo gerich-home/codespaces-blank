@@ -1,7 +1,9 @@
 namespace Engine;
 
-public record class Vector(double x, double y, double z)
+public readonly record struct Vector(double x, double y, double z)
 {
+	public static Vector Zero => new Vector(0, 0, 0);
+
 	public Vector Normalized => this / Length;
 
 	public double Norm => x * x + y * y + z * z;

@@ -17,7 +17,7 @@ public class Sphere : ILightSource
 		this.le = le;
 	}
 
-	public LightPoint SampleLightPoint(Random rnd, Vector point)
+	public LightPoint SampleLightPoint(Random rnd)
 	{	
 		double cosa = rnd.NextDouble();
 		double sina = Math.Sqrt(1 - cosa * cosa);

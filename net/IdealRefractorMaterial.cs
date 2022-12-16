@@ -42,7 +42,7 @@ public class IdealRefractorMaterial: IMaterial
 			}
 			else
 			{
-				return new Luminance(0, 0, 0);
+				return Luminance.Zero;
 			}
 		}
 
@@ -57,7 +57,7 @@ public class IdealRefractorMaterial: IMaterial
 		
 		double qreflect = (Rs + Rt) / 2;
 		
-		Luminance result = new Luminance(0, 0, 0);
+		Luminance result = Luminance.Zero;
 		
 		{
 			Vector R = direction + 2 * cosa * normal;

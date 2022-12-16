@@ -13,7 +13,7 @@ public class IdealMirrorMaterial: IMaterial
 
 	public Luminance BRDF(Vector direction, Vector ndirection, Vector normal)
 	{
-		return new Luminance(0, 0, 0);
+		return Luminance.Zero;
 	}
 
 	public RandomDirection SampleDirection(Random rnd, Vector direction, Vector normal, double ksi)

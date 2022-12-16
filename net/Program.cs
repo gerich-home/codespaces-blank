@@ -1,3 +1,6 @@
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+
 namespace Engine;
 
 public class Program
@@ -14,12 +17,10 @@ public class Program
 	const double CAM_SIZE = (0.55 * CAM_Z / (1 + CAM_Z));
 	const double PIXEL_SIZE = 1.05;
 
-	public Luminance[] L = new Luminance[W * H];
-
 
 	public void InitScene()
 	{
-		Luminance kd_black = new Luminance(0, 0, 0);
+		Luminance kd_black = Luminance.Zero;
 		Luminance ks_black = new Luminance(0, 0, 0.2);
 		int[]    n_black  = {1, 1, 1};
 		IMaterial m_black = new Materials.DuffuseSpecularMaterial(kd_black, ks_black, n_black);
@@ -32,36 +33,36 @@ public class Program
 		ITexturedMaterial m_chess = new Materials.CheckeredMaterial(10, 10, m_white, m_black);
 		
 		Luminance kd_red = new Luminance(1, 0, 0);
-		Luminance ks_red = new Luminance(0, 0, 0);
+		Luminance ks_red = Luminance.Zero;
 		int[]    n_red  = {0, 0, 0};
 		IMaterial m_red = new Materials.DuffuseSpecularMaterial(kd_red, ks_red, n_red);
 		
 		Luminance kd_blue = new Luminance(0, 0, 1);
-		Luminance ks_blue = new Luminance(0, 0, 0);
+		Luminance ks_blue = Luminance.Zero;
 		int[]    n_blue  = {0, 0, 0};
 		IMaterial m_blue = new Materials.DuffuseSpecularMaterial(kd_blue, ks_blue, n_blue);
 		
 		Luminance kd_green = new Luminance(0, 1, 0);
-		Luminance ks_green = new Luminance(0, 0, 0);
+		Luminance ks_green = Luminance.Zero;
 		int[]    n_green  = {0, 0, 0};
 		IMaterial m_green = new Materials.DuffuseSpecularMaterial(kd_green, ks_green, n_green);
 
 		Luminance kd_yellow = new Luminance(1, 1, 0);
-		Luminance ks_yellow = new Luminance(0, 0, 0);
+		Luminance ks_yellow = Luminance.Zero;
 		int[]    n_yellow  = {0, 0, 0};
 		IMaterial m_yellow = new Materials.DuffuseSpecularMaterial(kd_yellow, ks_yellow, n_yellow);
 
 		Luminance kd1 = new Luminance(0.9, 0.6, 0.3);
-		Luminance ks1 = new Luminance(0, 0, 0);
+		Luminance ks1 = Luminance.Zero;
 		int[]    n1  = {0, 0, 0};
 		IMaterial m1 = new Materials.DuffuseSpecularMaterial(kd1, ks1, n1);
 
 		Luminance kd2 = new Luminance(0.6, 0.1, 1);
-		Luminance ks2 = new Luminance(0, 0, 0);
+		Luminance ks2 = Luminance.Zero;
 		int[]    n2  = {0, 0, 0};
 		IMaterial m2 = new Materials.DuffuseSpecularMaterial(kd2, ks2, n2);
 		
-		Luminance kd3 = new Luminance(0, 0, 0);
+		Luminance kd3 = Luminance.Zero;
 		Luminance ks3 = new Luminance(1, 1, 1);
 		int[]    n3  = {1, 1, 1};
 		IMaterial m3 = new Materials.DuffuseSpecularMaterial(kd3, ks3, n3);
@@ -72,7 +73,7 @@ public class Program
 		
 		ITexturedMaterial m_chess2 = new Materials.CheckeredMaterial(10, 1, m_red, m_green);
 
-		Luminance Le1 = new Luminance(25, 25, 25);
+		Luminance Le1 = new Luminance(50, 50, 50);
 		
 		IShape floor     = new Shapes.Square(new Vector(-0.5, -0.5, 1), new Vector(-0.5, -0.5, 2), new Vector( 0.5, -0.5, 1), m_chess);
 		IShape ceiling   = new Shapes.Square(new Vector(-0.5,  0.5, 1), new Vector( 0.5,  0.5, 1), new Vector(-0.5,  0.5, 2), m_yellow);
@@ -122,9 +123,9 @@ public class Program
 		
 		ILightSource[] lightSources = {
 			new Lights.Square(new Vector(-0.15, 0.5 - double.Epsilon, 1.35), new Vector(0.15,  0.5 - double.Epsilon, 1.35), new Vector(-0.15, 0.5 - double.Epsilon, 1.65), Le1),
-			//new Lights.Square(new Vector(-0.15, 0.45, 8.35), new Vector(0.15,  0.45, 8.35), new Vector(-0.15, 0.45, 8.65), new Luminance(Le1)),
-			//new Lights.Sphere(new Vector(0, 0.5, 1.5), 0.1, new Luminance(Le1)),
-			//new Lights.Sphere(new Vector(-0.3, -0.3, 1.5), 0.05, new Luminance(Le1)),
+			//new Lights.Square(new Vector(-0.15, 0.45, 8.35), new Vector(0.15,  0.45, 8.35), new Vector(-0.15, 0.45, 8.65), Le1),
+			new Lights.Sphere(new Vector(0, 0.5, 1.5), 0.1, Le1),
+			//new Lights.Sphere(new Vector(-0.3, -0.3, 1.5), 0.05, Le1),
 		};
 		
 		scene = new Shapes.Scene(shapes);
@@ -145,23 +146,28 @@ public class Program
 		engine = new Engines.SimpleTracing();
 		var rnd = new Random();
 
-		for(int j = 0; j < H; j++)
+		using(var image = new Image<Rgb24>(W, H))
 		{
-			for(int i = 0; i < W; i++)
+			for(int row = 0; row < W; row++)
 			{
-				L[i * H + j] = new Luminance(0, 0, 0);
+				for(int column = 0; column < H; column++)
+				{
+					var l = Luminance.Zero;
+					const int nframes = 10;
+					for(int frame = 1; frame <= nframes; frame++)
+					{
+						l += Rasterizer.ColorAtPixel(rnd, row + PIXEL_SIZE * rnd.NextDouble() - PIXEL_SIZE * 0.5, column + PIXEL_SIZE * rnd.NextDouble() - PIXEL_SIZE * 0.5, W, H, CAM_Z, CAM_SIZE, scene, diffuse, glossy, lights, engine);
+					}
+					l *= (255.0 / nframes);
+					image[row, column] = new Rgb24(
+						Math.Min((byte)l.r, (byte)255),
+						Math.Min((byte)l.g, (byte)255),
+						Math.Min((byte)l.b, (byte)255)
+					);
+				}
 			}
-		}
 
-		for(int frame = 1; frame < 100; frame++)
-		for(int j = 0; j < H; j++)
-		{
-			for(int i = 0; i < W; i++)
-			{
-				L[i * H + j] += Rasterizer.ColorAtPixel(rnd, i + PIXEL_SIZE * rnd.NextDouble() - PIXEL_SIZE * 0.5, j + PIXEL_SIZE * rnd.NextDouble() - PIXEL_SIZE * 0.5, W, H, CAM_Z, CAM_SIZE, scene, diffuse, glossy, lights, engine);
-				Luminance l = L[i * H + j] * (255.0 / frame);
-				Console.WriteLine($"{i},{j} -> {(l.r > 255 ? 255 : (int)l.r)} {(l.g > 255 ? 255 : (int)l.g)} {(l.b > 255 ? 255 : (int)l.b)}");
-			}
+			image.SaveAsBmp("result.bmp");
 		}
 	}
 }

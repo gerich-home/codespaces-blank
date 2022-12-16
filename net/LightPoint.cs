@@ -1,6 +1,6 @@
 namespace Engine;
 
-public record class LightPoint(
+public readonly record struct LightPoint(
 	Vector point,
 	Vector normal,
 	double probability,

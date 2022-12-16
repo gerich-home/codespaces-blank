@@ -43,7 +43,7 @@ public class DuffuseSpecularMaterial : IMaterial
 		{
 			if(qd + qs == 0)
 			{
-				return new RandomDirection(new Luminance(0, 0, 0), new Vector(0, 0, 0));
+				return new RandomDirection(Luminance.Zero, Vector.Zero);
 			}
 			
 			double k = 1 / (qd + qs);
@@ -74,7 +74,7 @@ public class DuffuseSpecularMaterial : IMaterial
 
 			if(normal.DotProduct(ndirection) <= 0)
 			{
-				return new RandomDirection(new Luminance(0, 0, 0), new Vector(0, 0, 0));
+				return new RandomDirection(Luminance.Zero, Vector.Zero);
 			}
 
 			return new RandomDirection(new Luminance(

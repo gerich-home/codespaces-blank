@@ -21,7 +21,7 @@ public class Triangle : ILightSource
 		this.le = le;
 	}
 
-	public LightPoint SampleLightPoint(Random rnd, Vector point)
+	public LightPoint SampleLightPoint(Random rnd)
 	{
 		double t1 = rnd.NextDouble();
 		double t2 = rnd.NextDouble();

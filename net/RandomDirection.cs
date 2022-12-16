@@ -1,3 +1,3 @@
 namespace Engine;
 
-public record class RandomDirection(Luminance factor, Vector direction);
+public readonly record struct RandomDirection(Luminance factor, Vector direction);
