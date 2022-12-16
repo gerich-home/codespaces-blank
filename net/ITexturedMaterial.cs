@@ -1,7 +1,6 @@
-namespace Engine
+namespace Engine;
+
+public interface ITexturedMaterial
 {
-	public interface ITexturedMaterial
-	{
-		IMaterial MaterialAt(double t1, double t2);
-	}
+	IMaterial MaterialAt(double t1, double t2);
 }

@@ -1,65 +1,63 @@
-using System;
 using Engine;
 
-namespace Lights
-{
-	public class Triangle : ILightSource
-	{
-		public readonly double probability;
-		public readonly Vector ba;
-		public readonly Vector ca;
-		public readonly Vector a;
-		public readonly Vector normal;
-		public readonly Luminance le;
+namespace Lights;
 
-		public Triangle(Vector a, Vector b, Vector c, Luminance Le)
+public class Triangle : ILightSource
+{
+	public readonly double probability;
+	public readonly Vector ba;
+	public readonly Vector ca;
+	public readonly Vector a;
+	public readonly Vector normal;
+	public readonly Luminance le;
+
+	public Triangle(Vector a, Vector b, Vector c, Luminance Le)
+	{
+		this.a = a;
+		this.ba = b - a;
+		this.ca = c - a;
+		this.normal = (b - a).CrossProduct(c - a).Normalized;
+		this.probability = 2 / (b - a).CrossProduct(c - a).Length;
+		this.le = le;
+	}
+
+	public LightPoint SampleLightPoint(Random rnd, Vector point)
+	{
+		double t1 = rnd.NextDouble();
+		double t2 = rnd.NextDouble();
+
+		if(t1 + t2 > 1)
 		{
-			this.a = a;
-			this.ba = b - a;
-			this.ca = c - a;
-			this.normal = (b - a).CrossProduct(c - a).Normalized;
-			this.probability = 2 / (b - a).CrossProduct(c - a).Length;
-			this.le = le;
+			t1 = 1 - t1;
+			t2 = 1 - t2;
 		}
 
-		public LightPoint SampleLightPoint(Random rnd, Vector point)
+		Vector p = a + t1 * ba + t2 * ca;
+		return new LightPoint(p, normal, probability, le);
+	}
+
+	public Photon[] EmitPhotons(Random rnd, int nphotons)
+	{
+		Photon[] photons = new Photon[nphotons];
+		Luminance energy = le / nphotons;
+		for(int i = 0; i < nphotons; i++)
 		{
 			double t1 = rnd.NextDouble();
 			double t2 = rnd.NextDouble();
+			
+			double cosa = rnd.NextDouble();
+			double sina = Math.Sqrt(1 - cosa * cosa);
+			double b = 2 * Math.PI * rnd.NextDouble();
 
-			if(t1 + t2 > 1)
-			{
-				t1 = 1 - t1;
-				t2 = 1 - t2;
-			}
+			Vector direction = new Vector(sina * Math.Cos(b), sina * Math.Sin(b), cosa).Transform(normal);
 
-			Vector p = a + t1 * ba + t2 * ca;
-			return new LightPoint(p, normal, probability, le);
+			photons[i] = new Photon(a + t1 * ba + t2 * ca, normal, direction, energy);
 		}
+		return photons;
+	}
 
-		public Photon[] EmitPhotons(Random rnd, int nphotons)
-		{
-			Photon[] photons = new Photon[nphotons];
-			Luminance energy = le / nphotons;
-			for(int i = 0; i < nphotons; i++)
-			{
-				double t1 = rnd.NextDouble();
-				double t2 = rnd.NextDouble();
-				
-				double cosa = rnd.NextDouble();
-				double sina = Math.Sqrt(1 - cosa * cosa);
-				double b = 2 * Math.PI * rnd.NextDouble();
-
-				Vector direction = new Vector(sina * Math.Cos(b), sina * Math.Sin(b), cosa).Transform(normal);
-
-				photons[i] = new Photon(a + t1 * ba + t2 * ca, normal, direction, energy);
-			}
-			return photons;
-		}
-
-		public Luminance Le() 
-		{
-			return le;
-		}
-	};
+	public Luminance Le() 
+	{
+		return le;
+	}
 }

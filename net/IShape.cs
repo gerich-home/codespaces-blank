@@ -1,7 +1,6 @@
-namespace Engine
+namespace Engine;
+
+public interface IShape
 {
-	public interface IShape
-	{
-		HitPoint Intersection(Vector start, Vector direction);
-	}
+	HitPoint Intersection(Vector start, Vector direction);
 }

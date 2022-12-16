@@ -1,8 +1,7 @@
-namespace Engine
+namespace Engine;
+
+public interface IMaterial
 {
-	public interface IMaterial
-	{
-		Luminance BRDF(Vector direction, Vector ndirection, Vector normal);
-		RandomDirection SampleDirection(Random rnd, Vector direction, Vector normal, double ksi);
-	}
+	Luminance BRDF(Vector direction, Vector ndirection, Vector normal);
+	RandomDirection SampleDirection(Random rnd, Vector direction, Vector normal, double ksi);
 }
