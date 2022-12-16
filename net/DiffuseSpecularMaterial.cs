@@ -7,9 +7,11 @@ public class DuffuseSpecularMaterial : IMaterial
 	public readonly Luminance rd;
 	public readonly Luminance rs;
 	public readonly int[] n;
+	public readonly Random rnd;
 
-	public DuffuseSpecularMaterial(Luminance rd, Luminance rs, int[] n)
+	public DuffuseSpecularMaterial(Random rnd, Luminance rd, Luminance rs, int[] n)
 	{
+		this.rnd = rnd;
 		this.rd = rd;
 		this.rs = rs;
 		this.n = n;
@@ -34,7 +36,7 @@ public class DuffuseSpecularMaterial : IMaterial
 		return result;
 	}
 
-	public RandomDirection SampleDirection(Random rnd, Vector direction, Vector normal, double ksi)
+	public RandomDirection SampleDirection(Vector direction, Vector normal, double ksi)
 	{	
 		double qd = rd.Energy;
 		double qs = rs.Energy;

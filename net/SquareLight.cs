@@ -2,7 +2,7 @@ using Engine;
 
 namespace Lights;
 
-public class Square: ILightSource
+public class SquareLight: ILightSource
 {
 	public readonly Vector a;
 	public readonly Vector ba;
@@ -10,9 +10,11 @@ public class Square: ILightSource
 	public readonly Vector normal;
 	public readonly double probability;
 	public readonly Luminance le;
+	public readonly Random rnd;
 
-	public Square(Vector a, Vector b, Vector c, Luminance le)
+	public SquareLight(Random rnd, Vector a, Vector b, Vector c, Luminance le)
 	{
+		this.rnd = rnd;
 		this.a = a;
 		this.ba = b - a;
 		this.ca = c - a;
@@ -21,7 +23,7 @@ public class Square: ILightSource
 		this.le = le;
 	}
 
-	public LightPoint SampleLightPoint(Random rnd)
+	public LightPoint SampleLightPoint()
 	{
 		double t1 = rnd.NextDouble();
 		double t2 = rnd.NextDouble();
@@ -29,7 +31,7 @@ public class Square: ILightSource
 		return new LightPoint(a + t1 * ba + t2 * ca, normal, probability, le);
 	}
 
-	public Photon[] EmitPhotons(Random rnd, int nphotons)
+	public Photon[] EmitPhotons(int nphotons)
 	{
 		Photon[] photons = new Photon[nphotons];
 		Luminance energy = le / nphotons;

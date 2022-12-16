@@ -6,8 +6,14 @@ public class SimpleTracing : IEngine
 {
 	public const int SHADOW_RAYS = 10;
 	public const double ABSOPTION = 0.3;
+	public readonly Random rnd;
 
-	public Luminance L(Random rnd, HitPoint hp, Vector point, Vector direction, IShape scene, IShape diffuse, IShape glossy, ILightSource lights)
+	public SimpleTracing(Random rnd)
+	{
+		this.rnd = rnd;
+	}
+
+	public Luminance L(HitPoint hp, Vector point, Vector direction, IShape scene, IShape diffuse, IShape glossy, ILightSource lights)
 	{
 		Luminance result = Luminance.Zero;
 		Luminance factor = new Luminance(1, 1, 1);
@@ -21,7 +27,7 @@ public class SimpleTracing : IEngine
 
 			for(int i = 0; i < SHADOW_RAYS; i++)
 			{	
-				LightPoint lp = lights.SampleLightPoint(rnd);
+				LightPoint lp = lights.SampleLightPoint();
 				Vector ndirection = lp.point - current_point;
 
 				double cos_dir_normal = current_hp.normal.DotProduct(ndirection);
@@ -75,7 +81,7 @@ public class SimpleTracing : IEngine
 
 			ksi = (ksi - ABSOPTION) / (1 - ABSOPTION);
 
-			RandomDirection rndd = current_hp.material.SampleDirection(rnd, current_direction, current_hp.normal, ksi);
+			RandomDirection rndd = current_hp.material.SampleDirection(current_direction, current_hp.normal, ksi);
 			
 			if(rndd.factor.r == 0 && rndd.factor.g == 0 && rndd.factor.b == 0)
 			{

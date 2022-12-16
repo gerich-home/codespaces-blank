@@ -99,7 +99,7 @@ public class IdealRefractorMaterial: IMaterial
 		return result;
 	}
 
-	public RandomDirection SampleDirection(Random rnd, Vector direction, Vector normal, double ksi)
+	public RandomDirection SampleDirection(Vector direction, Vector normal, double ksi)
 	{	
 		double cosa = -direction.DotProduct(normal);
 		double factor = refract;

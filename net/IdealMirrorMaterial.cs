@@ -16,7 +16,7 @@ public class IdealMirrorMaterial: IMaterial
 		return Luminance.Zero;
 	}
 
-	public RandomDirection SampleDirection(Random rnd, Vector direction, Vector normal, double ksi)
+	public RandomDirection SampleDirection(Vector direction, Vector normal, double ksi)
 	{
 		Vector R = direction - 2 * normal.DotProduct(direction) * normal;
 

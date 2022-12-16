@@ -2,22 +2,24 @@ using Engine;
 
 namespace Lights;
 
-public class Sphere : ILightSource
+public class SphereLight : ILightSource
 {
 	public readonly double r;
 	public readonly double probability;
 	public readonly Vector center;
 	public readonly Luminance le;
+	public readonly Random rnd;
 
-	public Sphere(Vector center, double r, Luminance le)
+	public SphereLight(Random rnd, Vector center, double r, Luminance le)
 	{
+		this.rnd = rnd;
 		this.center = center;
 		this.r = r;
 		this.probability = 1 / (4 * Math.PI * r * r);
 		this.le = le;
 	}
 
-	public LightPoint SampleLightPoint(Random rnd)
+	public LightPoint SampleLightPoint()
 	{	
 		double cosa = rnd.NextDouble();
 		double sina = Math.Sqrt(1 - cosa * cosa);
@@ -28,7 +30,7 @@ public class Sphere : ILightSource
 		return new LightPoint(center + r * normal, normal, probability, le);
 	}
 
-	public Photon[] EmitPhotons(Random rnd, int nphotons)
+	public Photon[] EmitPhotons(int nphotons)
 	{
 		Photon[] photons = new Photon[nphotons];
 		Luminance energy = le / nphotons;

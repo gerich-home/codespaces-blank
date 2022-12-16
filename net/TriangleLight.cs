@@ -10,9 +10,11 @@ public class Triangle : ILightSource
 	public readonly Vector a;
 	public readonly Vector normal;
 	public readonly Luminance le;
+	public readonly Random rnd;
 
-	public Triangle(Vector a, Vector b, Vector c, Luminance Le)
+	public Triangle(Random rnd, Vector a, Vector b, Vector c, Luminance Le)
 	{
+		this.rnd = rnd;
 		this.a = a;
 		this.ba = b - a;
 		this.ca = c - a;
@@ -21,7 +23,7 @@ public class Triangle : ILightSource
 		this.le = le;
 	}
 
-	public LightPoint SampleLightPoint(Random rnd)
+	public LightPoint SampleLightPoint()
 	{
 		double t1 = rnd.NextDouble();
 		double t2 = rnd.NextDouble();
@@ -36,7 +38,7 @@ public class Triangle : ILightSource
 		return new LightPoint(p, normal, probability, le);
 	}
 
-	public Photon[] EmitPhotons(Random rnd, int nphotons)
+	public Photon[] EmitPhotons(int nphotons)
 	{
 		Photon[] photons = new Photon[nphotons];
 		Luminance energy = le / nphotons;

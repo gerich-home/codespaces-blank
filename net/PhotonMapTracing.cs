@@ -16,7 +16,7 @@ public class PhotonMapTracing: IEngine
 		this.causticsMap = causticsMap;
 	}
 
-	public Luminance L(Random rnd, HitPoint hp, Vector point, Vector direction, IShape scene, IShape diffuse, IShape glossy, ILightSource lights)
+	public Luminance L(HitPoint hp, Vector point, Vector direction, IShape scene, IShape diffuse, IShape glossy, ILightSource lights)
 	{
 		Luminance result = Luminance.Zero;
 		Luminance factor = new Luminance(1, 1, 1);
@@ -30,7 +30,7 @@ public class PhotonMapTracing: IEngine
 
 			for(int i = 0; i < SHADOW_RAYS; i++)
 			{	
-				LightPoint lp = lights.SampleLightPoint(rnd);
+				LightPoint lp = lights.SampleLightPoint();
 				Vector ndirection = lp.point - current_point;
 
 				double cos_dir_normal = current_hp.normal.DotProduct(ndirection);
@@ -75,7 +75,7 @@ public class PhotonMapTracing: IEngine
 			
 			//Compute indirect luminancy
 			
-			RandomDirection rndd = current_hp.material.SampleDirection(rnd, current_direction, current_hp.normal, ABSOPTION);
+			RandomDirection rndd = current_hp.material.SampleDirection(current_direction, current_hp.normal, ABSOPTION);
 				
 			// the whole file was commented before
 			//if(rndd.hp == null)

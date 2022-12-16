@@ -6,9 +6,11 @@ public class CompositeLightSource : ILightSource
 {
 	public readonly ILightSource[] lights;
 	public readonly double[] probabilities;
+	public readonly Random rnd;
 
-	public CompositeLightSource(ILightSource[] lights)
+	public CompositeLightSource(Random rnd, ILightSource[] lights)
 	{
+		this.rnd = rnd;
 		this.lights = lights;
 		this.probabilities = new double[lights.Length];
 		
@@ -39,7 +41,7 @@ public class CompositeLightSource : ILightSource
 		}
 	}
 
-	public LightPoint SampleLightPoint(Random rnd)
+	public LightPoint SampleLightPoint()
 	{
 		double ksi = rnd.NextDouble();
 
@@ -47,7 +49,7 @@ public class CompositeLightSource : ILightSource
 		{
 			if(ksi < probabilities[i])
 			{
-				LightPoint lp = lights[i].SampleLightPoint(rnd);
+				LightPoint lp = lights[i].SampleLightPoint();
 				return new LightPoint(lp.point, lp.normal, probabilities[i] * lp.probability, lp.Le);
 			}
 			else
@@ -59,7 +61,7 @@ public class CompositeLightSource : ILightSource
 		throw new Exception();
 	}
 
-	public Photon[] EmitPhotons(Random rnd, int nphotons)
+	public Photon[] EmitPhotons(int nphotons)
 	{
 		double factor = nphotons / Le.Energy;
 
@@ -75,7 +77,7 @@ public class CompositeLightSource : ILightSource
 		}
 
 		return lights
-			.SelectMany((light, i) => light.EmitPhotons(rnd, nphotonsPerLight[i]))
+			.SelectMany((light, i) => light.EmitPhotons(nphotonsPerLight[i]))
 			.ToArray();
 	}
 

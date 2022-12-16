@@ -6,11 +6,17 @@ public class CausticPhotonMapBuilder : IPhotonMapBuilder
 {
 	public const int NPHOTONS = 100;
 	public const double ABSOPTION = 0.3;
+	public readonly Random rnd;
 
-	public PhotonMap BuildPhotonMap(Random rnd, IShape scene, IShape diffuse, IShape glossy, ILightSource lights)
+	public CausticPhotonMapBuilder(Random rnd)
+	{
+		this.rnd = rnd;
+	}
+
+	public PhotonMap BuildPhotonMap(IShape scene, IShape diffuse, IShape glossy, ILightSource lights)
 	{
 		PhotonMap pm = new PhotonMap(NPHOTONS);
-		Photon[] emitted_photons = lights.EmitPhotons(rnd, NPHOTONS);
+		Photon[] emitted_photons = lights.EmitPhotons(NPHOTONS);
 
 		for(int i = 0; i < NPHOTONS; i++)
 		{
@@ -86,7 +92,7 @@ public class CausticPhotonMapBuilder : IPhotonMapBuilder
 
 				ksi = (ksi - ABSOPTION) / (1 - ABSOPTION);
 
-				RandomDirection rndd = hp.material.SampleDirection(rnd, current_photon.direction, hp.normal, ksi);
+				RandomDirection rndd = hp.material.SampleDirection(current_photon.direction, hp.normal, ksi);
 			
 				if(rndd.factor.r == 0 && rndd.factor.g == 0 && rndd.factor.b == 0)
 				{
