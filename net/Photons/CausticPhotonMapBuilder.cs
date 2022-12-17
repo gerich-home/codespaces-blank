@@ -94,7 +94,7 @@ public class CausticPhotonMapBuilder : IPhotonMapBuilder
 
 				RandomDirection rndd = hp.material.SampleDirection(current_photon.ray.direction, hp.normal, ksi);
 			
-				if(rndd.factor.r == 0 && rndd.factor.g == 0 && rndd.factor.b == 0)
+				if(rndd.factor.IsZero)
 				{
 					break;
 				}

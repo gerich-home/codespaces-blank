@@ -22,7 +22,7 @@ public record class PhotonMapTracingEngine(
 		Luminance result = Luminance.Zero;
 		Luminance factor = new Luminance(1, 1, 1);
 		Vector current_point = hp.hitPoint;
-		Vector current_direction = hp.ray.direction;
+		Vector current_direction = hp.direction;
 		HitPoint current_hp = hp;
 
 		while(true)
@@ -84,7 +84,7 @@ public record class PhotonMapTracingEngine(
 			//	break;
 			//}
 
-			if(rndd.factor.r == 0 && rndd.factor.g == 0 && rndd.factor.b == 0)
+			if(rndd.factor.IsZero)
 			{
 				break;
 			}

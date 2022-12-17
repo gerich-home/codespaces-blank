@@ -3,6 +3,7 @@ namespace Engine;
 public readonly record struct Luminance(double r, double g, double b)
 {
 	public static Luminance Zero => new Luminance(0, 0, 0);
+	public bool IsZero => r == 0 && g == 0 && b == 0;
 
 	public double Energy => (r + g + b) / 3;
 
