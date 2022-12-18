@@ -21,9 +21,8 @@ public class SphereLight : ILightSource
 
 	public LightPoint SampleLightPoint()
 	{	
-		double cosa = rnd.NextDouble();
-		double sina = Math.Sqrt(1 - cosa * cosa);
-		double b = 2 * Math.PI * rnd.NextDouble();
+		var (cosa, sina) = rnd.NextCosDistribution();
+		double b = rnd.NextDouble(2 * Math.PI);
 
 		Vector normal = new Vector(cosa * Math.Cos(b), cosa * Math.Sin(b), sina);
 
@@ -35,23 +34,20 @@ public class SphereLight : ILightSource
 		Photon[] photons = new Photon[nphotons];
 		Luminance energy = le / nphotons;
 		for(int i = 0; i < nphotons; i++)
-		{		
-			double sina = rnd.NextDouble();
-			double cosa = Math.Sqrt(1 - sina * sina);
-			double b = 2 * Math.PI * rnd.NextDouble();
+        {
+            var (cosa, sina) = rnd.NextSinDistribution();
+            double b = rnd.NextDouble(2 * Math.PI);
 
-			Vector normal = new Vector(cosa * Math.Cos(b), cosa * Math.Sin(b), sina);
-			
-			cosa = rnd.NextDouble();
-			sina = Math.Sqrt(1 - cosa * cosa);
-			b = 2 * Math.PI * rnd.NextDouble();
+            Vector normal = new Vector(cosa * Math.Cos(b), cosa * Math.Sin(b), sina);
+            (cosa, sina) = rnd.NextCosDistribution();
+            b = rnd.NextDouble(2 * Math.PI);
 
-			Vector direction = new Vector(sina * Math.Cos(b), sina * Math.Sin(b), cosa).Transform(normal);
+            Vector direction = new Vector(sina * Math.Cos(b), sina * Math.Sin(b), cosa).Transform(normal);
 
-			photons[i] = new Photon((center + r * normal).RayAlong(direction), normal, energy);
-		}
+            photons[i] = new Photon((center + r * normal).RayAlong(direction), normal, energy);
+        }
 
-		return photons;
+        return photons;
 	}
 
     public Luminance Le => le;

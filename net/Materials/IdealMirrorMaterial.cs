@@ -5,9 +5,9 @@ namespace Materials;
 public record class IdealMirrorMaterial(
 	Luminance rs //koefficient specular reflection
 ): IMaterial {
-	public Luminance BRDF(Vector direction, Vector ndirection, Vector normal) =>
+	public Luminance BRDF(HitPoint hitPoint, Vector ndirection) =>
 		Luminance.Zero;
 
-	public RandomDirection SampleDirection(Vector direction, Vector normal, double ksi) =>
-		new RandomDirection(rs, direction - 2 * normal.DotProduct(direction) * normal);
+	public RandomDirection SampleDirection(HitPoint hitPoint, double ksi) =>
+		new RandomDirection(rs, hitPoint.r);
 }

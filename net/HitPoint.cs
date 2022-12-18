@@ -21,8 +21,11 @@ public class HitPoint
 		hitPoint.RayAlong(newDirection);
 
 	public RandomDirection SampleDirection(double ksi) =>
-		material.SampleDirection(direction, normal, ksi);
+		material.SampleDirection(this, ksi);
 
 	public Luminance BRDF(Vector ndirection) =>
-		material.BRDF(direction, ndirection, normal);
+		material.BRDF(this, ndirection);
+
+	public Vector r =>
+		direction - 2 * normal.DotProduct(direction) * normal;
 }

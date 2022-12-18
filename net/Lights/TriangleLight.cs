@@ -47,9 +47,8 @@ public class Triangle : ILightSource
 			double t1 = rnd.NextDouble();
 			double t2 = rnd.NextDouble();
 			
-			double cosa = rnd.NextDouble();
-			double sina = Math.Sqrt(1 - cosa * cosa);
-			double b = 2 * Math.PI * rnd.NextDouble();
+			var (cosa, sina) = rnd.NextCosDistribution();
+			double b = rnd.NextDouble(2 * Math.PI);
 
 			Vector direction = new Vector(sina * Math.Cos(b), sina * Math.Sin(b), cosa).Transform(normal);
 

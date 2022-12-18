@@ -6,11 +6,11 @@ public record class IdealRefractorMaterial(
 	Luminance rd,
 	double refract
 ): IMaterial {
-	public Luminance BRDF(Vector direction, Vector ndirection, Vector normal)
+	public Luminance BRDF(HitPoint hitPoint, Vector ndirection)
 	{
 		int n = 500;
 
-		double cosa = -direction.DotProduct(normal);
+		double cosa = -hitPoint.direction.DotProduct(hitPoint.normal);
 		double factor = refract;
 		if(cosa < 0)
 		{
@@ -21,7 +21,7 @@ public record class IdealRefractorMaterial(
 
 		if(cosb < 0)
 		{
-			Vector R = direction + 2 * cosa * normal;
+			Vector R = hitPoint.direction + 2 * cosa * hitPoint.normal;
 			
 			double cosphi = ndirection.DotProduct(R);
 		
@@ -51,7 +51,7 @@ public record class IdealRefractorMaterial(
 		Luminance result = Luminance.Zero;
 		
 		{
-			Vector R = direction + 2 * cosa * normal;
+			Vector R = hitPoint.direction + 2 * cosa * hitPoint.normal;
 			double cosphi = ndirection.DotProduct(R);
 		
 			if(cosphi > 0)
@@ -68,11 +68,11 @@ public record class IdealRefractorMaterial(
 			Vector R;
 			if(cosa > 0)
 			{
-				R = -cosb * normal + factor * (cosa * normal + direction);
+				R = -cosb * hitPoint.normal + factor * (cosa * hitPoint.normal + hitPoint.direction);
 			}
 			else	
 			{
-				R = cosb * normal + factor * (cosa * normal + direction);
+				R = cosb * hitPoint.normal + factor * (cosa * hitPoint.normal + hitPoint.direction);
 			}
 			
 			double cosphi = ndirection.DotProduct(R);
@@ -90,12 +90,12 @@ public record class IdealRefractorMaterial(
 		return result;
 	}
 
-	public RandomDirection SampleDirection(Vector direction, Vector normal, double ksi) =>
-		new RandomDirection(rd, SampleDirectionVector(direction, normal, ksi));
+	public RandomDirection SampleDirection(HitPoint hitPoint, double ksi) =>
+		new RandomDirection(rd, SampleDirectionVector(hitPoint, ksi));
 
-	private Vector SampleDirectionVector(Vector direction, Vector normal, double ksi)
+	private Vector SampleDirectionVector(HitPoint hitPoint, double ksi)
 	{	
-		double cosa = -direction.DotProduct(normal);
+		double cosa = -hitPoint.direction.DotProduct(hitPoint.normal);
 		double factor = refract;
 		if(cosa < 0)
 		{
@@ -106,7 +106,7 @@ public record class IdealRefractorMaterial(
 
 		if(cosb < 0)
 		{
-			return direction + 2 * cosa * normal;
+			return hitPoint.direction + 2 * cosa * hitPoint.normal;
 		}
 
 		cosb = Math.Sqrt(cosb);
@@ -122,16 +122,16 @@ public record class IdealRefractorMaterial(
 		
 		if(ksi < qreflect)
 		{
-			return direction + 2 * cosa * normal;
+			return hitPoint.direction + 2 * cosa * hitPoint.normal;
 		}
 	
 		if(cosa > 0)
 		{
-			return -cosb * normal + factor * (cosa * normal + direction);
+			return -cosb * hitPoint.normal + factor * (cosa * hitPoint.normal + hitPoint.direction);
 		}
 		else
 		{
-			return cosb * normal + factor * (cosa * normal + direction);
+			return cosb * hitPoint.normal + factor * (cosa * hitPoint.normal + hitPoint.direction);
 		}
 	}
 }

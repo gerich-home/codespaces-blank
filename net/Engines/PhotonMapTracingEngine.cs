@@ -68,7 +68,7 @@ public record class PhotonMapTracingEngine(
 					}
 				}
 
-				direct += lp.Le * current_hp.material.BRDF(current_direction, ndirection, current_hp.normal) * (cos_dir_normal * cos_dir_lnormal / (lp.probability * l * l));
+				direct += lp.Le * current_hp.BRDF(ndirection) * (cos_dir_normal * cos_dir_lnormal / (lp.probability * l * l));
 			}
 			direct /= SHADOW_RAYS;
 			
@@ -76,7 +76,7 @@ public record class PhotonMapTracingEngine(
 			
 			//Compute indirect luminancy
 			
-			RandomDirection rndd = current_hp.material.SampleDirection(current_direction, current_hp.normal, ABSOPTION);
+			RandomDirection rndd = current_hp.SampleDirection(ABSOPTION);
 				
 			// the whole file was commented before
 			//if(rndd.hp == null)
