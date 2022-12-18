@@ -8,7 +8,7 @@ public class HitPoint
 	public readonly Vector normal;
 	public readonly IMaterial material;
 
-	public HitPoint(Ray ray, double t, Vector normal, IMaterial material)
+	public HitPoint(in Ray ray, double t, in Vector normal, IMaterial material)
 	{
 		this.t = t;
 		this.direction = ray.direction;
@@ -17,13 +17,13 @@ public class HitPoint
 		this.material = material;
 	}
 	
-	public Ray RayAlong(Vector newDirection) =>
+	public Ray RayAlong(in Vector newDirection) =>
 		hitPoint.RayAlong(newDirection);
 
 	public RandomDirection SampleDirection(double ksi) =>
 		material.SampleDirection(this, ksi);
 
-	public Luminance BRDF(Vector ndirection) =>
+	public Luminance BRDF(in Vector ndirection) =>
 		material.BRDF(this, ndirection);
 
 	public Vector r =>

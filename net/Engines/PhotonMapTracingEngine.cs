@@ -10,7 +10,7 @@ public record class PhotonMapTracingEngine(
 	const int SHADOW_RAYS = 10;
 	const double ABSOPTION = 0.01;
 
-	public Luminance L(Ray ray)
+	public Luminance L(in Ray ray)
 	{
 		HitPoint hp = sceneSetup.scene.Intersection(ray);
 	

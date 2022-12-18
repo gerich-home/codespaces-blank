@@ -6,7 +6,7 @@ public record class IdealRefractorMaterial(
 	Luminance rd,
 	double refract
 ): IMaterial {
-	public Luminance BRDF(HitPoint hitPoint, Vector ndirection)
+	public Luminance BRDF(HitPoint hitPoint, in Vector ndirection)
 	{
 		int n = 500;
 

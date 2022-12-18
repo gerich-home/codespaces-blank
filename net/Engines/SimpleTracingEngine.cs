@@ -9,7 +9,7 @@ public record class SimpleTracingEngine(
 	public const int SHADOW_RAYS = 10;
 	public const double ABSOPTION = 0.3;
 
-	public Luminance L(Ray ray) =>
+	public Luminance L(in Ray ray) =>
 		LuminanceComponents(ray).Aggregate(Luminance.Zero, (l1, l2) => l1 + l2);
 
 	private IEnumerable<Luminance> LuminanceComponents(Ray ray)

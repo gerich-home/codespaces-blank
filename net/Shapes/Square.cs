@@ -32,7 +32,7 @@ public class Square: IShape
 		this.material = new TexturedMaterialAdapter(material);
 	}
 
-	public HitPoint Intersection(Ray ray)
+	public HitPoint Intersection(in Ray ray)
 	{
 		double t = 0;
 		double t1 = 0;

@@ -211,7 +211,7 @@ public class PhotonMap
 		}
 	}
 
-	public double FindNearest(Vector x, int count, Photon[] result)
+	public double FindNearest(in Vector x, int count, Photon[] result)
 	{
 		ParamsForFind p = new ParamsForFind(x, count, result);
 		GoDown(root, p);

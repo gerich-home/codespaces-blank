@@ -1,8 +1,10 @@
+using System.Text;
+
 namespace Engine;
 
 public readonly record struct Vector(double x, double y, double z)
 {
-	public Ray RayAlong(Vector direction) =>
+	public Ray RayAlong(in Vector direction) =>
 		new Ray(this, direction);
 
 	public static Vector Zero => new Vector(0, 0, 0);
@@ -13,32 +15,32 @@ public readonly record struct Vector(double x, double y, double z)
 
 	public double Length => Math.Sqrt(Norm);
 
-	public static Vector operator +(Vector a, Vector b) =>
+	public static Vector operator +(in Vector a, in Vector b) =>
 		new Vector(a.x + b.x, a.y + b.y, a.z + b.z);
 		
-	public static Vector operator -(Vector a, Vector b) =>
+	public static Vector operator -(in Vector a, in Vector b) =>
 		new Vector(a.x - b.x, a.y - b.y, a.z - b.z);
 		
-	public static Vector operator *(Vector a, double factor) =>
+	public static Vector operator *(in Vector a, double factor) =>
 		new Vector(a.x * factor, a.y * factor, a.z * factor);
 
-	public static Vector operator *(double factor, Vector a) =>
+	public static Vector operator *(double factor, in Vector a) =>
 		new Vector(a.x * factor, a.y * factor, a.z * factor);
 
-	public static Vector operator /(Vector a, double factor) =>
+	public static Vector operator /(in Vector a, double factor) =>
 		a * (1 / factor);
 
-	public Vector CrossProduct(Vector vector) =>
+	public Vector CrossProduct(in Vector vector) =>
 		new Vector(
 			y * vector.z - vector.y * z,
 			z * vector.x - vector.z * x,
 			x * vector.y - vector.x * y
 		);
 
-	public double DotProduct(Vector vector) =>
+	public double DotProduct(in Vector vector) =>
 		vector.x * x + vector.y * y + vector.z * z;
 
-	public Vector Transform(Vector axis)
+	public Vector Transform(in Vector axis)
 	{
 		Vector t;
 
@@ -73,4 +75,20 @@ public readonly record struct Vector(double x, double y, double z)
 		2 => z,
 		_ => throw new Exception()
 	};
+
+	private bool PrintMembers(StringBuilder builder)
+    {
+        builder.Append(nameof(x));
+        builder.Append(" = ");
+        builder.Append(x);
+		builder.Append(", ");
+        builder.Append(nameof(y));
+        builder.Append(" = ");
+        builder.Append(y);
+		builder.Append(", ");
+        builder.Append(nameof(z));
+        builder.Append(" = ");
+        builder.Append(z);
+		return true;
+	}
 }

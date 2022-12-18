@@ -11,7 +11,7 @@ public class Scene : IShape
 		this.shapes = shapes;
 	}
 
-	public HitPoint Intersection(Ray ray)
+	public HitPoint Intersection(in Ray ray)
 	{
 		HitPoint bestHitPoint = null;
 		HitPoint hitPoint;

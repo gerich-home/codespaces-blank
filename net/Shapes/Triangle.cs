@@ -21,7 +21,7 @@ public class Triangle: IShape
 		this.material = material;
 	}
 
-	public HitPoint Intersection(Ray ray)
+	public HitPoint Intersection(in Ray ray)
 	{
 		double t = 0;
 		double t1 = 0;

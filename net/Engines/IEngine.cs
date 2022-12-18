@@ -7,5 +7,5 @@ public interface IEngineFactory
 
 public interface IEngine
 {
-	Luminance L(Ray ray);
+	Luminance L(in Ray ray);
 }

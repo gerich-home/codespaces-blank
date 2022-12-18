@@ -2,5 +2,5 @@ namespace Engine;
 
 public interface IShape
 {
-	HitPoint Intersection(Ray ray);
+	HitPoint Intersection(in Ray ray);
 }

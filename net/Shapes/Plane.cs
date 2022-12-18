@@ -41,7 +41,7 @@ public class Plane : IShape
 			);
 	}
 
-	public HitPoint Intersection(Ray ray)
+	public HitPoint Intersection(in Ray ray)
 	{
 		double divident = normal.DotProduct(ray.direction);
 

@@ -2,29 +2,52 @@ using Engine;
 
 namespace Materials;
 
-public record class DuffuseSpecularMaterial(
-	Random rnd,
-	Luminance rd,
-	Luminance rs,
-	int[] n
-) : IMaterial {
-	public Luminance BRDF(HitPoint hitPoint, Vector ndirection)
+public class DuffuseSpecularMaterial : IMaterial
+{
+	public readonly Random rnd;
+	public readonly Luminance rd;
+	public readonly Luminance rs;
+	public readonly Luminance n;
+
+	public readonly Luminance diffuseResult;
+	public readonly Luminance rsDiv2PiMulNPlus2;
+	public readonly bool IsPureDiffuse;
+
+	public DuffuseSpecularMaterial(Random rnd, Luminance rd, Luminance rs, Luminance n)
 	{
-		Luminance result = rd / Math.PI; 
-		
+		this.rnd = rnd;
+		this.rd = rd;
+		this.rs = rs;
+		this.n = n;
+
+
+		this.diffuseResult = rd / Math.PI;
+		this.rsDiv2PiMulNPlus2 = (n + new Luminance(2, 2, 2)) * rs / (2 * Math.PI);
+		this.IsPureDiffuse = rs.IsZero;
+	}
+
+	public Luminance BRDF(HitPoint hitPoint, in Vector ndirection)
+	{
+		if (IsPureDiffuse)
+		{
+			return diffuseResult;
+		}
+
 		Vector R = 2 * hitPoint.normal.DotProduct(ndirection) * hitPoint.normal - ndirection;
 		double cosphi = -hitPoint.direction.DotProduct(R);
 		
-		if(cosphi > 0)
+		if (cosphi <= 0)
 		{
-			result += new Luminance(
-				rs.r == 0 ? 0 : rs.r * (n[0] + 2) * Math.Pow(cosphi, n[0]),
-				rs.g == 0 ? 0 : rs.g * (n[1] + 2) * Math.Pow(cosphi, n[1]),
-				rs.b == 0 ? 0 : rs.b * (n[2] + 2) * Math.Pow(cosphi, n[2])
-				) / (2 * Math.PI);
+			return diffuseResult;
 		}
 
-		return result;
+		var specularResult = new Luminance(
+			rsDiv2PiMulNPlus2.r == 0 ? 0 : rsDiv2PiMulNPlus2.r * Math.Pow(cosphi, n.r),
+			rsDiv2PiMulNPlus2.g == 0 ? 0 : rsDiv2PiMulNPlus2.g * Math.Pow(cosphi, n.g),
+			rsDiv2PiMulNPlus2.b == 0 ? 0 : rsDiv2PiMulNPlus2.b * Math.Pow(cosphi, n.b)
+		);
+
+		return diffuseResult + specularResult;
 	}
 
 	public RandomDirection SampleDirection(HitPoint hitPoint, double ksi)
@@ -59,7 +82,7 @@ public record class DuffuseSpecularMaterial(
 		}
 		else
 		{
-			double selectedn = Math.Min(n[0], Math.Min(n[1], n[2]));
+			double selectedn = Math.Min(n.r, Math.Min(n.g, n.b));
 	
 			double cosa = Math.Pow(rnd.NextDouble(), 1 / (selectedn + 1));
 			double sina = Math.Sqrt(1 - cosa * cosa);
@@ -77,9 +100,9 @@ public record class DuffuseSpecularMaterial(
 			}
 
 			return new RandomDirection(new Luminance(
-				rs.r == 0 ? 0 : rs.r * (n[0] + 2) * Math.Pow(cosa, n[0] - selectedn),
-				rs.g == 0 ? 0 : rs.g * (n[1] + 2) * Math.Pow(cosa, n[1] - selectedn),
-				rs.b == 0 ? 0 : rs.b * (n[2] + 2) * Math.Pow(cosa, n[2] - selectedn)
+				rs.r == 0 ? 0 : rs.r * (n.r + 2) * Math.Pow(cosa, n.r - selectedn),
+				rs.g == 0 ? 0 : rs.g * (n.g + 2) * Math.Pow(cosa, n.g - selectedn),
+				rs.b == 0 ? 0 : rs.b * (n.b + 2) * Math.Pow(cosa, n.b - selectedn)
 				) * hitPoint.normal.DotProduct(ndirection) / (qs * (selectedn + 2)), ndirection);
 		}
 	}

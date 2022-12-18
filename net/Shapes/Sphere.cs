@@ -17,7 +17,7 @@ public class Sphere : IShape
 		this.rinv = 1 / r;
 	}
 
-	public HitPoint Intersection(Ray ray)
+	public HitPoint Intersection(in Ray ray)
 	{
 		Vector ac = ray.start - center;
 		
