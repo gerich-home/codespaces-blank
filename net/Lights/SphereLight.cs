@@ -9,6 +9,7 @@ public class SphereLight : ILightSource
 	public readonly Vector center;
 	public readonly Luminance le;
 	public readonly Random rnd;
+	public static readonly double TwoPi = 2 * Math.PI;
 
 	public SphereLight(Random rnd, Vector center, double r, Luminance le)
 	{
@@ -19,14 +20,31 @@ public class SphereLight : ILightSource
 		this.le = le;
 	}
 
-	public LightPoint SampleLightPoint()
+	public bool CanSendLightTo(HitPoint hitPoint)
+	{
+		var hc = hitPoint.Point - center;
+
+		return hitPoint.Normal.DotProduct(hc) > -r;
+	}
+
+	public LightPoint SampleLightPoint(HitPoint hitPoint)
 	{	
 		var (cosa, sina) = rnd.NextCosDistribution();
-		double b = rnd.NextDouble(2 * Math.PI);
+		var b = rnd.NextDouble(TwoPi);
+		var (sinb, cosb) = Math.SinCos(b);
 
-		Vector normal = new Vector(cosa * Math.Cos(b), cosa * Math.Sin(b), sina);
+		var normal = new Vector(
+			cosa * cosb,
+			cosa * sinb,
+			sina
+		);
 
-		return new LightPoint(center + r * normal, normal, probability, le);
+		return new LightPoint(
+			center + r * normal,
+			normal,
+			probability,
+			le
+		);
 	}
 
 	public Photon[] EmitPhotons(int nphotons)
@@ -36,13 +54,24 @@ public class SphereLight : ILightSource
 		for(int i = 0; i < nphotons; i++)
         {
             var (cosa, sina) = rnd.NextSinDistribution();
-            double b = rnd.NextDouble(2 * Math.PI);
+            var b = rnd.NextDouble(TwoPi);
+			var (sinb, cosb) = Math.SinCos(b);
 
-            Vector normal = new Vector(cosa * Math.Cos(b), cosa * Math.Sin(b), sina);
+            var normal = new Vector(
+				cosa * cosb,
+				cosa * sinb,
+				sina
+			);
+
             (cosa, sina) = rnd.NextCosDistribution();
-            b = rnd.NextDouble(2 * Math.PI);
+            b = rnd.NextDouble(TwoPi);
+			(sinb, cosb) = Math.SinCos(b);
 
-            Vector direction = new Vector(sina * Math.Cos(b), sina * Math.Sin(b), cosa).Transform(normal);
+            var direction = new Vector(
+				sina * cosb,
+				sina * sinb,
+				cosa
+			).Transform(normal);
 
             photons[i] = new Photon((center + r * normal).RayAlong(direction), normal, energy);
         }

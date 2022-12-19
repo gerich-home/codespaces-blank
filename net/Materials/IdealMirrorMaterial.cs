@@ -9,5 +9,5 @@ public record class IdealMirrorMaterial(
 		Luminance.Zero;
 
 	public RandomDirection SampleDirection(HitPoint hitPoint, double ksi) =>
-		new RandomDirection(rs, hitPoint.r);
+		new RandomDirection(rs, hitPoint.Reflection);
 }

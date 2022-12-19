@@ -21,8 +21,8 @@ public record class PhotonMapTracingEngine(
 
 		Luminance result = Luminance.Zero;
 		Luminance factor = new Luminance(1, 1, 1);
-		Vector current_point = hp.hitPoint;
-		Vector current_direction = hp.direction;
+		Vector current_point = hp.Point;
+		Vector current_direction = hp.IncomingDirection;
 		HitPoint current_hp = hp;
 
 		while(true)
@@ -31,44 +31,44 @@ public record class PhotonMapTracingEngine(
 
 			for(int i = 0; i < SHADOW_RAYS; i++)
 			{	
-				LightPoint lp = sceneSetup.lights.SampleLightPoint();
-				Vector ndirection = lp.point - current_point;
+				LightPoint lp = sceneSetup.lights.SampleLightPoint(hp);
+				Vector directionToLight = lp.point - current_point;
 
-				double cos_dir_normal = current_hp.normal.DotProduct(ndirection);
+				double cos_dir_normal = current_hp.Normal.DotProduct(directionToLight);
 
 				if(cos_dir_normal < 0)
 				{
 					continue;
 				}
 
-				double cos_dir_lnormal = -(ndirection.DotProduct(lp.normal));
+				double cos_dir_lnormal = -(directionToLight.DotProduct(lp.normal));
 				if(cos_dir_lnormal < 0)
 				{
 					continue;
 				}
 
-				double l = ndirection.Length;
+				double l = directionToLight.Length;
 				if(l * l < double.Epsilon)
 				{
 					continue;
 				}
 
 				double linv = 1 / l;
-				ndirection *= linv;
+				directionToLight *= linv;
 				cos_dir_normal *= linv;
 				cos_dir_lnormal *= linv;
 
-				HitPoint nhp = sceneSetup.scene.Intersection(current_point.RayAlong(ndirection));
+				HitPoint nhp = sceneSetup.scene.Intersection(current_point.RayAlong(directionToLight));
 
 				if(nhp != null)
 				{
-					if(nhp.t <= l - double.Epsilon)
+					if(nhp.T <= l - double.Epsilon)
 					{
 						continue;
 					}
 				}
 
-				direct += lp.Le * current_hp.BRDF(ndirection) * (cos_dir_normal * cos_dir_lnormal / (lp.probability * l * l));
+				direct += lp.Le * current_hp.BRDF(directionToLight) * (cos_dir_normal * cos_dir_lnormal / (lp.probability * l * l));
 			}
 			direct /= SHADOW_RAYS;
 			

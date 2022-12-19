@@ -6,54 +6,76 @@ public record class SimpleTracingEngine(
 	Random rnd,
 	SceneSetup sceneSetup
 ): IEngine {
+	public const int REFLECT_RAYS = 3;
 	public const int SHADOW_RAYS = 10;
-	public const double ABSOPTION = 0.3;
+	public const double ABSOPTION = 0.7;
 
-	public Luminance L(in Ray ray) =>
-		LuminanceComponents(ray).Aggregate(Luminance.Zero, (l1, l2) => l1 + l2);
-
-	private IEnumerable<Luminance> LuminanceComponents(Ray ray)
+	public Luminance L(in Ray ray)
 	{
-		HitPoint hp;
-		
-		hp = sceneSetup.scene.Intersection(ray);
+		var hp = sceneSetup.scene.Intersection(ray);
 	
 		if (hp == null)
 		{
-			yield break;
+			return Luminance.Zero;
 		}
 
-		Luminance factor = new Luminance(1, 1, 1);
+		var root = new Node
+		{
+			hp = hp,
+			factor = new Luminance(1, 1, 1),
+			indirectLuminance = Luminance.Zero
+		};
 
-		while(true)
+		var q = new Queue<Node>();
+		var s = new Stack<Node>();
+		q.Enqueue(root);
+
+		while(q.Count > 0)
         {
-			yield return factor * ComputeDirectLuminance(hp);
+			var node = q.Dequeue();
 
             double ksi = rnd.NextDouble();
 
             if (ksi < ABSOPTION)
             {
-                yield break;
+                continue;
             }
 
-            ksi = (ksi - ABSOPTION) / (1 - ABSOPTION);
+			for(int i = 0; i < REFLECT_RAYS; i++)
+			{
+				var rndd = hp.SampleDirection(rnd.NextDouble());
 
-            var rndd = hp.SampleDirection(ksi);
+				if (rndd.factor.IsZero)
+				{
+					continue;
+				}
 
-            if (rndd.factor.IsZero)
-            {
-                yield break;
-            }
+				var nextHp = sceneSetup.scene.Intersection(hp.RayAlong(rndd.direction));
 
-            hp = sceneSetup.scene.Intersection(hp.RayAlong(rndd.direction));
-
-            if (hp == null)
-            {
-                yield break;
-            }
-
-            factor *= rndd.factor / (1 - ABSOPTION);
+				if (nextHp == null)
+				{
+					continue;
+				}
+				
+				var nextNode = new Node
+				{
+					parent = node,
+					hp = nextHp,
+					factor = rndd.factor / (REFLECT_RAYS * (1 - ABSOPTION))
+				};
+            	q.Enqueue(nextNode);
+				s.Push(nextNode);
+			}
         }
+
+		while(s.Count > 0)
+		{
+			var node = s.Pop();
+			var directLuminance = ComputeDirectLuminance(node.hp);
+			node.parent.indirectLuminance += (directLuminance + node.indirectLuminance) * node.factor;
+		}
+
+		return ComputeDirectLuminance(root.hp) + root.indirectLuminance;		
 	}
 
     private Luminance ComputeDirectLuminance(HitPoint hp)
@@ -70,40 +92,53 @@ public record class SimpleTracingEngine(
 	
     private Luminance ComputeDirectLuminanceForSingleRay(HitPoint hp)
     {
-		var lp = sceneSetup.lights.SampleLightPoint();
-		var ndirection = lp.point - hp.hitPoint;
+		var lp = sceneSetup.lights.SampleLightPoint(hp);
+		if (lp.probability == 0)
+		{
+			return Luminance.Zero;
+		}
 
-		double cos_dir_normal = hp.normal.DotProduct(ndirection);
+		var directionToLight = lp.point - hp.Point;
+
+		double cos_dir_normal = hp.Normal.DotProduct(directionToLight);
 
 		if (cos_dir_normal <= 0)
 		{
 			return Luminance.Zero;
 		}
 
-		double cos_dir_lnormal = -(ndirection.DotProduct(lp.normal));
-		if (cos_dir_lnormal <= 0)
+		double cos_dir_lnormal = directionToLight.DotProduct(lp.normal);
+		if (cos_dir_lnormal >= 0)
 		{
 			return Luminance.Zero;
 		}
 
-		double l = ndirection.Length;
+		double l = directionToLight.Length;
 		if (l * l < double.Epsilon)
 		{
 			return Luminance.Zero;
 		}
 
 		double linv = 1 / l;
-		ndirection *= linv;
+		directionToLight *= linv;
 		cos_dir_normal *= linv;
 		cos_dir_lnormal *= linv;
 
-		var barrierHp = sceneSetup.scene.Intersection(hp.RayAlong(ndirection));
+		var barrierHp = sceneSetup.scene.Intersection(hp.RayAlong(directionToLight));
 
-		if (barrierHp != null && (barrierHp.t <= l - double.Epsilon))
+		if (barrierHp != null && (barrierHp.T <= l - double.Epsilon))
 		{
 			return Luminance.Zero;
 		}
 
-		return lp.Le * hp.BRDF(ndirection) * (cos_dir_normal * cos_dir_lnormal / (lp.probability * l * l));
+		return lp.Le * hp.BRDF(directionToLight) * (-cos_dir_normal * cos_dir_lnormal / (lp.probability * l * l));
     }
+}
+
+class Node
+{
+	public Node parent;
+	public HitPoint hp;
+	public Luminance indirectLuminance = Luminance.Zero;
+	public Luminance factor;
 }

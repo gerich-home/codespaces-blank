@@ -34,7 +34,7 @@ public class CausticPhotonMapBuilder : IPhotonMapBuilder
 			
 			if(dhp1 != null)
 			{
-				if(dhp1.t < ghp1.t)
+				if(dhp1.T < ghp1.T)
 				{
 					continue;
 				}
@@ -55,7 +55,7 @@ public class CausticPhotonMapBuilder : IPhotonMapBuilder
 				{
 					if(ghp != null)
 					{
-						if(dhp.t <= ghp.t)
+						if(dhp.T <= ghp.T)
 						{
 							isDiffuse = true;
 							hp = dhp;
@@ -103,7 +103,7 @@ public class CausticPhotonMapBuilder : IPhotonMapBuilder
 
 				current_photon = current_photon with {
 					ray = current_photon.ray with {
-						start = current_photon.ray.PointAt(hp.t),
+						start = current_photon.ray.PointAt(hp.T),
 						direction = rndd.direction,
 					},
 					energy = current_photon.energy * rndd.factor / (1 - ABSOPTION)
@@ -112,7 +112,7 @@ public class CausticPhotonMapBuilder : IPhotonMapBuilder
 				if(isDiffuse)
 				{
 					current_photon = current_photon with {
-						normal = hp.normal
+						normal = hp.Normal
 					};
 					if(!pm.Add(current_photon))
 					{

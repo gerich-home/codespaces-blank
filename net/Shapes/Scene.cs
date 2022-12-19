@@ -19,7 +19,7 @@ public class Scene : IShape
 		for(int i = 0; i < shapes.Length; i++)
 		{
 			hitPoint = shapes[i].Intersection(ray);
-			if(hitPoint != null && (bestHitPoint == null || hitPoint.t < bestHitPoint.t))
+			if(hitPoint != null && (bestHitPoint == null || hitPoint.T < bestHitPoint.T))
 			{
 				bestHitPoint = hitPoint;
 			}

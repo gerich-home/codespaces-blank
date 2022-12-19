@@ -21,49 +21,49 @@ public class Program
 		Luminance kd_black = Luminance.Zero;
 		Luminance ks_black = Luminance.Zero;
 		Luminance n_black = new Luminance(1, 1, 1);
-		IMaterial m_black = new DuffuseSpecularMaterial(rnd, kd_black, ks_black, n_black);
+		IMaterial m_black = DiffuseSpecularMaterial.Create(rnd, kd_black, ks_black, n_black);
 
 		Luminance kd_white = new Luminance(1, 1, 1);
 		Luminance ks_white = Luminance.Zero;
 		Luminance n_white = new Luminance(1, 1, 1);
-		IMaterial m_white = new DuffuseSpecularMaterial(rnd, kd_white, ks_white, n_white);
+		IMaterial m_white = DiffuseSpecularMaterial.Create(rnd, kd_white, ks_white, n_white);
 
 		ITexturedMaterial m_chess = new CheckeredMaterial(2, 2, m_white, m_black);
 		
 		Luminance kd_red = new Luminance(1, 0, 0);
 		Luminance ks_red = Luminance.Zero;
 		Luminance n_red = Luminance.Zero;
-		IMaterial m_red = new DuffuseSpecularMaterial(rnd, kd_red, ks_red, n_red);
+		IMaterial m_red = DiffuseSpecularMaterial.Create(rnd, kd_red, ks_red, n_red);
 		
 		Luminance kd_blue = new Luminance(0, 0, 1);
 		Luminance ks_blue = Luminance.Zero;
 		Luminance n_blue = Luminance.Zero;
-		IMaterial m_blue = new DuffuseSpecularMaterial(rnd, kd_blue, ks_blue, n_blue);
+		IMaterial m_blue = DiffuseSpecularMaterial.Create(rnd, kd_blue, ks_blue, n_blue);
 		
 		Luminance kd_green = new Luminance(0, 1, 0);
 		Luminance ks_green = Luminance.Zero;
 		Luminance n_green = Luminance.Zero;
-		IMaterial m_green = new DuffuseSpecularMaterial(rnd, kd_green, ks_green, n_green);
+		IMaterial m_green = DiffuseSpecularMaterial.Create(rnd, kd_green, ks_green, n_green);
 
 		Luminance kd_yellow = new Luminance(1, 1, 0);
 		Luminance ks_yellow = Luminance.Zero;
 		Luminance n_yellow = Luminance.Zero;
-		IMaterial m_yellow = new DuffuseSpecularMaterial(rnd, kd_yellow, ks_yellow, n_yellow);
+		IMaterial m_yellow = DiffuseSpecularMaterial.Create(rnd, kd_yellow, ks_yellow, n_yellow);
 
 		Luminance kd1 = new Luminance(0.9, 0.6, 0.3);
 		Luminance ks1 = Luminance.Zero;
 		Luminance n1 = Luminance.Zero;
-		IMaterial m1 = new DuffuseSpecularMaterial(rnd, kd1, ks1, n1);
+		IMaterial m1 = DiffuseSpecularMaterial.Create(rnd, kd1, ks1, n1);
 
 		Luminance kd2 = new Luminance(0.6, 0.1, 1);
 		Luminance ks2 = Luminance.Zero;
 		Luminance n2 = Luminance.Zero;
-		IMaterial m2 = new DuffuseSpecularMaterial(rnd, kd2, ks2, n2);
+		IMaterial m2 = DiffuseSpecularMaterial.Create(rnd, kd2, ks2, n2);
 		
 		Luminance kd3 = Luminance.Zero;
 		Luminance ks3 = new Luminance(1, 1, 1);
-		Luminance n3 = new Luminance(1, 1, 1);
-		IMaterial m3 = new DuffuseSpecularMaterial(rnd, kd3, ks3, n3);
+		Luminance n3 = new Luminance(3, 3, 3);
+		IMaterial m3 = DiffuseSpecularMaterial.Create(rnd, kd3, ks3, n3);
 		
 		Luminance rrefract = new Luminance(1, 1, 1);
 		double refract = 1 / 2.0;
@@ -71,7 +71,7 @@ public class Program
 		
 		ITexturedMaterial m_chess2 = new CheckeredMaterial(5, 5, m_red, m_green);
 
-		Luminance Le1 = new Luminance(150, 150, 150);
+		Luminance Le1 = new Luminance(100, 100, 100);
 		
 		IShape floor     = new Square(new Vector(-0.5, -0.5, 1), new Vector(-0.5, -0.5, 2), new Vector( 0.5, -0.5, 1), m_chess2);
 		IShape ceiling   = new Square(new Vector(-0.5,  0.5, 1), new Vector( 0.5,  0.5, 1), new Vector(-0.5,  0.5, 2), m_yellow);
@@ -79,7 +79,7 @@ public class Program
 		IShape leftWall  = new Square(new Vector(-0.5,  0.5, 1), new Vector(-0.5,  0.5, 2), new Vector(-0.5, -0.5, 1), m_green);
 		IShape rightWall = new Square(new Vector( 0.5,  0.5, 1), new Vector( 0.5, -0.5, 1), new Vector( 0.5,  0.5, 2), m_blue);
 
-		IShape ball1 = new Sphere(new Vector(   0, -0.4, 1.3), 0.1,  m1);
+		IShape ball1 = new Sphere(new Vector(   0, -0.4, 1.3), 0.1,  m3);
 		IShape ball2 = new Sphere(new Vector(-0.23, 0, 1.3), 0.1, m2);
 		IShape ball3 = new Sphere(new Vector(0.3, -0.3, 1.5), 0.15, m_refractor);
 
@@ -123,13 +123,13 @@ public class Program
 			new SquareLight(rnd, new Vector(-0.15, 0.5 - double.Epsilon, 1.35), new Vector(0.15,  0.5 - double.Epsilon, 1.35), new Vector(-0.15, 0.5 - double.Epsilon, 1.65), Le1),
 			//new SphereLight(new Vector(-0.15, 0.45, 8.35), new Vector(0.15,  0.45, 8.35), new Vector(-0.15, 0.45, 8.65), Le1),
 			//new SphereLight(rnd, new Vector(0, 0.5, 1.5), 0.1, Le1),
-			//new SphereLight(new Vector(-0.3, -0.3, 1.5), 0.05, Le1),
+			//new SphereLight(rnd, new Vector(-0.3, -0.3, 1.5), 0.05, Le1),
 		};
 		
 		var scene = new Scene(shapes);
 		var glossy = new Scene(glossyShapes);
 		var diffuse = new Scene(diffuseShapes);
-		var lights = new CompositeLightSource(rnd, lightSources);
+		var lights = CompositeLightSource.Create(rnd, lightSources);
 
 		return new SceneSetup(scene, diffuse, glossy, lights);
 	}
@@ -147,7 +147,7 @@ public class Program
 		var engineFactory = new SimpleTracingEngineFactory();
 
 		var engine = engineFactory.CreateEngine(rnd, sceneSetup);
-		var rasterizer = new Rasterizer(rnd, PIXEL_SIZE, W, H, CAM_Z, CAM_SIZE, engine, sceneSetup);
+		var rasterizer = new Rasterizer(rnd, PIXEL_SIZE, W, H, CAM_Z, CAM_SIZE, engine);
 
 		using(var image = new Image<Rgb24>(W, H))
 		{

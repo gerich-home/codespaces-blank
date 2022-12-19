@@ -7,8 +7,7 @@ public record class Rasterizer(
 	int height,
 	double cam_z,
 	double cam_size,
-	IEngine engine,
-	SceneSetup sceneSetup
+	IEngine engine
 )
 {
 	public Luminance ColorAtPixel(double x, double y)
