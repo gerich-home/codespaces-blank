@@ -2,15 +2,20 @@ namespace Engine;
 
 public static class RandomExtensions
 {
-    public static (double cosa, double sina) NextCosDistribution(this Random rnd)
+	public static readonly double TwoPi = 2 * Math.PI;
+
+    public static Vector NextSemisphereDirectionUniform(this Random rnd)
     {
         var cosa = rnd.NextDouble();
-        return (cosa, Math.Sqrt(1 - cosa * cosa));
-    }
-    public static (double cosa, double sina) NextSinDistribution(this Random rnd)
-    {
-        var sina = rnd.NextDouble();
-        return (Math.Sqrt(1 - sina * sina), sina);
+        var sina = Math.Sqrt(1 - cosa * cosa);
+        var b = rnd.NextDouble(TwoPi);
+        var (sinb, cosb) = Math.SinCos(b);
+
+        return new Vector(
+            cosa * cosb,
+            cosa * sinb,
+            sina
+        );
     }
 
     public static double NextDouble(this Random rnd, double max) =>

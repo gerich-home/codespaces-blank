@@ -62,16 +62,9 @@ public class Triangle : ILightSource
 		{
 			double t1 = rnd.NextDouble();
 			double t2 = rnd.NextDouble();
-			
-			var (cosa, sina) = rnd.NextCosDistribution();
-			var b = rnd.NextDouble(TwoPi);
-			var (sinb, cosb) = Math.SinCos(b);
 
-            var direction = new Vector(
-				sina * cosb,
-				sina * sinb,
-				cosa
-			).Transform(normal);
+            var direction = rnd.NextSemisphereDirectionUniform()
+				.Transform(normal);
 
 			photons[i] = new Photon((a + t1 * ba + t2 * ca).RayAlong(direction), normal, energy);
 		}

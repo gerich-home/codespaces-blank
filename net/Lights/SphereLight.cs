@@ -28,50 +28,26 @@ public class SphereLight : ILightSource
 	}
 
 	public LightPoint SampleLightPoint(HitPoint hitPoint)
-	{	
-		var (cosa, sina) = rnd.NextCosDistribution();
-		var b = rnd.NextDouble(TwoPi);
-		var (sinb, cosb) = Math.SinCos(b);
+    {
+        var normal = rnd.NextSemisphereDirectionUniform();
 
-		var normal = new Vector(
-			cosa * cosb,
-			cosa * sinb,
-			sina
-		);
+        return new LightPoint(
+            center + r * normal,
+            normal,
+            probability,
+            le
+        );
+    }
 
-		return new LightPoint(
-			center + r * normal,
-			normal,
-			probability,
-			le
-		);
-	}
-
-	public Photon[] EmitPhotons(int nphotons)
+    public Photon[] EmitPhotons(int nphotons)
 	{
 		Photon[] photons = new Photon[nphotons];
 		Luminance energy = le / nphotons;
 		for(int i = 0; i < nphotons; i++)
         {
-            var (cosa, sina) = rnd.NextSinDistribution();
-            var b = rnd.NextDouble(TwoPi);
-			var (sinb, cosb) = Math.SinCos(b);
-
-            var normal = new Vector(
-				cosa * cosb,
-				cosa * sinb,
-				sina
-			);
-
-            (cosa, sina) = rnd.NextCosDistribution();
-            b = rnd.NextDouble(TwoPi);
-			(sinb, cosb) = Math.SinCos(b);
-
-            var direction = new Vector(
-				sina * cosb,
-				sina * sinb,
-				cosa
-			).Transform(normal);
+            var normal = rnd.NextSemisphereDirectionUniform();
+            var direction = rnd.NextSemisphereDirectionUniform()
+				.Transform(normal);
 
             photons[i] = new Photon((center + r * normal).RayAlong(direction), normal, energy);
         }

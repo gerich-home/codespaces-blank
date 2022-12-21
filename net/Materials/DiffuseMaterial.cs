@@ -26,15 +26,8 @@ public class DiffuseMaterial : IMaterial
 
 	public RandomDirection SampleDirection(HitPoint hitPoint, double ksi)
 	{
-		var (cosa, sina) = rnd.NextCosDistribution();
-		var b = rnd.NextDouble(TwoPi);
-		var (sinb, cosb) = Math.SinCos(b);
-
-		var ndirection = new Vector(
-			sina * cosb,
-			sina * sinb,
-			cosa
-		).Transform(hitPoint.Normal);
+		var ndirection = rnd.NextSemisphereDirectionUniform()
+			.Transform(hitPoint.Normal);
 
 		return new RandomDirection(rdDiv2, ndirection);
 	}
