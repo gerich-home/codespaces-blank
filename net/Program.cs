@@ -14,7 +14,7 @@ public class Program
 	const double CAM_Z = 0.0000001;
 	const double CAM_SIZE = (0.55 * CAM_Z / (1 + CAM_Z));
 	const double PIXEL_SIZE = 1.05;
-	const int NFRAMES = 10;
+	const int NFRAMES = 1000;
 
 	public SceneSetup InitScene(Random rnd)
 	{
@@ -149,29 +149,30 @@ public class Program
 		var engine = engineFactory.CreateEngine(rnd, sceneSetup);
 		var rasterizer = new Rasterizer(rnd, PIXEL_SIZE, W, H, CAM_Z, CAM_SIZE, engine);
 
-		using(var image = new Image<Rgb24>(W, H))
-		{
-			image.ProcessPixelRows(accessor => {
-				for(int y = 0; y < H; y++) {
-					Console.WriteLine($"Row {y}");
-					var pixelRow = accessor.GetRowSpan(y);
-					for(int x = 0; x < W; x++)
-					{
-						var l = (255.0 / NFRAMES) *
-							Enumerable.Range(0, NFRAMES)
-								.Select(i => rasterizer.ColorAtPixel(x, y))
-								.Aggregate(Luminance.Zero, (l1, l2) => l1 + l2);
+		var L = new Luminance[W, H];
+		for(int frame = 1; frame <= NFRAMES; frame++) {
+			using(var image = new Image<Rgb24>(W, H))
+			{
+				image.ProcessPixelRows(accessor => {
+					for(int y = 0; y < H; y++) {
+						Console.WriteLine($"Row {y}");
+						var pixelRow = accessor.GetRowSpan(y);
+						for(int x = 0; x < W; x++)
+						{
+							L[x, y] += rasterizer.ColorAtPixel(x, y);
+							var (r, g, b) = L[x, y] * 255.0 / frame;
 
-						pixelRow[x] = new Rgb24(
-							Math.Min((byte)l.r, (byte)255),
-							Math.Min((byte)l.g, (byte)255),
-							Math.Min((byte)l.b, (byte)255)
-						);
+							pixelRow[x] = new Rgb24(
+								Math.Min((byte)r, (byte)255),
+								Math.Min((byte)g, (byte)255),
+								Math.Min((byte)b, (byte)255)
+							);
+						}
 					}
-				}
-			});
 
-			image.SaveAsBmp("result.bmp");
+					image.SaveAsBmp($"result{frame}.bmp");
+				});
+			}
 		}
 	}
 }
