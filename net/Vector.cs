@@ -42,31 +42,20 @@ public readonly record struct Vector(double x, double y, double z)
 
 	public Vector Transform(in Vector axis)
 	{
-		Vector t;
+		const double threshold = 0.57735026919;
 
-		if(Math.Abs(axis.x) < Math.Abs(axis.y))
-		{
-			if(Math.Abs(axis.x) < Math.Abs(axis.z))
-				t = axis with {x = 1};
-			else
-				t = axis with {z = 1};
-		}
+		Vector majorAxis;
+		if(Math.Abs(axis.x) < threshold)
+			majorAxis = new Vector(1, 0, 0);
+		else if(Math.Abs(axis.y) < threshold)
+			majorAxis = new Vector(0, 1, 0);
 		else
-		{
-			if(Math.Abs(axis.y) < Math.Abs(axis.z))
-				t = axis with {y = 1};
-			else
-				t = axis with {z = 1};
-		}
+			majorAxis = new Vector(0, 0, 1);
 
-		var M1 = axis.CrossProduct(t).Normalized;
+		var M1 = axis.CrossProduct(majorAxis).Normalized;
 		var M2 = axis.CrossProduct(M1);
 
-		return new Vector(
-			x * M1.x + y * M2.x + z * axis.x,
-			x * M1.y + y * M2.y + z * axis.y,
-			x * M1.z + y * M2.z + z * axis.z
-		);
+		return x * M1 + y * M2 + z * axis;
 	}
 
 	public double this[int index] => index switch {

@@ -71,7 +71,7 @@ public class Program
 		
 		ITexturedMaterial m_chess2 = new CheckeredMaterial(5, 5, m_red, m_green);
 
-		Luminance Le1 = new Luminance(100, 100, 100);
+		Luminance Le1 = Luminance.Unit * 2000;
 		
 		IShape floor     = new Square(new Vector(-0.5, -0.5, 1), new Vector(-0.5, -0.5, 2), new Vector( 0.5, -0.5, 1), m_chess2);
 		IShape ceiling   = new Square(new Vector(-0.5,  0.5, 1), new Vector( 0.5,  0.5, 1), new Vector(-0.5,  0.5, 2), m_yellow);
@@ -79,7 +79,7 @@ public class Program
 		IShape leftWall  = new Square(new Vector(-0.5,  0.5, 1), new Vector(-0.5,  0.5, 2), new Vector(-0.5, -0.5, 1), m_green);
 		IShape rightWall = new Square(new Vector( 0.5,  0.5, 1), new Vector( 0.5, -0.5, 1), new Vector( 0.5,  0.5, 2), m_blue);
 
-		IShape ball1 = new Sphere(new Vector(   0, -0.4, 1.3), 0.1,  m3);
+		IShape ball1 = new Sphere(new Vector(   0, -0.4, 1.3), 0.1,  m1);
 		IShape ball2 = new Sphere(new Vector(-0.23, 0, 1.3), 0.1, m2);
 		IShape ball3 = new Sphere(new Vector(0.3, -0.3, 1.5), 0.15, m_refractor);
 
@@ -159,13 +159,13 @@ public class Program
 						var pixelRow = accessor.GetRowSpan(y);
 						for(int x = 0; x < W; x++)
 						{
-							L[x, y] += rasterizer.ColorAtPixel(x, y);
-							var (r, g, b) = L[x, y] * 255.0 / frame;
+							L[x, y] = L[x, y] * (frame - 1) / frame + rasterizer.ColorAtPixel(x, y) / frame;
+							var (r, g, b) = L[x, y] * 255;
 
 							pixelRow[x] = new Rgb24(
-								Math.Min((byte)r, (byte)255),
-								Math.Min((byte)g, (byte)255),
-								Math.Min((byte)b, (byte)255)
+								(byte)(Math.Min(r, 255)),
+								(byte)(Math.Min(g, 255)),
+								(byte)(Math.Min(b, 255))
 							);
 						}
 					}

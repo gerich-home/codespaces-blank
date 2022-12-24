@@ -6,13 +6,13 @@ public record class SimpleTracingEngine(
 	Random rnd,
 	SceneSetup sceneSetup
 ): IEngine {
-	public const int REFLECT_RAYS = 3;
+	public const int REFLECT_RAYS = 10;
 	public const int SHADOW_RAYS = 10;
-	public const double ABSOPTION = 0.7;
+	public const double ABSOPTION = 0.9;
 
 	public Luminance L(in Ray ray)
 	{
-		var hp = sceneSetup.scene.Intersection(ray);
+		var hp = sceneSetup.scene.Intersection(null, ray);
 	
 		if (hp == null)
 		{
@@ -41,6 +41,8 @@ public record class SimpleTracingEngine(
                 continue;
             }
 
+			const double reflectFactor = 1.0 / (REFLECT_RAYS * (1 - ABSOPTION));
+
 			for(int i = 0; i < REFLECT_RAYS; i++)
 			{
 				var rndd = hp.SampleDirection(rnd.NextDouble());
@@ -50,7 +52,7 @@ public record class SimpleTracingEngine(
 					continue;
 				}
 
-				var nextHp = sceneSetup.scene.Intersection(hp.RayAlong(rndd.direction));
+				var nextHp = sceneSetup.scene.Intersection(hp.shape, hp.RayAlong(rndd.direction));
 
 				if (nextHp == null)
 				{
@@ -61,7 +63,7 @@ public record class SimpleTracingEngine(
 				{
 					parent = node,
 					hp = nextHp,
-					factor = rndd.factor / (REFLECT_RAYS * (1 - ABSOPTION))
+					factor = rndd.factor * reflectFactor
 				};
             	q.Enqueue(nextNode);
 				s.Push(nextNode);
@@ -75,7 +77,7 @@ public record class SimpleTracingEngine(
 			node.parent.indirectLuminance += (directLuminance + node.indirectLuminance) * node.factor;
 		}
 
-		return ComputeDirectLuminance(root.hp) + root.indirectLuminance;		
+		return ComputeDirectLuminance(root.hp) + root.indirectLuminance;
 	}
 
     private Luminance ComputeDirectLuminance(HitPoint hp)
@@ -93,7 +95,7 @@ public record class SimpleTracingEngine(
     private Luminance ComputeDirectLuminanceForSingleRay(HitPoint hp)
     {
 		var lp = sceneSetup.lights.SampleLightPoint(hp);
-		if (lp.probability == 0)
+		if (lp.factor == 0)
 		{
 			return Luminance.Zero;
 		}
@@ -114,24 +116,25 @@ public record class SimpleTracingEngine(
 		}
 
 		double l = directionToLight.Length;
-		if (l * l < double.Epsilon)
+		if (l < double.Epsilon)
 		{
 			return Luminance.Zero;
 		}
 
 		double linv = 1 / l;
 		directionToLight *= linv;
-		cos_dir_normal *= linv;
-		cos_dir_lnormal *= linv;
 
-		var barrierHp = sceneSetup.scene.Intersection(hp.RayAlong(directionToLight));
+		var barrierHp = sceneSetup.scene.Intersection(hp.shape, hp.RayAlong(directionToLight));
 
 		if (barrierHp != null && (barrierHp.T <= l - double.Epsilon))
 		{
 			return Luminance.Zero;
 		}
 
-		return lp.Le * hp.BRDF(directionToLight) * (-cos_dir_normal * cos_dir_lnormal / (lp.probability * l * l));
+		linv *= linv;
+		linv *= linv;
+
+		return (-cos_dir_normal * cos_dir_lnormal * lp.factor * linv) * lp.Le * hp.BRDF(directionToLight);
     }
 }
 

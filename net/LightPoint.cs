@@ -3,6 +3,6 @@ namespace Engine;
 public readonly record struct LightPoint(
 	Vector point,
 	Vector normal,
-	double probability,
+	double factor,
 	Luminance Le
 );

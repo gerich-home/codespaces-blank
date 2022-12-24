@@ -17,8 +17,13 @@ public class Sphere : IShape
 		this.rinv = 1 / r;
 	}
 
-	public HitPoint Intersection(in Ray ray)
+	public HitPoint Intersection(IShape except, in Ray ray)
 	{
+		if (except == this)
+		{
+			return null;
+		}
+
 		Vector ac = ray.start - center;
 		
 		double b = ac.DotProduct(ray.direction);
@@ -44,6 +49,6 @@ public class Sphere : IShape
 			}
 		}
 
-		return new HitPoint(ray, t, (ray.PointAt(t) - center) * rinv, material);
+		return new HitPoint(ray, t, (ray.PointAt(t) - center) * rinv, material, this);
 	}
 }

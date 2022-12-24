@@ -21,8 +21,13 @@ public class Triangle: IShape
 		this.material = material;
 	}
 
-	public HitPoint Intersection(in Ray ray)
+	public HitPoint Intersection(IShape except, in Ray ray)
 	{
+		if (except == this)
+		{
+			return null;
+		}
+
 		double t = 0;
 		double t1 = 0;
 		double t2 = 0;
@@ -65,6 +70,6 @@ public class Triangle: IShape
 			return null;
 		}
 
-		return new HitPoint(ray, t, n, material);
+		return new HitPoint(ray, t, n, material, this);
 	}
 }

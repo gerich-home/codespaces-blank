@@ -6,11 +6,7 @@ public class DiffuseMaterial : IMaterial
 {
 	public readonly Random rnd;
 	public readonly Luminance rd;
-
-	public readonly Luminance rdDiv2;
 	public readonly Luminance diffuseResult;
-
-	public static readonly double TwoPi = 2 * Math.PI;
 
 	public DiffuseMaterial(Random rnd, Luminance rd)
 	{
@@ -18,17 +14,21 @@ public class DiffuseMaterial : IMaterial
 		this.rd = rd;
 
 		this.diffuseResult = rd / Math.PI;
-		this.rdDiv2 = rd / 2;
 	}
 
 	public Luminance BRDF(HitPoint hitPoint, in Vector ndirection) =>
 		diffuseResult;
 
+
+	// BRDF(hitPoint) * cos(hitPoint.normal, outDirection) / prob(outDirection)
+	// BRDF(hitPoint) = rd / PI
+	// prob(outgoingDirection) = cos(hitPoint.normal, outDirection) / PI
+	// result = rd
 	public RandomDirection SampleDirection(HitPoint hitPoint, double ksi)
 	{
-		var ndirection = rnd.NextSemisphereDirectionUniform()
+		var ndirection = rnd.NextSemisphereDirectionCos()
 			.Transform(hitPoint.Normal);
 
-		return new RandomDirection(rdDiv2, ndirection);
+		return new RandomDirection(rd, ndirection);
 	}
 }

@@ -41,8 +41,13 @@ public class Plane : IShape
 			);
 	}
 
-	public HitPoint Intersection(in Ray ray)
+	public HitPoint Intersection(IShape except, in Ray ray)
 	{
+		if (except == this)
+		{
+			return null;
+		}
+
 		double divident = normal.DotProduct(ray.direction);
 
 		if(divident == 0)
@@ -57,6 +62,6 @@ public class Plane : IShape
 			return null;
 		}
 
-		return new HitPoint(ray, t, normal, material);
+		return new HitPoint(ray, t, normal, material, this);
 	}
 }

@@ -23,14 +23,14 @@ public class CausticPhotonMapBuilder : IPhotonMapBuilder
 			bool isDiffuse = false;
 			Photon current_photon = emitted_photons[i];
 			
-			HitPoint ghp1 = glossy.Intersection(current_photon.ray);
+			HitPoint ghp1 = glossy.Intersection(null, current_photon.ray);
 			
 			if(ghp1 == null)
 			{
 				continue;
 			}
 			
-			HitPoint dhp1 = diffuse.Intersection(current_photon.ray);
+			HitPoint dhp1 = diffuse.Intersection(null, current_photon.ray);
 			
 			if(dhp1 != null)
 			{
@@ -48,8 +48,8 @@ public class CausticPhotonMapBuilder : IPhotonMapBuilder
 
 				HitPoint hp;
 
-				HitPoint ghp = glossy.Intersection(current_photon.ray);
-				HitPoint dhp = diffuse.Intersection(current_photon.ray);
+				HitPoint ghp = glossy.Intersection(null, current_photon.ray);
+				HitPoint dhp = diffuse.Intersection(null, current_photon.ray);
 			
 				if(dhp != null)
 				{

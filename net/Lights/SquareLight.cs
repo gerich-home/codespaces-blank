@@ -11,7 +11,7 @@ public class SquareLight : ILightSource
 	public readonly Vector ba;
 	public readonly Vector ca;
 	public readonly Vector normal;
-	public readonly double probability;
+	public readonly double factor;
 	public readonly Luminance le;
 	public readonly Random rnd;
 	public static readonly double TwoPi = 2 * Math.PI;
@@ -26,7 +26,7 @@ public class SquareLight : ILightSource
 		this.ca = c - a;
 		this.d = b + ca;
 		this.normal = ba.CrossProduct(ca).Normalized;
-		this.probability = 1 / (ba).CrossProduct(ca).Length;
+		this.factor = (ba).CrossProduct(ca).Length;
 		this.le = le;
 	}
 
@@ -47,7 +47,7 @@ public class SquareLight : ILightSource
 		double t1 = rnd.NextDouble();
 		double t2 = rnd.NextDouble();
 
-		return new LightPoint(a + t1 * ba + t2 * ca, normal, probability, le);
+		return new LightPoint(a + t1 * ba + t2 * ca, normal, factor, le);
 	}
 
 	public Photon[] EmitPhotons(int nphotons)

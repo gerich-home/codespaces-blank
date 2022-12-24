@@ -32,8 +32,13 @@ public class Square: IShape
 		this.material = new TexturedMaterialAdapter(material);
 	}
 
-	public HitPoint Intersection(in Ray ray)
+	public HitPoint Intersection(IShape except, in Ray ray)
 	{
+		if (except == this)
+		{
+			return null;
+		}
+
 		double t = 0;
 		double t1 = 0;
 		double t2 = 0;
@@ -71,6 +76,6 @@ public class Square: IShape
 			return null;
 		}
 
-		return new HitPoint(ray, t, n, material.MaterialAt(t1, t2));
+		return new HitPoint(ray, t, n, material.MaterialAt(t1, t2), this);
 	}
 }

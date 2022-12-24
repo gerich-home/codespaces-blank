@@ -4,7 +4,7 @@ namespace Lights;
 
 public class CompositeLightSource : ILightSource
 {
-	public readonly (ILightSource light, double probability)[] lights;
+	public readonly (ILightSource light, double energy)[] lights;
 	public readonly Random rnd;
 
 	public static ILightSource Create(Random rnd, ILightSource[] lights)
@@ -14,20 +14,13 @@ public class CompositeLightSource : ILightSource
 			return lights[0];
 		}
 
-		return new CompositeLightSource(rnd, CalculateLightsWithProbabilities(lights));
+		return new CompositeLightSource(rnd, lights);
 	}
 
-	private static (ILightSource light, double probability)[] CalculateLightsWithProbabilities(ILightSource[] lights)
-	{
-		var k = 1.0 / lights.Sum(light => light.Le.Energy);
-
-		return lights.Select(light => (light, light.Le.Energy * k)).ToArray();
-	}
-
-	private CompositeLightSource(Random rnd, (ILightSource light, double probability)[] lights)
+	private CompositeLightSource(Random rnd, IEnumerable<ILightSource> lights)
 	{
 		this.rnd = rnd;
-		this.lights = lights;
+		this.lights = lights.Select(light => (light, light.Le.Energy)).ToArray();
 	}
 
 	public bool CanSendLightTo(HitPoint hitPoint) =>
@@ -37,20 +30,22 @@ public class CompositeLightSource : ILightSource
 	{
 		var visibleLights = lights.Where(l => l.light.CanSendLightTo(hitPoint)).ToList();
 		
-		var totalP = visibleLights.Sum(l => l.probability);
+		var totalEnergy = visibleLights.Sum(l => l.light.Le.Energy);
 
-		double ksi = rnd.NextDouble(totalP);
+		double ksi = rnd.NextDouble(totalEnergy);
 
-		foreach (var (light, p) in visibleLights)
+		foreach (var (light, energy) in visibleLights)
 		{
-			if(ksi < p)
+			if(ksi < energy)
 			{
 				var lp = light.SampleLightPoint(hitPoint);
-				return new LightPoint(lp.point, lp.normal, p * lp.probability / totalP, lp.Le);
+				return lp with {
+					factor = lp.factor * totalEnergy / energy
+				};
 			}
 			else
 			{
-				ksi -= p;
+				ksi -= energy;
 			}
 		}
 

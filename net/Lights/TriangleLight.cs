@@ -4,7 +4,7 @@ namespace Lights;
 
 public class Triangle : ILightSource
 {
-	public readonly double probability;
+	public readonly double factor;
 	public readonly Vector a;
 	public readonly Vector b;
 	public readonly Vector c;
@@ -24,7 +24,7 @@ public class Triangle : ILightSource
 		this.ba = b - a;
 		this.ca = c - a;
 		this.normal = ba.CrossProduct(ca).Normalized;
-		this.probability = 2 / (ba).CrossProduct(ca).Length;
+		this.factor = (ba).CrossProduct(ca).Length / 2;
 		this.le = le;
 	}
 
@@ -51,7 +51,7 @@ public class Triangle : ILightSource
 		}
 
 		Vector p = a + t1 * ba + t2 * ca;
-		return new LightPoint(p, normal, probability, le);
+		return new LightPoint(p, normal, factor, le);
 	}
 
 	public Photon[] EmitPhotons(int nphotons)

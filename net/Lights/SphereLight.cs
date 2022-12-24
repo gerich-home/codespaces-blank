@@ -5,7 +5,7 @@ namespace Lights;
 public class SphereLight : ILightSource
 {
 	public readonly double r;
-	public readonly double probability;
+	public readonly double factor;
 	public readonly Vector center;
 	public readonly Luminance le;
 	public readonly Random rnd;
@@ -16,7 +16,7 @@ public class SphereLight : ILightSource
 		this.rnd = rnd;
 		this.center = center;
 		this.r = r;
-		this.probability = 1 / (4 * Math.PI * r * r);
+		this.factor = 4 * Math.PI * r * r;
 		this.le = le;
 	}
 
@@ -34,7 +34,7 @@ public class SphereLight : ILightSource
         return new LightPoint(
             center + r * normal,
             normal,
-            probability,
+            factor,
             le
         );
     }

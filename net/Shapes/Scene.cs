@@ -11,14 +11,14 @@ public class Scene : IShape
 		this.shapes = shapes;
 	}
 
-	public HitPoint Intersection(in Ray ray)
+	public HitPoint Intersection(IShape shape, in Ray ray)
 	{
 		HitPoint bestHitPoint = null;
 		HitPoint hitPoint;
 
 		for(int i = 0; i < shapes.Length; i++)
 		{
-			hitPoint = shapes[i].Intersection(ray);
+			hitPoint = shapes[i].Intersection(shape, ray);
 			if(hitPoint != null && (bestHitPoint == null || hitPoint.T < bestHitPoint.T))
 			{
 				bestHitPoint = hitPoint;

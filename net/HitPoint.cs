@@ -7,14 +7,16 @@ public class HitPoint
 	public readonly Vector Point;
 	public readonly Vector Normal;
 	public readonly IMaterial material;
+	public readonly IShape shape;
 
-	public HitPoint(in Ray ray, double t, in Vector normal, IMaterial material)
+	public HitPoint(in Ray ray, double t, in Vector normal, IMaterial material, IShape shape)
 	{
 		this.T = t;
 		this.IncomingDirection = ray.direction;
 		this.Point = ray.PointAt(t);
 		this.Normal = normal;
 		this.material = material;
+		this.shape = shape;
 	}
 	
 	public Ray RayAlong(in Vector newDirection) =>
