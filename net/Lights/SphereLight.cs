@@ -5,6 +5,7 @@ namespace Lights;
 public class SphereLight : ILightSource
 {
 	public readonly double r;
+	public readonly double r2;
 	public readonly double factor;
 	public readonly Vector center;
 	public readonly Luminance le;
@@ -16,6 +17,7 @@ public class SphereLight : ILightSource
 		this.rnd = rnd;
 		this.center = center;
 		this.r = r;
+		this.r2 = r * r;
 		this.factor = 4 * Math.PI * r * r;
 		this.le = le;
 	}
@@ -29,7 +31,9 @@ public class SphereLight : ILightSource
 
 	public LightPoint SampleLightPoint(HitPoint hitPoint)
     {
-        var normal = rnd.NextSemisphereDirectionUniform();
+		var directionFromLight = hitPoint.Point - center;
+        var normal = rnd.NextSemisphereDirectionCos(r2 / directionFromLight.Norm)
+			.Transform(directionFromLight.Normalized);
 
         return new LightPoint(
             center + r * normal,

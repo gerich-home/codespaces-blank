@@ -125,7 +125,7 @@ public class Program
 		ILightSource[] lightSources = {
 			//new SquareLight(rnd, new Vector(-0.15, 0.5 - double.Epsilon, 1.35), new Vector(0.15,  0.5 - double.Epsilon, 1.35), new Vector(-0.15, 0.5 - double.Epsilon, 1.65), Le1),
 			//new SphereLight(new Vector(-0.15, 0.45, 8.35), new Vector(0.15,  0.45, 8.35), new Vector(-0.15, 0.45, 8.65), Le1),
-			new SphereLight(rnd, new Vector(0.1, -0.2, 0.9), 0.2, Le1),
+			new SphereLight(rnd, new Vector(0.3, -0.2, 0.9), 0.2, Le1),
 			//new SphereLight(rnd, new Vector(-0.3, -0.3, 1.5), 0.05, Le1),
 		};
 		
