@@ -10,7 +10,9 @@ public class Square: IShape
 	public readonly Vector ca;
 	public readonly Vector normal;
 	public readonly Vector n;
-	public ITexturedMaterial material;
+	public readonly ITexturedMaterial material;
+
+	public readonly AABB aabb;
 
 	public Square(Vector a, Vector b, Vector c, ITexturedMaterial material)
 	{
@@ -20,6 +22,12 @@ public class Square: IShape
 		this.normal = (b - a).CrossProduct(c - a);
 		this.n = (b - a).CrossProduct(c - a).Normalized;
 		this.material = material;
+		aabb = AABB.FromEdgePoints(
+			a,
+			a + ba, 
+			a + ca,
+			a + ba + ca 
+		);
 	}
 		
 	public Square(Vector a, Vector b, Vector c, IMaterial material)
@@ -30,7 +38,15 @@ public class Square: IShape
 		this.normal = (b - a).CrossProduct(c - a);
 		this.n = (b - a).CrossProduct(c - a).Normalized;
 		this.material = new TexturedMaterialAdapter(material);
+		aabb = AABB.FromEdgePoints(
+			a,
+			a + ba, 
+			a + ca,
+			a + ba + ca 
+		);
 	}
+
+	public ref readonly AABB AABB => ref aabb;
 
 	public HitPoint Intersection(IShape except, in Ray ray)
 	{

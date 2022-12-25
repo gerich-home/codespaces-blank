@@ -8,6 +8,7 @@ public class Plane : IShape
 	public readonly Vector normal;
 	public readonly Vector A;
 	public readonly IMaterial material;
+	public readonly AABB aabb;
 
 	public Plane(Vector normal, double d, IMaterial material)
 	{
@@ -17,6 +18,7 @@ public class Plane : IShape
 				normal.y != 0 ? new Vector(0, -d / normal.y, 0) :
 				new Vector(0, 0, -d / normal.z);
 		this.material = material;
+		aabb = AABB.Infinity;
 	}
 
 	public Plane(Vector a, Vector b, Vector A, IMaterial material)
@@ -25,6 +27,7 @@ public class Plane : IShape
 		this.A = A;
 		this.material = material;
 		this.d = A.DotProduct(normal);
+		aabb = AABB.Infinity;
 	}
 
 	public Plane(double a, double b, double c, double d, IMaterial material)
@@ -39,7 +42,10 @@ public class Plane : IShape
 				? new Vector(0, -d / b, 0)
 				: new Vector(0, 0, -d / c)
 			);
+		aabb = AABB.Infinity;
 	}
+
+	public ref readonly AABB AABB => ref aabb;
 
 	public HitPoint Intersection(IShape except, in Ray ray)
 	{

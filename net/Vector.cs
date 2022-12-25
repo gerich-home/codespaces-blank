@@ -8,6 +8,7 @@ public readonly record struct Vector(double x, double y, double z)
 		new Ray(this, direction);
 
 	public static Vector Zero => new Vector(0, 0, 0);
+	public static Vector Unit => new Vector(1, 1, 1);
 
 	public Vector Normalized => this / Length;
 

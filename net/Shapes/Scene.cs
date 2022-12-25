@@ -5,20 +5,43 @@ namespace Shapes;
 public class Scene : IShape
 {
 	public readonly IShape[] shapes;
+	public readonly AABB aabb;
 
 	public Scene(IShape[] shapes)
 	{
 		this.shapes = shapes;
+		aabb = shapes.Any() ?
+			shapes.Skip(1)
+				.Aggregate(shapes.First().AABB, (a, s) => a.Union(s.AABB)) :
+			AABB.Infinity;
 	}
 
-	public HitPoint Intersection(IShape shape, in Ray ray)
-	{
-		HitPoint bestHitPoint = null;
-		HitPoint hitPoint;
+	public ref readonly AABB AABB => ref aabb;
 
+	public HitPoint Intersection(IShape except, in Ray ray)
+	{
+		var dirInv = new Vector(
+			1 / ray.direction.x,
+			1 / ray.direction.y,
+			1 / ray.direction.z
+		);
+		
+		if (!AABB.CanIntersect(ray, dirInv))
+		{
+			return null;
+		}
+
+		HitPoint bestHitPoint = null;
+		
 		for(int i = 0; i < shapes.Length; i++)
 		{
-			hitPoint = shapes[i].Intersection(shape, ray);
+			var shape = shapes[i]; 
+			if(!shape.AABB.CanIntersect(ray, in dirInv))
+			{
+				continue;
+			}
+
+			var hitPoint = shape.Intersection(except, ray);
 			if(hitPoint != null && (bestHitPoint == null || hitPoint.T < bestHitPoint.T))
 			{
 				bestHitPoint = hitPoint;
@@ -27,5 +50,4 @@ public class Scene : IShape
 
 		return bestHitPoint;
 	}
-
 }

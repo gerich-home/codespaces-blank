@@ -11,6 +11,8 @@ public class Triangle: IShape
 	public readonly Vector a;
 	public readonly IMaterial material;
 
+	public readonly AABB aabb;
+
 	public Triangle(Vector a, Vector b, Vector c, IMaterial material)
 	{
 		this.a = a;
@@ -19,7 +21,14 @@ public class Triangle: IShape
 		this.normal = (b - a).CrossProduct(c - a);
 		this.n = (b - a).CrossProduct(c - a).Normalized;
 		this.material = material;
+		aabb = AABB.FromEdgePoints(
+			a,
+			a + ba, 
+			a + ca 
+		);
 	}
+
+	public ref readonly AABB AABB => ref aabb;
 
 	public HitPoint Intersection(IShape except, in Ray ray)
 	{

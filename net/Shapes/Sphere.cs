@@ -8,6 +8,7 @@ public class Sphere : IShape
 	public readonly double rinv;
 	public readonly Vector center;
 	public readonly IMaterial material;
+	public readonly AABB aabb;
 
 	public Sphere(Vector center, double r, IMaterial material)
 	{
@@ -15,7 +16,13 @@ public class Sphere : IShape
 		this.material = material;
 		this.r2 = r * r;
 		this.rinv = 1 / r;
+		aabb = new AABB(
+			center - Vector.Unit * r,
+			center + Vector.Unit * r
+		);
 	}
+
+	public ref readonly AABB AABB => ref aabb;
 
 	public HitPoint Intersection(IShape except, in Ray ray)
 	{

@@ -15,6 +15,9 @@ public class Program
 	const double CAM_SIZE = (0.55 * CAM_Z / (1 + CAM_Z));
 	const double PIXEL_SIZE = 1.05;
 	const int NFRAMES = 1000;
+	const int REFLECT_RAYS = 10;
+	const int SHADOW_RAYS = 10;
+	const double ABSOPTION = 0.9;
 
 	public SceneSetup InitScene(Random rnd)
 	{
@@ -71,7 +74,7 @@ public class Program
 		
 		ITexturedMaterial m_chess2 = new CheckeredMaterial(5, 5, m_red, m_green);
 
-		Luminance Le1 = Luminance.Unit * 200;
+		Luminance Le1 = Luminance.Unit * 2;
 		
 		IShape floor     = new Square(new Vector(-0.5, -0.5, 1), new Vector(-0.5, -0.5, 2), new Vector( 0.5, -0.5, 1), m_chess2);
 		IShape ceiling   = new Square(new Vector(-0.5,  0.5, 1), new Vector( 0.5,  0.5, 1), new Vector(-0.5,  0.5, 2), m_yellow);
@@ -120,9 +123,9 @@ public class Program
 		};
 		
 		ILightSource[] lightSources = {
-			new SquareLight(rnd, new Vector(-0.15, 0.5 - double.Epsilon, 1.35), new Vector(0.15,  0.5 - double.Epsilon, 1.35), new Vector(-0.15, 0.5 - double.Epsilon, 1.65), Le1),
+			//new SquareLight(rnd, new Vector(-0.15, 0.5 - double.Epsilon, 1.35), new Vector(0.15,  0.5 - double.Epsilon, 1.35), new Vector(-0.15, 0.5 - double.Epsilon, 1.65), Le1),
 			//new SphereLight(new Vector(-0.15, 0.45, 8.35), new Vector(0.15,  0.45, 8.35), new Vector(-0.15, 0.45, 8.65), Le1),
-			//new SphereLight(rnd, new Vector(0, 0.5, 1.5), 0.1, Le1),
+			new SphereLight(rnd, new Vector(0.1, -0.2, 0.9), 0.2, Le1),
 			//new SphereLight(rnd, new Vector(-0.3, -0.3, 1.5), 0.05, Le1),
 		};
 		
@@ -144,22 +147,19 @@ public class Program
 		var rnd = new Random();
 		var sceneSetup = InitScene(rnd);
 
-		int REFLECT_RAYS = 10;
-		int SHADOW_RAYS = 10;
-		double ABSOPTION = 0.9;
-
 		var engineFactory = new SimpleTracingEngineFactory(REFLECT_RAYS, SHADOW_RAYS, ABSOPTION);
 
 		var engine = engineFactory.CreateEngine(rnd, sceneSetup);
 		var rasterizer = new Rasterizer(rnd, PIXEL_SIZE, W, H, CAM_Z, CAM_SIZE, engine);
 
 		var L = new Luminance[W, H];
+		Directory.CreateDirectory("result");
 		for(int frame = 1; frame <= NFRAMES; frame++) {
 			using(var image = new Image<Rgb24>(W, H))
 			{
 				image.ProcessPixelRows(accessor => {
 					for(int y = 0; y < H; y++) {
-						Console.WriteLine($"Row {y}");
+						Console.WriteLine($"frame {frame} - row {y}");
 						var pixelRow = accessor.GetRowSpan(y);
 						for(int x = 0; x < W; x++)
 						{
@@ -174,7 +174,7 @@ public class Program
 						}
 					}
 
-					image.SaveAsBmp($"result{frame}.bmp");
+					image.SaveAsBmp($"result/{frame}.bmp");
 				});
 			}
 		}
