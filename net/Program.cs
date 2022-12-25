@@ -71,7 +71,7 @@ public class Program
 		
 		ITexturedMaterial m_chess2 = new CheckeredMaterial(5, 5, m_red, m_green);
 
-		Luminance Le1 = Luminance.Unit * 2000;
+		Luminance Le1 = Luminance.Unit * 200;
 		
 		IShape floor     = new Square(new Vector(-0.5, -0.5, 1), new Vector(-0.5, -0.5, 2), new Vector( 0.5, -0.5, 1), m_chess2);
 		IShape ceiling   = new Square(new Vector(-0.5,  0.5, 1), new Vector( 0.5,  0.5, 1), new Vector(-0.5,  0.5, 2), m_yellow);
@@ -144,7 +144,11 @@ public class Program
 		var rnd = new Random();
 		var sceneSetup = InitScene(rnd);
 
-		var engineFactory = new SimpleTracingEngineFactory();
+		int REFLECT_RAYS = 10;
+		int SHADOW_RAYS = 10;
+		double ABSOPTION = 0.9;
+
+		var engineFactory = new SimpleTracingEngineFactory(REFLECT_RAYS, SHADOW_RAYS, ABSOPTION);
 
 		var engine = engineFactory.CreateEngine(rnd, sceneSetup);
 		var rasterizer = new Rasterizer(rnd, PIXEL_SIZE, W, H, CAM_Z, CAM_SIZE, engine);

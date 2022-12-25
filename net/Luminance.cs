@@ -26,4 +26,7 @@ public readonly record struct Luminance(double r, double g, double b)
 
 	public static Luminance operator /(in Luminance a, double factor) =>
 		a * (1 / factor);
+
+	public static Luminance Max(in Luminance a, in Luminance b) =>
+		new Luminance(Math.Max(a.r, b.r), Math.Max(a.g, b.g), Math.Max(a.b, b.b));
 }

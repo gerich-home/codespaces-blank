@@ -40,7 +40,7 @@ public class CompositeLightSource : ILightSource
 			{
 				var lp = light.SampleLightPoint(hitPoint);
 				return lp with {
-					factor = lp.factor * totalEnergy / energy
+					factor = lp.factor * (totalEnergy / energy)
 				};
 			}
 			else

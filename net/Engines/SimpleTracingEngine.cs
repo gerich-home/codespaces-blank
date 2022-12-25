@@ -4,25 +4,25 @@ namespace Engines;
 
 public record class SimpleTracingEngine(
 	Random rnd,
-	SceneSetup sceneSetup
+	SceneSetup sceneSetup,
+	int reflectRaysCount,
+	int shadowRaysCount,
+	double absorptionProbability,
+	double reflectFactor
 ): IEngine {
-	public const int REFLECT_RAYS = 10;
-	public const int SHADOW_RAYS = 10;
-	public const double ABSOPTION = 0.9;
-
 	public Luminance L(in Ray ray)
 	{
-		var hp = sceneSetup.scene.Intersection(null, ray);
+		var rootHp = sceneSetup.scene.Intersection(null, ray);
 	
-		if (hp == null)
+		if (rootHp == null)
 		{
 			return Luminance.Zero;
 		}
 
 		var root = new Node
 		{
-			hp = hp,
-			factor = new Luminance(1, 1, 1),
+			hp = rootHp,
+			factor = Luminance.Unit,
 			indirectLuminance = Luminance.Zero
 		};
 
@@ -33,17 +33,16 @@ public record class SimpleTracingEngine(
 		while(q.Count > 0)
         {
 			var node = q.Dequeue();
+			var hp = node.hp;
 
             double ksi = rnd.NextDouble();
 
-            if (ksi < ABSOPTION)
+            if (ksi < absorptionProbability)
             {
                 continue;
             }
 
-			const double reflectFactor = 1.0 / (REFLECT_RAYS * (1 - ABSOPTION));
-
-			for(int i = 0; i < REFLECT_RAYS; i++)
+			for(int i = 0; i < reflectRaysCount; i++)
 			{
 				var rndd = hp.SampleDirection(rnd.NextDouble());
 
@@ -77,19 +76,16 @@ public record class SimpleTracingEngine(
 			node.parent.indirectLuminance += (directLuminance + node.indirectLuminance) * node.factor;
 		}
 
-		return ComputeDirectLuminance(root.hp) + root.indirectLuminance;
+		return ComputeDirectLuminance(rootHp) + root.indirectLuminance;
 	}
 
     private Luminance ComputeDirectLuminance(HitPoint hp)
     {
-        Luminance result = Luminance.Zero;
-
-        for (int i = 0; i < SHADOW_RAYS; i++)
-        {
-			result += ComputeDirectLuminanceForSingleRay(hp);
-        }
-
-        return result / SHADOW_RAYS;
+		var result = Enumerable
+			.Range(0, shadowRaysCount)
+			.Aggregate(Luminance.Zero, (l1, i) => l1 + ComputeDirectLuminanceForSingleRay(hp));
+			
+		return result / shadowRaysCount;
     }
 	
     private Luminance ComputeDirectLuminanceForSingleRay(HitPoint hp)
