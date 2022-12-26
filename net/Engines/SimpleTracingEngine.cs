@@ -50,6 +50,14 @@ public record class SimpleTracingEngine(
 		while(q.Count > 0)
         {
 			var node = q.Dequeue();
+
+			#if DEBUG_DEPTH
+			if (node.depth == DEPTH)
+			{
+				continue;
+			}
+			#endif
+
 			var hp = node.hp;
 
             var ksi = rnd.NextDouble();
@@ -58,13 +66,6 @@ public record class SimpleTracingEngine(
             {
                 continue;
             }
-
-			#if DEBUG_DEPTH
-			if (node.depth == DEPTH)
-			{
-				continue;
-			}
-			#endif
 
 			for(int i = 0; i < reflectRaysCount; i++)
 			{

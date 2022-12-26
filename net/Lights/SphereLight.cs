@@ -24,9 +24,9 @@ public class SphereLight : ILightSource
 
 	public bool CanSendLightTo(HitPoint hitPoint)
 	{
-		var hc = hitPoint.Point - center;
+		var directionToLight = center - hitPoint.Point;
 
-		return hitPoint.Normal.DotProduct(hc) > -r;
+		return directionToLight.DotProduct(hitPoint.Normal) > -r;
 	}
 
 	public LightPoint SampleLightPoint(HitPoint hitPoint)
