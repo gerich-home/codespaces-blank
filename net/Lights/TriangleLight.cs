@@ -13,6 +13,7 @@ public class Triangle : ILightSource
 	public readonly Random rnd;
 	public readonly Vector ba;
 	public readonly Vector ca;
+	public readonly AABB aabb;
 	public static readonly double TwoPi = 2 * Math.PI;
 
 	public Triangle(Random rnd, Vector a, Vector b, Vector c, Luminance le)
@@ -26,7 +27,14 @@ public class Triangle : ILightSource
 		this.normal = ba.CrossProduct(ca).Normalized;
 		this.factor = (ba).CrossProduct(ca).Length / 2;
 		this.le = le;
+		aabb = AABB.FromEdgePoints(
+			a,
+			b, 
+			c 
+		);
 	}
+
+	public ref readonly AABB AABB => ref aabb;
 
 	public bool CanSendLightTo(HitPoint hitPoint)
 	{

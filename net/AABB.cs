@@ -21,10 +21,10 @@ public record struct AABB(
             )
         );
     
-    public static AABB Infinity =>
+    public static AABB MaxValue =>
         new AABB(
-            new Vector(double.NegativeInfinity, double.NegativeInfinity, double.NegativeInfinity),
-            new Vector(double.PositiveInfinity, double.PositiveInfinity, double.PositiveInfinity)
+            new Vector(double.MinValue, double.MinValue, double.MinValue),
+            new Vector(double.MaxValue, double.MaxValue, double.MaxValue)
         );
 
     public bool CanIntersect(in Ray ray, in Vector dirInv)
@@ -77,4 +77,6 @@ public record struct AABB(
                 Math.Max(max.z, other.max.z)
             )
         );
+
+    public Vector Center => (min + max) / 2;
 }

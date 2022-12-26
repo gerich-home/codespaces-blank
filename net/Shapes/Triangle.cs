@@ -23,8 +23,8 @@ public class Triangle: IShape
 		this.material = material;
 		aabb = AABB.FromEdgePoints(
 			a,
-			a + ba, 
-			a + ca 
+			b, 
+			c 
 		);
 	}
 

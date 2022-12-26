@@ -13,7 +13,7 @@ public class Scene : IShape
 		aabb = shapes.Any() ?
 			shapes.Skip(1)
 				.Aggregate(shapes.First().AABB, (a, s) => a.Union(s.AABB)) :
-			AABB.Infinity;
+			AABB.MaxValue;
 	}
 
 	public ref readonly AABB AABB => ref aabb;

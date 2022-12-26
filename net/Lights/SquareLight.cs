@@ -11,6 +11,7 @@ public class SquareLight : ILightSource
 	public readonly Vector ba;
 	public readonly Vector ca;
 	public readonly Vector normal;
+	public readonly AABB aabb;
 	public readonly double factor;
 	public readonly Luminance le;
 	public readonly Random rnd;
@@ -28,7 +29,15 @@ public class SquareLight : ILightSource
 		this.normal = ba.CrossProduct(ca).Normalized;
 		this.factor = (ba).CrossProduct(ca).Length;
 		this.le = le;
+		aabb = AABB.FromEdgePoints(
+			a,
+			b, 
+			c,
+			b + ca 
+		);
 	}
+
+	public ref readonly AABB AABB => ref aabb;
 
 	public bool CanSendLightTo(HitPoint hitPoint)
 	{

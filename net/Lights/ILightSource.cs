@@ -6,4 +6,5 @@ public interface ILightSource
 	LightPoint SampleLightPoint(HitPoint hitPoint);
 	Photon[] EmitPhotons(int nphotons);
     Luminance Le { get; }
+	ref readonly AABB AABB { get; }
 }

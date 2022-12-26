@@ -7,6 +7,7 @@ public class SphereLight : ILightSource
 	public readonly double r;
 	public readonly double r2;
 	public readonly double factor;
+	public readonly AABB aabb;
 	public readonly Vector center;
 	public readonly Luminance le;
 	public readonly Random rnd;
@@ -20,7 +21,13 @@ public class SphereLight : ILightSource
 		this.r2 = r * r;
 		this.factor = 4 * Math.PI * r * r;
 		this.le = le;
+		aabb = new AABB(
+			center - Vector.Unit * r,
+			center + Vector.Unit * r
+		);
 	}
+
+	public ref readonly AABB AABB => ref aabb;
 
 	public bool CanSendLightTo(HitPoint hitPoint)
 	{

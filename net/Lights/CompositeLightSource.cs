@@ -4,8 +4,9 @@ namespace Lights;
 
 public class CompositeLightSource : ILightSource
 {
-	public readonly (ILightSource light, double energy)[] lights;
+	public readonly (ILightSource light, double energy, Vector center)[] lights;
 	public readonly Random rnd;
+	public readonly AABB aabb;
 
 	public static ILightSource Create(Random rnd, ILightSource[] lights)
 	{
@@ -20,21 +21,32 @@ public class CompositeLightSource : ILightSource
 	private CompositeLightSource(Random rnd, IEnumerable<ILightSource> lights)
 	{
 		this.rnd = rnd;
-		this.lights = lights.Select(light => (light, light.Le.Energy)).ToArray();
+		this.lights = lights.Select(light => (light, light.Le.Energy, light.AABB.Center)).ToArray();
+		aabb = lights.Any() ?
+			lights.Skip(1)
+				.Aggregate(lights.First().AABB, (a, s) => a.Union(s.AABB)) :
+			AABB.MaxValue;
 	}
+
+	public ref readonly AABB AABB => ref aabb;
 
 	public bool CanSendLightTo(HitPoint hitPoint) =>
 		lights.Any(l => l.light.CanSendLightTo(hitPoint));
 
 	public LightPoint SampleLightPoint(HitPoint hitPoint)
 	{
-		var visibleLights = lights.Where(l => l.light.CanSendLightTo(hitPoint)).ToList();
-		
-		var totalEnergy = visibleLights.Sum(l => l.light.Le.Energy);
+		var visibleLights = lights
+			.Where(l => l.light.CanSendLightTo(hitPoint))
+			.Select(l => (
+				energy: l.energy / (l.center - hitPoint.Point).Norm,
+				light: l.light
+			))
+			.ToList();
+		var totalEnergy = visibleLights.Sum(l => l.energy);
 
 		double ksi = rnd.NextDouble(totalEnergy);
 
-		foreach (var (light, energy) in visibleLights)
+		foreach (var (energy, light) in visibleLights)
 		{
 			if(ksi < energy)
 			{

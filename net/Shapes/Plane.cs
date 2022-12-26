@@ -18,7 +18,7 @@ public class Plane : IShape
 				normal.y != 0 ? new Vector(0, -d / normal.y, 0) :
 				new Vector(0, 0, -d / normal.z);
 		this.material = material;
-		aabb = AABB.Infinity;
+		aabb = AABB.MaxValue;
 	}
 
 	public Plane(Vector a, Vector b, Vector A, IMaterial material)
@@ -27,7 +27,7 @@ public class Plane : IShape
 		this.A = A;
 		this.material = material;
 		this.d = A.DotProduct(normal);
-		aabb = AABB.Infinity;
+		aabb = AABB.MaxValue;
 	}
 
 	public Plane(double a, double b, double c, double d, IMaterial material)
@@ -42,7 +42,7 @@ public class Plane : IShape
 				? new Vector(0, -d / b, 0)
 				: new Vector(0, 0, -d / c)
 			);
-		aabb = AABB.Infinity;
+		aabb = AABB.MaxValue;
 	}
 
 	public ref readonly AABB AABB => ref aabb;

@@ -40,9 +40,9 @@ public class Square: IShape
 		this.material = new TexturedMaterialAdapter(material);
 		aabb = AABB.FromEdgePoints(
 			a,
-			a + ba, 
-			a + ca,
-			a + ba + ca 
+			b, 
+			c,
+			b + ca 
 		);
 	}
 
