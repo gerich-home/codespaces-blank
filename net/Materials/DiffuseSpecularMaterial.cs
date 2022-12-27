@@ -23,12 +23,14 @@ public static class DiffuseSpecularMaterial
 		
 		if(qd == 0)
 		{
-			return new SpecularMaterial(rnd, rs, n);
+			// TODO split by n into separate materials
+			return new SpecularMaterial(rnd, rs, n.Energy);
 		}
 
 		return new CompositeMaterial(
 			new DiffuseMaterial(rnd, rd),
-			new SpecularMaterial(rnd, rs, n),
+			// TODO split by n into separate materials
+			new SpecularMaterial(rnd, rs, n.Energy),
 			qd / (qd + qs)
 		);
 	}

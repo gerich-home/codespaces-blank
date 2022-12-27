@@ -16,19 +16,19 @@ public class DiffuseMaterial : IMaterial
 		this.diffuseResult = rd / Math.PI;
 	}
 
-	public Luminance BRDF(HitPoint hitPoint, in Vector ndirection) =>
+	public Luminance BRDF(HitPoint hitPoint, in Vector directionToLight) =>
 		diffuseResult;
 
-
-	// BRDF(hitPoint) * cos(hitPoint.normal, outDirection) / prob(outDirection)
-	// BRDF(hitPoint) = rd / PI
-	// prob(outgoingDirection) = cos(hitPoint.normal, outDirection) / PI
-	// result = rd
+	// BRDF(hitPoint, result.directionToLight) = rd / PI
+	// prob(result.directionToLight) = cos(hitPoint.normal, result.directionToLight) / PI
+	// result.factor == BRDF(hitPoint, result.directionToLight) * cos(hitPoint.normal, result.directionToLight) / prob(result.direction)
+	// -> result.factor == (rd / PI) * cos(hitPoint.normal, result.directionToLight) / (cos(hitPoint.normal, result.directionToLight) / PI)
+	// -> result.factor == rd
 	public RandomDirection SampleDirection(HitPoint hitPoint, double ksi)
 	{
-		var ndirection = rnd.NextSemisphereDirectionCos()
+		var directionToLight = rnd.NextSemisphereDirectionCos()
 			.Transform(hitPoint.Normal);
 
-		return new RandomDirection(rd, ndirection);
+		return new RandomDirection(rd, directionToLight);
 	}
 }

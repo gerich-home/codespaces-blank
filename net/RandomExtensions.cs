@@ -46,6 +46,20 @@ public static class RandomExtensions
         );
     }
 
+    public static Vector NextSemisphereDirectionPhong(this Random rnd, double n)
+    {
+        var cosa = Math.Sqrt(Math.Pow(rnd.NextDouble(), 1 / (n + 1)));
+        var sina = Math.Sqrt(1 - cosa * cosa);
+        var b = rnd.NextDouble(TwoPi);
+        var (sinb, cosb) = Math.SinCos(b);
+
+        return new Vector(
+            sina * cosb,
+            sina * sinb,
+            cosa
+        );
+    }
+
     public static double NextDouble(this Random rnd, double max) =>
         rnd.NextDouble() * max;
 

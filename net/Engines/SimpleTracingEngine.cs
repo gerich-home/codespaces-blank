@@ -1,4 +1,4 @@
-// #define DEBUG_DEPTH
+#define DEBUG_DEPTH
 
 using Engine;
 
@@ -76,7 +76,7 @@ public record class SimpleTracingEngine(
 					continue;
 				}
 
-				var nextHp = sceneSetup.scene.Intersection(hp.shape, hp.RayAlong(rndd.direction));
+				var nextHp = sceneSetup.scene.Intersection(hp.shape, hp.RayAlong(rndd.directionToLight));
 
 				if (nextHp == null)
 				{

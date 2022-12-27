@@ -2,7 +2,7 @@ namespace Engine;
 
 public readonly record struct RandomDirection(
     Luminance factor,
-    Vector direction
+    Vector directionToLight
 ) {
 	public static RandomDirection operator *(in RandomDirection a, double factor) =>
 		a with {factor = a.factor * factor};

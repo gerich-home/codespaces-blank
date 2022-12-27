@@ -82,7 +82,7 @@ public class Program
 		IShape leftWall  = new Square(new Vector(-0.5,  0.5, 1), new Vector(-0.5,  0.5, 2), new Vector(-0.5, -0.5, 1), m_green);
 		IShape rightWall = new Square(new Vector( 0.5,  0.5, 1), new Vector( 0.5, -0.5, 1), new Vector( 0.5,  0.5, 2), m_blue);
 
-		IShape ball1 = new Sphere(new Vector(   0, -0.3, 1.3), 0.2,  m1);
+		IShape ball1 = new Sphere(new Vector(   0, -0.3, 1.3), 0.2,  m3);
 		IShape ball2 = new Sphere(new Vector(-0.23, 0, 1.3), 0.1, m2);
 		IShape ball3 = new Sphere(new Vector(0.3, -0.3, 1.5), 0.15, m_refractor);
 

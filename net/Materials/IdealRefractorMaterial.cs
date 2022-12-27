@@ -8,7 +8,7 @@ public record class IdealRefractorMaterial(
 ): IMaterial {
 	public static readonly double TwoPi = 2 * Math.PI;
 
-	public Luminance BRDF(HitPoint hitPoint, in Vector ndirection)
+	public Luminance BRDF(HitPoint hitPoint, in Vector directionToLight)
 	{
 		int n = 500;
 
@@ -25,7 +25,7 @@ public record class IdealRefractorMaterial(
 		{
 			Vector R = hitPoint.IncomingDirection + 2 * cosa * hitPoint.Normal;
 			
-			double cosphi = ndirection.DotProduct(R);
+			double cosphi = directionToLight.DotProduct(R);
 		
 			if(cosphi <= 0)
 			{
@@ -54,7 +54,7 @@ public record class IdealRefractorMaterial(
 		
 		{
 			Vector R = hitPoint.IncomingDirection + 2 * cosa * hitPoint.Normal;
-			double cosphi = ndirection.DotProduct(R);
+			double cosphi = directionToLight.DotProduct(R);
 		
 			if(cosphi > 0)
 			{
@@ -77,7 +77,7 @@ public record class IdealRefractorMaterial(
 				R = cosb * hitPoint.Normal + factor * (cosa * hitPoint.Normal + hitPoint.IncomingDirection);
 			}
 			
-			double cosphi = ndirection.DotProduct(R);
+			double cosphi = directionToLight.DotProduct(R);
 		
 			if(cosphi > 0)
 			{

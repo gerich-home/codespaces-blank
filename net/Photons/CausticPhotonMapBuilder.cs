@@ -104,7 +104,7 @@ public class CausticPhotonMapBuilder : IPhotonMapBuilder
 				current_photon = current_photon with {
 					ray = current_photon.ray with {
 						start = current_photon.ray.PointAt(hp.T),
-						direction = rndd.direction,
+						direction = rndd.directionToLight,
 					},
 					energy = current_photon.energy * rndd.factor / (1 - ABSOPTION)
 				};

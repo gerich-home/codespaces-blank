@@ -91,7 +91,7 @@ public record class PhotonMapTracingEngine(
 
 			factor *= rndd.factor;
 			
-			current_direction = rndd.direction;
+			current_direction = rndd.directionToLight;
 			// the whole file was commented before
 			//current_hp = rndd.hp;
 			//current_point += current_direction * current_hp.t;
