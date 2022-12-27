@@ -65,7 +65,7 @@ public class Program
 		
 		Luminance kd3 = Luminance.Zero;
 		Luminance ks3 = new Luminance(1, 1, 1);
-		Luminance n3 = new Luminance(3, 3, 3);
+		Luminance n3 = new Luminance(6, 3, 1);
 		IMaterial m3 = DiffuseSpecularMaterial.Create(rnd, kd3, ks3, n3);
 		
 		Luminance rrefract = new Luminance(1, 1, 1);

@@ -10,7 +10,61 @@ public class SpecularMaterial : IMaterial
 	public readonly Luminance brdfPart;
 	public readonly double n;
 
-	public SpecularMaterial(Random rnd, Luminance rs, double n)
+	public static IMaterial Create(Random rnd, Luminance rs, Luminance n)
+	{
+		if (n.r == n.g)
+		{
+			if(n.r == n.b)
+			{
+				return new SpecularMaterial(rnd, rs, n.r);
+			}
+			else
+			{
+				var m1rs = rs * new Luminance(1, 1, 0);
+				var m2rs = rs * new Luminance(0, 0, 1);
+
+				return CompositeMaterial.Create(
+					new SpecularMaterial(rnd, m1rs, n.r),
+					new SpecularMaterial(rnd, m2rs, n.b),
+					m1rs.Energy,
+					m2rs.Energy
+				);
+			}
+		}
+		
+		if(n.g == n.b)
+		{
+			var m1rs = rs * new Luminance(0, 1, 1);
+			var m2rs = rs * new Luminance(1, 0, 0);
+
+			return CompositeMaterial.Create(
+				new SpecularMaterial(rnd, m1rs, n.g),
+				new SpecularMaterial(rnd, m2rs, n.r),
+				m1rs.Energy,
+				m2rs.Energy
+			);
+		}
+		else
+		{
+			var m1rs = rs * new Luminance(1, 0, 0);
+			var m2rs = rs * new Luminance(0, 1, 0);
+			var m3rs = rs * new Luminance(0, 0, 1);
+
+			return CompositeMaterial.Create(
+				new SpecularMaterial(rnd, m1rs, n.r),
+				CompositeMaterial.Create(
+					new SpecularMaterial(rnd, m2rs, n.g),
+					new SpecularMaterial(rnd, m3rs, n.b),
+					m2rs.Energy,
+					m3rs.Energy
+				),
+				m1rs.Energy,
+				m2rs.Energy + m3rs.Energy
+			);
+		}
+	}
+
+	private SpecularMaterial(Random rnd, Luminance rs, double n)
 	{
 		this.rnd = rnd;
 		this.rs = rs;

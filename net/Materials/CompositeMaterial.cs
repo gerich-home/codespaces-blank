@@ -4,29 +4,53 @@ namespace Materials;
 
 public class CompositeMaterial : IMaterial
 {
-	public readonly double qd;
-	public readonly IMaterial d;
-	public readonly IMaterial s;
+	public readonly double p1;
+	public readonly double m1Factor;
+	public readonly double m2Factor;
+	public readonly IMaterial m1;
+	public readonly IMaterial m2;
 
-	public CompositeMaterial(IMaterial d, IMaterial s, double qd)
+	public static IMaterial Create(IMaterial m1, IMaterial m2, double m1Energy, double m2Energy)
 	{
-		this.d = d;
-		this.s = s;
-		this.qd = qd;
+		if (m1Energy == 0 && m2Energy == 0)
+		{
+			return new PureBlackMaterial();
+		}
+
+		if(m2Energy == 0)
+		{
+			return m1;
+		}
+		
+		if(m1Energy == 0)
+		{
+			return m2;
+		}
+
+		return new CompositeMaterial(m1, m2, m1Energy, m2Energy);
+	}
+
+	private CompositeMaterial(IMaterial m1, IMaterial m2, double m1Energy, double m2Energy)
+	{
+		this.m1 = m1;
+		this.m2 = m2;
+		this.p1 = m1Energy / (m1Energy + m2Energy);
+		this.m1Factor = 1 / p1;
+		this.m2Factor = 1 / (1 - p1);
 	}
 
 	public Luminance BRDF(HitPoint hitPoint, in Vector directionToLight) =>
-		d.BRDF(hitPoint, directionToLight) + s.BRDF(hitPoint, directionToLight);
+		m1.BRDF(hitPoint, directionToLight) + m2.BRDF(hitPoint, directionToLight);
 
 	public RandomDirection SampleDirection(HitPoint hitPoint, double ksi)
 	{
-		if (ksi < qd)
+		if (ksi < p1)
 		{
-			return d.SampleDirection(hitPoint, ksi / qd) / qd;
+			return m1.SampleDirection(hitPoint, ksi * m1Factor) * m1Factor;
 		}
 		else
 		{
-			return s.SampleDirection(hitPoint, ksi / (1 - qd)) / (1 - qd);
+			return m2.SampleDirection(hitPoint, ksi * m2Factor) * m2Factor;
 		}
 	}
 }
