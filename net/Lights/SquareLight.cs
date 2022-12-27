@@ -14,6 +14,7 @@ public class SquareLight : ILightSource
 	public readonly AABB aabb;
 	public readonly double factor;
 	public readonly Luminance le;
+	public readonly Luminance energy;
 	public readonly Random rnd;
 	public static readonly double TwoPi = 2 * Math.PI;
 
@@ -29,6 +30,7 @@ public class SquareLight : ILightSource
 		this.normal = ba.CrossProduct(ca).Normalized;
 		this.factor = (ba).CrossProduct(ca).Length;
 		this.le = le;
+		this.energy = le * factor;
 		aabb = AABB.FromEdgePoints(
 			a,
 			b, 
@@ -78,4 +80,5 @@ public class SquareLight : ILightSource
 	}
 
     public Luminance Le => le;
+    public Luminance Energy => energy;
 }

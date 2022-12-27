@@ -82,7 +82,7 @@ public class Program
 		IShape leftWall  = new Square(new Vector(-0.5,  0.5, 1), new Vector(-0.5,  0.5, 2), new Vector(-0.5, -0.5, 1), m_green);
 		IShape rightWall = new Square(new Vector( 0.5,  0.5, 1), new Vector( 0.5, -0.5, 1), new Vector( 0.5,  0.5, 2), m_blue);
 
-		IShape ball1 = new Sphere(new Vector(   0, -0.4, 1.3), 0.1,  m1);
+		IShape ball1 = new Sphere(new Vector(   0, -0.3, 1.3), 0.2,  m1);
 		IShape ball2 = new Sphere(new Vector(-0.23, 0, 1.3), 0.1, m2);
 		IShape ball3 = new Sphere(new Vector(0.3, -0.3, 1.5), 0.15, m_refractor);
 
@@ -126,7 +126,7 @@ public class Program
 			//new SquareLight(rnd, new Vector(-0.15, 0.5 - double.Epsilon, 1.35), new Vector(0.15,  0.5 - double.Epsilon, 1.35), new Vector(-0.15, 0.5 - double.Epsilon, 1.65), Le1),
 			//new SphereLight(new Vector(-0.15, 0.45, 8.35), new Vector(0.15,  0.45, 8.35), new Vector(-0.15, 0.45, 8.65), Le1),
 			new SphereLight(rnd, new Vector(   0.2, -0.4, 1.1), 0.1, Le1 * 3),
-			new SphereLight(rnd, new Vector(-0.1, 0.3, 1.7), 0.1, Le1 * 2),
+			new SphereLight(rnd, new Vector(-0.1, 0.3, 1.3), 0.1, Le1 * 2),
 			//new SphereLight(rnd, new Vector(-0.3, -0.3, 1.5), 0.05, Le1),
 		};
 		

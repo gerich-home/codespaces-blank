@@ -10,6 +10,7 @@ public class Triangle : ILightSource
 	public readonly Vector c;
 	public readonly Vector normal;
 	public readonly Luminance le;
+	public readonly Luminance energy;
 	public readonly Random rnd;
 	public readonly Vector ba;
 	public readonly Vector ca;
@@ -27,6 +28,7 @@ public class Triangle : ILightSource
 		this.normal = ba.CrossProduct(ca).Normalized;
 		this.factor = (ba).CrossProduct(ca).Length / 2;
 		this.le = le;
+		this.energy = le * factor;
 		aabb = AABB.FromEdgePoints(
 			a,
 			b, 
@@ -80,4 +82,5 @@ public class Triangle : ILightSource
 	}
 
     public Luminance Le => le;
+    public Luminance Energy => energy;
 }

@@ -7,6 +7,8 @@ public class CompositeLightSource : ILightSource
 	public readonly (ILightSource light, double energy, Vector center)[] lights;
 	public readonly Random rnd;
 	public readonly AABB aabb;
+	public readonly Luminance le;
+	public readonly Luminance energy;
 
 	public static ILightSource Create(Random rnd, ILightSource[] lights)
 	{
@@ -21,11 +23,19 @@ public class CompositeLightSource : ILightSource
 	private CompositeLightSource(Random rnd, IEnumerable<ILightSource> lights)
 	{
 		this.rnd = rnd;
-		this.lights = lights.Select(light => (light, light.Le.Energy, light.AABB.Center)).ToArray();
-		aabb = lights.Any() ?
+		this.lights = lights.Select(light => (light, light.Energy.Energy, light.AABB.Center)).ToArray();
+		this.aabb = lights.Any() ?
 			lights.Skip(1)
 				.Aggregate(lights.First().AABB, (a, s) => a.Union(s.AABB)) :
 			AABB.MaxValue;
+			
+		this.le = lights
+			.Select(l => l.Le)
+			.Aggregate(Luminance.Zero, (a, b) => a + b);
+
+		this.energy = lights
+			.Select(l => l.Energy)
+			.Aggregate(Luminance.Zero, (a, b) => a + b);
 	}
 
 	public ref readonly AABB AABB => ref aabb;
@@ -38,7 +48,7 @@ public class CompositeLightSource : ILightSource
 		var visibleLights = lights
 			.Where(l => l.light.CanSendLightTo(hitPoint))
 			.Select(l => (
-				energy: l.energy / (l.center - hitPoint.Point).Norm,
+				energy: l.energy,// / (l.center - hitPoint.Point).Norm,
 				light: l.light
 			))
 			.ToList();
@@ -84,8 +94,6 @@ public class CompositeLightSource : ILightSource
 			.ToArray();
 	}
 
-    public Luminance Le =>
-		lights
-			.Select(l => l.light.Le)
-			.Aggregate(Luminance.Zero, (a, b) => a + b);
+    public Luminance Le => le;
+    public Luminance Energy => energy;
 }

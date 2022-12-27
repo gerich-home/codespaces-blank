@@ -10,6 +10,7 @@ public class SphereLight : ILightSource
 	public readonly AABB aabb;
 	public readonly Vector center;
 	public readonly Luminance le;
+	public readonly Luminance energy;
 	public readonly Random rnd;
 	public static readonly double TwoPi = 2 * Math.PI;
 
@@ -19,8 +20,9 @@ public class SphereLight : ILightSource
 		this.center = center;
 		this.r = r;
 		this.r2 = r * r;
-		this.factor = 4 * Math.PI * r * r;
+		this.factor = 2 * Math.PI * r * r;
 		this.le = le;
+		this.energy = le * factor;
 		aabb = new AABB(
 			center - Vector.Unit * r,
 			center + Vector.Unit * r
@@ -67,4 +69,5 @@ public class SphereLight : ILightSource
 	}
 
     public Luminance Le => le;
+    public Luminance Energy => energy;
 }
