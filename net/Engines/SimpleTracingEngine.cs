@@ -15,116 +15,133 @@ public record class SimpleTracingEngine(
 	const double tolerance = 1E-8;
 
 	public Luminance L(in Ray ray)
-	{
-		#if DEBUG_DEPTH
+    {
+#if DEBUG_DEPTH
 		// output luminace of that depth only
 		const int DEPTH = 2;
-		#endif
+#endif
 
-		var rootHp = sceneSetup.scene.Intersection(ray);
-	
-		if (rootHp == null)
-		{
-			return Luminance.Zero;
-		}
+        var rootHp = sceneSetup.scene.Intersection(ray);
+        var lightHp = sceneSetup.lights.Intersection(ray);
 
-		var resultNode = new Node
-		{
-			indirectLuminance = Luminance.Zero,
-		};
-
-		var root = new Node
-		{
-			parent = resultNode,
-			hp = rootHp,
-			factor = Luminance.Unit,
-			indirectLuminance = Luminance.Zero,
-			#if DEBUG_DEPTH
-			depth = 0
-			#endif
-		};
-
-		var q = new Queue<Node>();
-		var s = new Stack<Node>();
-		q.Enqueue(root);
-		s.Push(root);
-
-		while(q.Count > 0)
+        var resultNode = new Node
         {
-			var node = q.Dequeue();
+            luminance = Luminance.Zero,
+        };
 
-			#if DEBUG_DEPTH
+        var root = new Node
+        {
+            parent = resultNode,
+            hp = rootHp,
+			lightHp = lightHp,
+            factor = Luminance.Unit,
+#if DEBUG_DEPTH
+			depth = 0
+#endif
+        };
+
+        var q = new Queue<Node>();
+        var s = new Stack<Node>();
+        if (rootHp != null)
+		{
+			q.Enqueue(root);
+		}
+        s.Push(root);
+
+        while (q.Count > 0)
+        {
+            var node = q.Dequeue();
+
+#if DEBUG_DEPTH
 			if (node.depth == DEPTH)
 			{
 				continue;
 			}
-			#endif
+#endif
 
-			var hp = node.hp;
-			var isPerfect = hp.material.IsPerfect;
+            var hp = node.hp;
 
-			if(!isPerfect)
+			if(hp == null)
 			{
-				var ksi = rnd.NextDouble();
-
-				if (ksi < absorptionProbability)
-				{
-					continue;
-				}
+				continue;
 			}
 
-			var actualReflectRaysCount = isPerfect ? 1 : reflectRaysCount;
-			var factor = isPerfect ? 1 : reflectFactor;
+            var isPerfect = hp.Material.IsPerfect;
 
-			for(int i = 0; i < actualReflectRaysCount; i++)
-			{
-				var rndd = hp.SampleDirection();
+            if (!isPerfect)
+            {
+                var ksi = rnd.NextDouble();
 
-				if (rndd.factor.IsZero)
-				{
-					continue;
-				}
+                if (ksi < absorptionProbability)
+                {
+                    continue;
+                }
+            }
 
-				var nextHp = sceneSetup.scene.Intersection(hp.RayAlong(rndd.directionToLight, tolerance));
+            var actualReflectRaysCount = isPerfect ? 1 : reflectRaysCount;
+            var factor = isPerfect ? 1 : reflectFactor;
 
-				if (nextHp == null)
-				{
-					continue;
-				}
-				
-				var nextNode = new Node
-				{
-					parent = node,
-					hp = nextHp,
-					factor = rndd.factor * factor,
+            for (int i = 0; i < actualReflectRaysCount; i++)
+            {
+                var rndd = hp.SampleDirection();
 
-					#if DEBUG_DEPTH
+                if (rndd.factor.IsZero)
+                {
+                    continue;
+                }
+
+				var nextRay = hp.RayAlong(rndd.directionToLight, tolerance);
+                var nextHp = sceneSetup.scene.Intersection(nextRay);
+		        var nextLightHp = sceneSetup.lights.Intersection(nextRay);
+
+                var nextNode = new Node
+                {
+                    parent = node,
+                    hp = nextHp,
+					lightHp = nextLightHp,
+                    factor = rndd.factor * factor,
+
+#if DEBUG_DEPTH
 					depth = node.depth + 1
-					#endif
-				};
-				q.Enqueue(nextNode);
-				s.Push(nextNode);
-			}
+#endif
+                };
+                if (nextHp != null)
+                {
+	                q.Enqueue(nextNode);
+                }
+                s.Push(nextNode);
+            }
         }
 
-		while(s.Count > 0)
-		{
-			var node = s.Pop();
-					
-			#if DEBUG_DEPTH
-			var directLuminance = node.depth == DEPTH ? ComputeDirectLuminance(node.hp) : Luminance.Zero;
-			#else
-			var directLuminance = ComputeDirectLuminance(node.hp);
-			#endif
-			node.parent.indirectLuminance += (directLuminance + node.indirectLuminance) * node.factor;
-		}
+        while (s.Count > 0)
+        {
+            var node = s.Pop();
 
-		return resultNode.indirectLuminance;
-	}
+#if DEBUG_DEPTH
+			var directLuminance = node.depth == DEPTH ? ComputeDirectLuminance(node.hp) : Luminance.Zero;
+#else
+            var directLuminance = ComputeDirectLuminance(node.hp);
+#endif
+			var l = LightLuminance(node.hp, node.lightHp);
+            node.parent.luminance += (node.luminance + directLuminance + l) * node.factor;
+        }
+
+        return resultNode.luminance;
+    }
+
+    private static Luminance LightLuminance(BodyHitPoint? sceneHp, LightHitPoint lightHp)
+    {
+        if (lightHp == null || sceneHp != null && sceneHp.T < lightHp.T)
+		{
+			return Luminance.Zero;
+        }
+
+		return (-lightHp.ShapeHitPoint.IncomingDirection.DotProduct(lightHp.ShapeHitPoint.Normal)) * lightHp.Le;
+    }
 
     private Luminance ComputeDirectLuminance(BodyHitPoint hp)
     {
-		if(hp.material.IsPerfect)
+		if(hp == null || hp.Material.IsPerfect)
 		{
 			return Luminance.Zero;
 		}
@@ -186,7 +203,8 @@ class Node
 {
 	public Node parent;
 	public BodyHitPoint hp;
-	public Luminance indirectLuminance = Luminance.Zero;
+	public LightHitPoint lightHp;
+	public Luminance luminance = Luminance.Zero;
 	public Luminance factor;
 
 	#if DEBUG_DEPTH

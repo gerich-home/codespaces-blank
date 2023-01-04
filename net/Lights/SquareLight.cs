@@ -1,4 +1,5 @@
 using Engine;
+using Shapes;
 
 namespace Lights;
 
@@ -16,6 +17,7 @@ public class SquareLight : ILightSource
 	public readonly Luminance le;
 	public readonly Luminance energy;
 	public readonly Random rnd;
+	public readonly Square shape;
 
 	public SquareLight(Random rnd, Vector a, Vector b, Vector c, Luminance le)
 	{
@@ -30,12 +32,8 @@ public class SquareLight : ILightSource
 		this.factor = (ba).CrossProduct(ca).Length;
 		this.le = le;
 		this.energy = le * factor;
-		aabb = AABB.FromEdgePoints(
-			a,
-			b, 
-			c,
-			b + ca 
-		);
+		this.shape = new Square(a, b, c);
+		aabb = shape.AABB;
 	}
 
 	public ref readonly AABB AABB => ref aabb;
@@ -80,4 +78,16 @@ public class SquareLight : ILightSource
 
     public Luminance Le => le;
     public Luminance Energy => energy;
+	
+	public LightHitPoint Intersection(in Ray ray)
+	{
+		var shapeHitPoint = shape.Intersection(ray);
+
+		if(shapeHitPoint == null) 
+		{
+			return null;
+		}
+
+		return new LightHitPoint(shapeHitPoint, Le);
+	}
 }

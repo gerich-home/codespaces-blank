@@ -1,4 +1,5 @@
 using Engine;
+using Shapes;
 
 namespace Lights;
 
@@ -12,6 +13,7 @@ public class SphereLight : ILightSource
 	public readonly Luminance le;
 	public readonly Luminance energy;
 	public readonly Random rnd;
+	public readonly Sphere shape;
 
 	public SphereLight(Random rnd, Vector center, double r, Luminance le)
 	{
@@ -22,10 +24,8 @@ public class SphereLight : ILightSource
 		this.factor = 2 * Math.PI * r * r;
 		this.le = le;
 		this.energy = le * factor;
-		aabb = new AABB(
-			center - Vector.Unit * r,
-			center + Vector.Unit * r
-		);
+		this.shape = new Sphere(center, r);
+		aabb = shape.AABB;
 	}
 
 	public ref readonly AABB AABB => ref aabb;
@@ -69,4 +69,16 @@ public class SphereLight : ILightSource
 
     public Luminance Le => le;
     public Luminance Energy => energy;
+	
+	public LightHitPoint Intersection(in Ray ray)
+	{
+		var shapeHitPoint = shape.Intersection(ray);
+
+		if(shapeHitPoint == null) 
+		{
+			return null;
+		}
+
+		return new LightHitPoint(shapeHitPoint, Le);
+	}
 }

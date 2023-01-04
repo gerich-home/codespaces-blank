@@ -8,4 +8,5 @@ public interface ILightSource
     Luminance Le { get; }
     Luminance Energy { get; }
 	ref readonly AABB AABB { get; }
+	LightHitPoint Intersection(in Ray ray);
 }

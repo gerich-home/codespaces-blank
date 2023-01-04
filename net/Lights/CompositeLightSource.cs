@@ -96,4 +96,37 @@ public class CompositeLightSource : ILightSource
 
     public Luminance Le => le;
     public Luminance Energy => energy;
+
+	public LightHitPoint Intersection(in Ray ray)
+	{
+		var dirInv = new Vector(
+			1 / ray.direction.x,
+			1 / ray.direction.y,
+			1 / ray.direction.z
+		);
+		
+		if (!AABB.CanIntersect(ray, dirInv))
+		{
+			return null;
+		}
+
+		LightHitPoint bestHitPoint = null;
+		
+		for(int i = 0; i < lights.Length; i++)
+		{
+			var light = lights[i].light; 
+			if(!light.AABB.CanIntersect(ray, dirInv))
+			{
+				continue;
+			}
+
+			var hitPoint = light.Intersection(ray);
+			if(hitPoint != null && (bestHitPoint == null || hitPoint.T < bestHitPoint.T))
+			{
+				bestHitPoint = hitPoint;
+			}
+		}
+
+		return bestHitPoint;
+	}
 }

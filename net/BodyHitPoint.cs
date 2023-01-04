@@ -1,33 +1,23 @@
 namespace Engine;
 
-public class BodyHitPoint
+public record class BodyHitPoint(ShapeHitPoint ShapeHitPoint, IMaterial Material)
 {
-	public readonly IMaterial material;
-	public readonly ShapeHitPoint shapeHitPoint;
-
-	public BodyHitPoint(ShapeHitPoint shapeHitPoint, IMaterial material)
-	{
-		this.shapeHitPoint = shapeHitPoint;
-		this.material = material;
-	}
-	
-	public double T => shapeHitPoint.T;
-	public ref readonly Vector Normal => ref shapeHitPoint.Normal;
-	public ref readonly Vector Point => ref shapeHitPoint.Point;
-	public ref readonly Vector IncomingDirection => ref shapeHitPoint.IncomingDirection;
+	public double T => ShapeHitPoint.T;
+	public ref readonly Vector Normal => ref ShapeHitPoint.Normal;
+	public ref readonly Vector Point => ref ShapeHitPoint.Point;
+	public Vector IncomingDirection => ShapeHitPoint.IncomingDirection;
 	
 	public Ray RayAlong(in Vector newDirection, double offset) =>
-		(Point + offset * newDirection).RayAlong(newDirection);
+		ShapeHitPoint.RayAlong(newDirection, offset);
 
 	// SampleDirection(ksi).DotProduct(Normal) >= 0
 	public RandomDirection SampleDirection() =>
-		material.SampleDirection(this);
+		Material.SampleDirection(this);
 
 	// directionToLight.DotProduct(Normal) >= 0
 	public Luminance BRDF(in Vector directionToLight) =>
-		material.BRDF(this, directionToLight);
+		Material.BRDF(this, directionToLight);
 
 	// Reflection.DotProduct(Normal) >= 0
-	public Vector Reflection =>
-		IncomingDirection - 2 * Normal.DotProduct(IncomingDirection) * Normal;
+	public Vector Reflection => ShapeHitPoint.Reflection;
 }

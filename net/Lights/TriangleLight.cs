@@ -1,8 +1,9 @@
 using Engine;
+using Shapes;
 
 namespace Lights;
 
-public class Triangle : ILightSource
+public class TriangleLight : ILightSource
 {
 	public readonly double factor;
 	public readonly Vector a;
@@ -15,8 +16,9 @@ public class Triangle : ILightSource
 	public readonly Vector ba;
 	public readonly Vector ca;
 	public readonly AABB aabb;
+	public readonly Triangle shape;
 
-	public Triangle(Random rnd, Vector a, Vector b, Vector c, Luminance le)
+	public TriangleLight(Random rnd, Vector a, Vector b, Vector c, Luminance le)
 	{
 		this.rnd = rnd;
 		this.a = a;
@@ -28,11 +30,8 @@ public class Triangle : ILightSource
 		this.factor = (ba).CrossProduct(ca).Length / 2;
 		this.le = le;
 		this.energy = le * factor;
-		aabb = AABB.FromEdgePoints(
-			a,
-			b, 
-			c 
-		);
+		this.shape = new Triangle(a, b, c);
+		aabb = shape.AABB;
 	}
 
 	public ref readonly AABB AABB => ref aabb;
@@ -82,4 +81,16 @@ public class Triangle : ILightSource
 
     public Luminance Le => le;
     public Luminance Energy => energy;
+	
+	public LightHitPoint Intersection(in Ray ray)
+	{
+		var shapeHitPoint = shape.Intersection(ray);
+
+		if(shapeHitPoint == null) 
+		{
+			return null;
+		}
+
+		return new LightHitPoint(shapeHitPoint, Le);
+	}
 }

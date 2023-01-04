@@ -1,3 +1,5 @@
+//#define HQ
+
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using Materials;
@@ -10,8 +12,13 @@ namespace Engine;
 
 public class Program
 {
+#if HQ
 	const int W = 1280;
 	const int H = 1280;
+#else
+	const int W = 320;
+	const int H = 320;
+#endif
 	const double CAM_Z = 0.0000001;
 	const double CAM_SIZE = (0.55 * CAM_Z / (1 + CAM_Z));
 	const double PIXEL_SIZE = 1.05;
@@ -74,7 +81,7 @@ public class Program
 		
 		ITexturedMaterial m_chess_wb = new CheckeredMaterial(4*2000, 4*200, m_white, m_black);
 
-		Luminance Le1 = Luminance.Unit * 2;
+		Luminance Le1 = Luminance.Unit;
 		
 		IBody floor     = new Square(new Vector(-2000, -0.5, 1), new Vector(-2000, -0.5, 200), new Vector( 2000, -0.5, 1)).WithMaterial(m_chess_wb);
 		//IShape floor     = new Square(new Vector(-0.5, -0.5, 1), new Vector(-0.5, -0.5, 2), new Vector( 0.5, -0.5, 1)).WithMaterial(m_chess_wb);
@@ -126,9 +133,9 @@ public class Program
 		ILightSource[] lightSources = {
 			//new SquareLight(rnd, new Vector(-0.15, 0.5 - double.Epsilon, 1.35), new Vector(0.15,  0.5 - double.Epsilon, 1.35), new Vector(-0.15, 0.5 - double.Epsilon, 1.65), Le1),
 			//new SphereLight(new Vector(-0.15, 0.45, 8.35), new Vector(0.15,  0.45, 8.35), new Vector(-0.15, 0.45, 8.65), Le1),
-			new SphereLight(rnd, new Vector(   0.2, -0.4, 1.1), 0.1, Le1 * 2),
-			new SphereLight(rnd, new Vector(-0.3, 0, 3), 0.2, Le1 * 10),
-			new SphereLight(rnd, new Vector(2, 3, 6), 0.5, Le1 * 20),
+			new SphereLight(rnd, new Vector(   0.2, -0.4, 1.1), 0.1, Le1 * 4),
+			new SphereLight(rnd, new Vector(-1, 1, 4), 0.2, Le1 * 20),
+			new SphereLight(rnd, new Vector(2, 1, 6), 0.5, Le1 * 40),
 			//new SphereLight(rnd, new Vector(-0.3, -0.3, 1.5), 0.05, Le1),
 		};
 		
