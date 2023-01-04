@@ -7,13 +7,11 @@ public class Sphere : IShape
 	public readonly double r2;
 	public readonly double rinv;
 	public readonly Vector center;
-	public readonly IMaterial material;
 	public readonly AABB aabb;
 
-	public Sphere(Vector center, double r, IMaterial material)
+	public Sphere(Vector center, double r)
 	{
 		this.center = center;
-		this.material = material;
 		this.r2 = r * r;
 		this.rinv = 1 / r;
 		aabb = new AABB(
@@ -24,7 +22,7 @@ public class Sphere : IShape
 
 	public ref readonly AABB AABB => ref aabb;
 
-	public HitPoint Intersection(in Ray ray)
+	public ShapeHitPoint Intersection(in Ray ray)
 	{
 		var ac = ray.start - center;
 		
@@ -52,6 +50,6 @@ public class Sphere : IShape
 			}
 		}
 
-		return new HitPoint(ray, t, (ray.PointAt(t) - center) * rinv, material, this);
+		return new ShapeHitPoint(ray, t, (ray.PointAt(t) - center) * rinv);
 	}
 }

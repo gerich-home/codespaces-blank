@@ -78,7 +78,7 @@ public class SpecularMaterial : IMaterial
 		this.factorPart = rs * (1 + 1 / (n + 1));
 	}
 
-	public Luminance BRDF(HitPoint hitPoint, in Vector directionToLight)
+	public Luminance BRDF(BodyHitPoint hitPoint, in Vector directionToLight)
 	{
 		var cosPhi = hitPoint.Reflection.DotProduct(directionToLight);
 		
@@ -95,7 +95,7 @@ public class SpecularMaterial : IMaterial
 	// result.factor == BRDF(hitPoint, result.directionToLight) * cos(hitPoint.normal, result.directionToLight) / prob(result.direction)
 	// -> result.factor == rs * (n + 2) * cos(hitPoint.R, result.directionToLight) ^ n / (2 * PI) * cos(hitPoint.normal, result.directionToLight) / (cos(hitPoint.R, result.directionToLight) ^ n * (n + 1) / (2 * PI))
 	// -> result.factor == rs * (1 + 1 / (n + 1)) * cos(hitPoint.normal, result.directionToLight)
-	public RandomDirection SampleDirection(HitPoint hitPoint)
+	public RandomDirection SampleDirection(BodyHitPoint hitPoint)
 	{
 		var directionToLight = rnd.NextSemisphereDirectionPhong(n)
 			.Transform(hitPoint.Reflection);

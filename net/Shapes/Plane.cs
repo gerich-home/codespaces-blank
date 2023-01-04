@@ -7,34 +7,30 @@ public class Plane : IShape
 	public readonly double d;
 	public readonly Vector normal;
 	public readonly Vector A;
-	public readonly IMaterial material;
 	public readonly AABB aabb;
 
-	public Plane(Vector normal, double d, IMaterial material)
+	public Plane(Vector normal, double d)
 	{
 		this.normal = normal;
 		this.d = d;
 		this.A = normal.x != 0 ? new Vector(-d / normal.x, 0, 0) :
 				normal.y != 0 ? new Vector(0, -d / normal.y, 0) :
 				new Vector(0, 0, -d / normal.z);
-		this.material = material;
 		aabb = AABB.MaxValue;
 	}
 
-	public Plane(Vector a, Vector b, Vector A, IMaterial material)
+	public Plane(Vector a, Vector b, Vector A)
 	{
 		this.normal = a.CrossProduct(b).Normalized;
 		this.A = A;
-		this.material = material;
 		this.d = A.DotProduct(normal);
 		aabb = AABB.MaxValue;
 	}
 
-	public Plane(double a, double b, double c, double d, IMaterial material)
+	public Plane(double a, double b, double c, double d)
 	{
 		this.normal = new Vector(a, b, c).Normalized;
 		this.d = d;
-		this.material = material;
 		this.A = a != 0
 			? new Vector(-d / a, 0, 0)
 			: (
@@ -47,7 +43,7 @@ public class Plane : IShape
 
 	public ref readonly AABB AABB => ref aabb;
 
-	public HitPoint Intersection(in Ray ray)
+	public ShapeHitPoint Intersection(in Ray ray)
 	{
 		double divident = normal.DotProduct(ray.direction);
 
@@ -63,6 +59,6 @@ public class Plane : IShape
 			return null;
 		}
 
-		return new HitPoint(ray, t, normal, material, this);
+		return new ShapeHitPoint(ray, t, normal);
 	}
 }

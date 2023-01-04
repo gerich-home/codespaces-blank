@@ -13,10 +13,10 @@ public class IdealRefractorMaterial: IMaterial
 		this.refractornessInv = 1 / refractorness;
 	}
 
-    public Luminance BRDF(HitPoint hitPoint, in Vector directionToLight) =>
+    public Luminance BRDF(BodyHitPoint hitPoint, in Vector directionToLight) =>
 		Luminance.Zero;
 
-	public RandomDirection SampleDirection(HitPoint hitPoint)
+	public RandomDirection SampleDirection(BodyHitPoint hitPoint)
 	{
 		var cos1 = hitPoint.IncomingDirection.DotProduct(hitPoint.Normal);
 		var x = hitPoint.Normal * cos1;
@@ -29,7 +29,7 @@ public class IdealRefractorMaterial: IMaterial
 		}
 		if (sin1 == 0 || cos1 == 0)
 		{
-			return new RandomDirection(Luminance.Unit, hitPoint.incomingDirection);
+			return new RandomDirection(Luminance.Unit, hitPoint.IncomingDirection);
 		}
 
 		var cos2 = Math.Sqrt(1 - sin2 * sin2);

@@ -12,7 +12,7 @@ public record class PhotonMapTracingEngine(
 
 	public Luminance L(in Ray ray)
 	{
-		HitPoint hp = sceneSetup.scene.Intersection(ray);
+		BodyHitPoint hp = sceneSetup.scene.Intersection(ray);
 	
 		if (hp == null)
 		{
@@ -23,7 +23,7 @@ public record class PhotonMapTracingEngine(
 		Luminance factor = new Luminance(1, 1, 1);
 		Vector current_point = hp.Point;
 		Vector current_direction = hp.IncomingDirection;
-		HitPoint current_hp = hp;
+		BodyHitPoint current_hp = hp;
 
 		while(true)
 		{
@@ -58,7 +58,7 @@ public record class PhotonMapTracingEngine(
 				cos_dir_normal *= linv;
 				cos_dir_lnormal *= linv;
 
-				HitPoint nhp = sceneSetup.scene.Intersection(current_point.RayAlong(directionToLight));
+				BodyHitPoint nhp = sceneSetup.scene.Intersection(current_point.RayAlong(directionToLight));
 
 				if(nhp != null)
 				{

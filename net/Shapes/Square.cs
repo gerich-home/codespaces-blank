@@ -1,27 +1,24 @@
 using Engine;
-using Materials;
 
 namespace Shapes;
 
-public class Square: IShape
+public class Square: ITexturableShape
 {
 	public readonly Vector a;
 	public readonly Vector ba;
 	public readonly Vector ca;
 	public readonly Vector normal;
 	public readonly Vector n;
-	public readonly ITexturedMaterial material;
 
 	public readonly AABB aabb;
 
-	public Square(Vector a, Vector b, Vector c, ITexturedMaterial material)
+	public Square(Vector a, Vector b, Vector c)
 	{
 		this.a = a;
 		this.ba = b - a;
 		this.ca = c - a;
 		this.normal = (b - a).CrossProduct(c - a);
 		this.n = (b - a).CrossProduct(c - a).Normalized;
-		this.material = material;
 		aabb = AABB.FromEdgePoints(
 			a,
 			a + ba, 
@@ -29,26 +26,13 @@ public class Square: IShape
 			a + ba + ca 
 		);
 	}
-		
-	public Square(Vector a, Vector b, Vector c, IMaterial material)
-	{
-		this.a = a;
-		this.ba = b - a;
-		this.ca = c - a;
-		this.normal = (b - a).CrossProduct(c - a);
-		this.n = (b - a).CrossProduct(c - a).Normalized;
-		this.material = new TexturedMaterialAdapter(material);
-		aabb = AABB.FromEdgePoints(
-			a,
-			b, 
-			c,
-			b + ca 
-		);
-	}
 
 	public ref readonly AABB AABB => ref aabb;
 
-	public HitPoint Intersection(in Ray ray)
+	public ShapeHitPoint Intersection(in Ray ray) =>
+		TexturableIntersection(ray);
+
+	public TexturableShapeHitPoint TexturableIntersection(in Ray ray)
 	{
 		double t = 0;
 		double t1 = 0;
@@ -87,6 +71,6 @@ public class Square: IShape
 			return null;
 		}
 
-		return new HitPoint(ray, t, n, material.MaterialAt(t1, t2), this);
+		return new TexturableShapeHitPoint(ray, t, n, t1, t2);
 	}
 }

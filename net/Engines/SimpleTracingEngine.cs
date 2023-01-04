@@ -122,7 +122,7 @@ public record class SimpleTracingEngine(
 		return resultNode.indirectLuminance;
 	}
 
-    private Luminance ComputeDirectLuminance(HitPoint hp)
+    private Luminance ComputeDirectLuminance(BodyHitPoint hp)
     {
 		if(hp.material.IsPerfect)
 		{
@@ -136,7 +136,7 @@ public record class SimpleTracingEngine(
 		return result / shadowRaysCount;
     }
 	
-    private Luminance ComputeDirectLuminanceForSingleRay(HitPoint hp)
+    private Luminance ComputeDirectLuminanceForSingleRay(BodyHitPoint hp)
     {
 		var lp = sceneSetup.lights.SampleLightPoint(hp);
 		if (lp.factor == 0)
@@ -185,7 +185,7 @@ public record class SimpleTracingEngine(
 class Node
 {
 	public Node parent;
-	public HitPoint hp;
+	public BodyHitPoint hp;
 	public Luminance indirectLuminance = Luminance.Zero;
 	public Luminance factor;
 

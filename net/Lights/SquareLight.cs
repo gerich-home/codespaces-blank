@@ -40,7 +40,7 @@ public class SquareLight : ILightSource
 
 	public ref readonly AABB AABB => ref aabb;
 
-	public bool CanSendLightTo(HitPoint hitPoint)
+	public bool CanSendLightTo(BodyHitPoint hitPoint)
 	{
 		var ha = hitPoint.Point - a;
 
@@ -52,7 +52,7 @@ public class SquareLight : ILightSource
 		);
 	}
 
-	public LightPoint SampleLightPoint(HitPoint hitPoint)
+	public LightPoint SampleLightPoint(BodyHitPoint hitPoint)
 	{
 		double t1 = rnd.NextDouble();
 		double t2 = rnd.NextDouble();

@@ -2,5 +2,5 @@ namespace Engine;
 
 public interface IPhotonMapBuilder
 {
-	PhotonMap BuildPhotonMap(IShape scene, IShape diffuse, IShape glossy, ILightSource lights);
+	PhotonMap BuildPhotonMap(IBody scene, IBody diffuse, IBody glossy, ILightSource lights);
 }

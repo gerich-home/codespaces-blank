@@ -30,14 +30,14 @@ public class SphereLight : ILightSource
 
 	public ref readonly AABB AABB => ref aabb;
 
-	public bool CanSendLightTo(HitPoint hitPoint)
+	public bool CanSendLightTo(BodyHitPoint hitPoint)
 	{
 		var directionToLight = center - hitPoint.Point;
 
 		return directionToLight.DotProduct(hitPoint.Normal) > -r;
 	}
 
-	public LightPoint SampleLightPoint(HitPoint hitPoint)
+	public LightPoint SampleLightPoint(BodyHitPoint hitPoint)
     {
 		var directionFromLight = hitPoint.Point - center;
         var normal = rnd.NextSemisphereDirectionCos(r2 / directionFromLight.Norm)

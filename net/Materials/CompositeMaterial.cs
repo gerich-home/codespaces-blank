@@ -40,10 +40,10 @@ public class CompositeMaterial : IMaterial
 		this.m2Factor = 1 / (1 - p1);
 	}
 
-	public Luminance BRDF(HitPoint hitPoint, in Vector directionToLight) =>
+	public Luminance BRDF(BodyHitPoint hitPoint, in Vector directionToLight) =>
 		m1.BRDF(hitPoint, directionToLight) + m2.BRDF(hitPoint, directionToLight);
 
-	public RandomDirection SampleDirection(HitPoint hitPoint)
+	public RandomDirection SampleDirection(BodyHitPoint hitPoint)
 	{
 		var ksi = rnd.NextDouble();
 		if (ksi < p1)

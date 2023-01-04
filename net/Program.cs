@@ -4,6 +4,7 @@ using Materials;
 using Lights;
 using Shapes;
 using Engines;
+using Bodies;
 
 namespace Engine;
 
@@ -75,18 +76,18 @@ public class Program
 
 		Luminance Le1 = Luminance.Unit * 2;
 		
-		IShape floor     = new Square(new Vector(-2000, -0.5, 1), new Vector(-2000, -0.5, 200), new Vector( 2000, -0.5, 1), m_chess_wb);
-		//IShape floor     = new Square(new Vector(-0.5, -0.5, 1), new Vector(-0.5, -0.5, 2), new Vector( 0.5, -0.5, 1), m_chess_wb);
-		IShape ceiling   = new Square(new Vector(-0.5,  0.5, 1), new Vector( 0.5,  0.5, 1), new Vector(-0.5,  0.5, 2), m_chess_wb);
-		IShape backWall  = new Square(new Vector(-2000, -2000, 200), new Vector(-2000,  0.5, 200), new Vector(2000, -0.5, 200), m_yellow);
-		IShape leftWall  = new Square(new Vector(-0.5,  0.5, 1), new Vector(-0.5,  0.5, 2), new Vector(-0.5, -0.5, 1), m_green);
-		IShape rightWall = new Square(new Vector( 0.5,  0.5, 1), new Vector( 0.5, -0.5, 1), new Vector( 0.5,  0.5, 2), m_blue);
+		IBody floor     = new Square(new Vector(-2000, -0.5, 1), new Vector(-2000, -0.5, 200), new Vector( 2000, -0.5, 1)).WithMaterial(m_chess_wb);
+		//IShape floor     = new Square(new Vector(-0.5, -0.5, 1), new Vector(-0.5, -0.5, 2), new Vector( 0.5, -0.5, 1)).WithMaterial(m_chess_wb);
+		IBody ceiling   = new Square(new Vector(-0.5,  0.5, 1), new Vector( 0.5,  0.5, 1), new Vector(-0.5,  0.5, 2)).WithMaterial(m_chess_wb);
+		IBody backWall  = new Square(new Vector(-2000, -2000, 200), new Vector(-2000,  0.5, 200), new Vector(2000, -0.5, 200)).WithMaterial(m_yellow);
+		IBody leftWall  = new Square(new Vector(-0.5,  0.5, 1), new Vector(-0.5,  0.5, 2), new Vector(-0.5, -0.5, 1)).WithMaterial(m_green);
+		IBody rightWall = new Square(new Vector( 0.5,  0.5, 1), new Vector( 0.5, -0.5, 1), new Vector( 0.5,  0.5, 2)).WithMaterial(m_blue);
 
-		IShape ball1 = new Sphere(new Vector(-0.7 + 0.4, -0.5 + 0.4, 1.5), 0.4, m_refractor);
-		IShape ball2 = new Sphere(new Vector(0.2, 0, 3.2), 0.3,  m_refractor);
-		IShape ball3 = new Sphere(new Vector(0.3, -0.3, 1.5), 0.15, m_refractor);
+		IBody ball1 = new Sphere(new Vector(-0.7 + 0.4, -0.5 + 0.4, 1.5), 0.4).WithMaterial(m_refractor);
+		IBody ball2 = new Sphere(new Vector(0.2, 0, 3.2), 0.3).WithMaterial(m_refractor);
+		IBody ball3 = new Sphere(new Vector(0.3, -0.3, 1.5), 0.15).WithMaterial(m_refractor);
 
-		IShape[] shapes = {
+		IBody[] shapes = {
 			floor,
 			//ceiling,
 			//backWall,
@@ -98,7 +99,7 @@ public class Program
 			//ball3,
 		};
 		
-		IShape[] glossyShapes = {
+		IBody[] glossyShapes = {
 			//floor,
 			//ceiling,
 			//backWall,
@@ -110,7 +111,7 @@ public class Program
 			//ball3,
 		};
 		
-		IShape[] diffuseShapes = {
+		IBody[] diffuseShapes = {
 			floor,
 			//ceiling,
 			//backWall,
@@ -131,9 +132,9 @@ public class Program
 			//new SphereLight(rnd, new Vector(-0.3, -0.3, 1.5), 0.05, Le1),
 		};
 		
-		var scene = new Scene(shapes);
-		var glossy = new Scene(glossyShapes);
-		var diffuse = new Scene(diffuseShapes);
+		var scene = new CompositeBody(shapes);
+		var glossy = new CompositeBody(glossyShapes);
+		var diffuse = new CompositeBody(diffuseShapes);
 		var lights = CompositeLightSource.Create(rnd, lightSources);
 
 		return new SceneSetup(scene, diffuse, glossy, lights);

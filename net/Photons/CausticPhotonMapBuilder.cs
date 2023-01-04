@@ -13,7 +13,7 @@ public class CausticPhotonMapBuilder : IPhotonMapBuilder
 		this.rnd = rnd;
 	}
 
-	public PhotonMap BuildPhotonMap(IShape scene, IShape diffuse, IShape glossy, ILightSource lights)
+	public PhotonMap BuildPhotonMap(IBody scene, IBody diffuse, IBody glossy, ILightSource lights)
 	{
 		PhotonMap pm = new PhotonMap(NPHOTONS);
 		Photon[] emitted_photons = lights.EmitPhotons(NPHOTONS);
@@ -23,14 +23,14 @@ public class CausticPhotonMapBuilder : IPhotonMapBuilder
 			bool isDiffuse = false;
 			Photon current_photon = emitted_photons[i];
 			
-			HitPoint ghp1 = glossy.Intersection(current_photon.ray);
+			BodyHitPoint ghp1 = glossy.Intersection(current_photon.ray);
 			
 			if(ghp1 == null)
 			{
 				continue;
 			}
 			
-			HitPoint dhp1 = diffuse.Intersection(current_photon.ray);
+			BodyHitPoint dhp1 = diffuse.Intersection(current_photon.ray);
 			
 			if(dhp1 != null)
 			{
@@ -46,10 +46,10 @@ public class CausticPhotonMapBuilder : IPhotonMapBuilder
 			{
 				isDiffuse = false;
 
-				HitPoint hp;
+				BodyHitPoint hp;
 
-				HitPoint ghp = glossy.Intersection(current_photon.ray);
-				HitPoint dhp = diffuse.Intersection(current_photon.ray);
+				BodyHitPoint ghp = glossy.Intersection(current_photon.ray);
+				BodyHitPoint dhp = diffuse.Intersection(current_photon.ray);
 			
 				if(dhp != null)
 				{

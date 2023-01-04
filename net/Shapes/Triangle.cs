@@ -9,18 +9,16 @@ public class Triangle: IShape
 	public readonly Vector ba;
 	public readonly Vector ca;
 	public readonly Vector a;
-	public readonly IMaterial material;
 
 	public readonly AABB aabb;
 
-	public Triangle(Vector a, Vector b, Vector c, IMaterial material)
+	public Triangle(Vector a, Vector b, Vector c)
 	{
 		this.a = a;
 		this.ba = b - a;
 		this.ca = c - a;
 		this.normal = (b - a).CrossProduct(c - a);
 		this.n = (b - a).CrossProduct(c - a).Normalized;
-		this.material = material;
 		aabb = AABB.FromEdgePoints(
 			a,
 			b, 
@@ -30,7 +28,7 @@ public class Triangle: IShape
 
 	public ref readonly AABB AABB => ref aabb;
 
-	public HitPoint Intersection(in Ray ray)
+	public ShapeHitPoint Intersection(in Ray ray)
 	{
 		double t = 0;
 		double t1 = 0;
@@ -74,6 +72,6 @@ public class Triangle: IShape
 			return null;
 		}
 
-		return new HitPoint(ray, t, n, material, this);
+		return new ShapeHitPoint(ray, t, n);
 	}
 }

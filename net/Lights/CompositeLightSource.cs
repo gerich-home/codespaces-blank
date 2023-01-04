@@ -40,10 +40,10 @@ public class CompositeLightSource : ILightSource
 
 	public ref readonly AABB AABB => ref aabb;
 
-	public bool CanSendLightTo(HitPoint hitPoint) =>
+	public bool CanSendLightTo(BodyHitPoint hitPoint) =>
 		lights.Any(l => l.light.CanSendLightTo(hitPoint));
 
-	public LightPoint SampleLightPoint(HitPoint hitPoint)
+	public LightPoint SampleLightPoint(BodyHitPoint hitPoint)
 	{
 		var visibleLights = lights
 			.Where(l => l.light.CanSendLightTo(hitPoint))

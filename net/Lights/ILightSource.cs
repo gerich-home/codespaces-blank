@@ -2,8 +2,8 @@ namespace Engine;
 
 public interface ILightSource
 {
-	bool CanSendLightTo(HitPoint hitPoint);
-	LightPoint SampleLightPoint(HitPoint hitPoint);
+	bool CanSendLightTo(BodyHitPoint hitPoint);
+	LightPoint SampleLightPoint(BodyHitPoint hitPoint);
 	Photon[] EmitPhotons(int nphotons);
     Luminance Le { get; }
     Luminance Energy { get; }
