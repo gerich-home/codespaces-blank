@@ -15,7 +15,6 @@ public class Triangle : ILightSource
 	public readonly Vector ba;
 	public readonly Vector ca;
 	public readonly AABB aabb;
-	public static readonly double TwoPi = 2 * Math.PI;
 
 	public Triangle(Random rnd, Vector a, Vector b, Vector c, Luminance le)
 	{

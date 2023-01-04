@@ -12,7 +12,6 @@ public class SphereLight : ILightSource
 	public readonly Luminance le;
 	public readonly Luminance energy;
 	public readonly Random rnd;
-	public static readonly double TwoPi = 2 * Math.PI;
 
 	public SphereLight(Random rnd, Vector center, double r, Luminance le)
 	{

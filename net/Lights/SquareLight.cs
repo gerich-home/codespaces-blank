@@ -16,7 +16,6 @@ public class SquareLight : ILightSource
 	public readonly Luminance le;
 	public readonly Luminance energy;
 	public readonly Random rnd;
-	public static readonly double TwoPi = 2 * Math.PI;
 
 	public SquareLight(Random rnd, Vector a, Vector b, Vector c, Luminance le)
 	{
