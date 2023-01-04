@@ -24,11 +24,13 @@ public class DiffuseMaterial : IMaterial
 	// result.factor == BRDF(hitPoint, result.directionToLight) * cos(hitPoint.normal, result.directionToLight) / prob(result.direction)
 	// -> result.factor == (rd / PI) * cos(hitPoint.normal, result.directionToLight) / (cos(hitPoint.normal, result.directionToLight) / PI)
 	// -> result.factor == rd
-	public RandomDirection SampleDirection(HitPoint hitPoint, double ksi)
+	public RandomDirection SampleDirection(HitPoint hitPoint)
 	{
 		var directionToLight = rnd.NextSemisphereDirectionCos()
 			.Transform(hitPoint.Normal);
 
 		return new RandomDirection(rd, directionToLight);
 	}
+
+	public bool IsPerfect => false;
 }

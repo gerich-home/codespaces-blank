@@ -2,12 +2,12 @@ using Engine;
 
 namespace Materials;
 
-public record class IdealMirrorMaterial(
-	Luminance rs //koefficient specular reflection
-): IMaterial {
+public record class IdealMirrorMaterial(): IMaterial {
 	public Luminance BRDF(HitPoint hitPoint, in Vector directionToLight) =>
 		Luminance.Zero;
 
-	public RandomDirection SampleDirection(HitPoint hitPoint, double ksi) =>
-		new RandomDirection(rs, hitPoint.Reflection);
+	public RandomDirection SampleDirection(HitPoint hitPoint) =>
+		new RandomDirection(Luminance.Unit, hitPoint.Reflection);
+	
+	public bool IsPerfect => true;
 }

@@ -9,8 +9,8 @@ namespace Engine;
 
 public class Program
 {
-	const int W = 640;
-	const int H = 640;
+	const int W = 1280;
+	const int H = 1280;
 	const double CAM_Z = 0.0000001;
 	const double CAM_SIZE = (0.55 * CAM_Z / (1 + CAM_Z));
 	const double PIXEL_SIZE = 1.05;
@@ -69,32 +69,32 @@ public class Program
 		IMaterial m3 = DiffuseSpecularMaterial.Create(rnd, kd3, ks3, n3);
 		
 		Luminance rrefract = new Luminance(1, 1, 1);
-		double refract = 1 / 2.0;
-		IMaterial m_refractor = new IdealRefractorMaterial(rrefract, refract);
+		IMaterial m_refractor = new IdealRefractorMaterial(1.5);
 		
-		ITexturedMaterial m_chess2 = new CheckeredMaterial(5, 5, m_red, m_green);
+		ITexturedMaterial m_chess_wb = new CheckeredMaterial(4*2000, 4*200, m_white, m_black);
 
 		Luminance Le1 = Luminance.Unit * 2;
 		
-		IShape floor     = new Square(new Vector(-0.5, -0.5, 1), new Vector(-0.5, -0.5, 2), new Vector( 0.5, -0.5, 1), m_chess2);
-		IShape ceiling   = new Square(new Vector(-0.5,  0.5, 1), new Vector( 0.5,  0.5, 1), new Vector(-0.5,  0.5, 2), m_yellow);
-		IShape backWall  = new Square(new Vector(-0.5, -0.5, 2), new Vector(-0.5,  0.5, 2), new Vector( 0.5, -0.5, 2), m_red);
+		IShape floor     = new Square(new Vector(-2000, -0.5, 1), new Vector(-2000, -0.5, 200), new Vector( 2000, -0.5, 1), m_chess_wb);
+		//IShape floor     = new Square(new Vector(-0.5, -0.5, 1), new Vector(-0.5, -0.5, 2), new Vector( 0.5, -0.5, 1), m_chess_wb);
+		IShape ceiling   = new Square(new Vector(-0.5,  0.5, 1), new Vector( 0.5,  0.5, 1), new Vector(-0.5,  0.5, 2), m_chess_wb);
+		IShape backWall  = new Square(new Vector(-2000, -2000, 200), new Vector(-2000,  0.5, 200), new Vector(2000, -0.5, 200), m_yellow);
 		IShape leftWall  = new Square(new Vector(-0.5,  0.5, 1), new Vector(-0.5,  0.5, 2), new Vector(-0.5, -0.5, 1), m_green);
 		IShape rightWall = new Square(new Vector( 0.5,  0.5, 1), new Vector( 0.5, -0.5, 1), new Vector( 0.5,  0.5, 2), m_blue);
 
-		IShape ball1 = new Sphere(new Vector(   0, -0.3, 1.3), 0.2,  m3);
-		IShape ball2 = new Sphere(new Vector(-0.23, 0, 1.3), 0.1, m2);
+		IShape ball1 = new Sphere(new Vector(-0.7 + 0.4, -0.5 + 0.4, 1.5), 0.4, m_refractor);
+		IShape ball2 = new Sphere(new Vector(0.2, 0, 3.2), 0.3,  m_refractor);
 		IShape ball3 = new Sphere(new Vector(0.3, -0.3, 1.5), 0.15, m_refractor);
 
 		IShape[] shapes = {
 			floor,
-			ceiling,
-			backWall,
-			leftWall,
-			rightWall,
+			//ceiling,
+			//backWall,
+			//leftWall,
+			//rightWall,
 
 			ball1,
-			//ball2,
+			ball2,
 			//ball3,
 		};
 		
@@ -112,10 +112,10 @@ public class Program
 		
 		IShape[] diffuseShapes = {
 			floor,
-			ceiling,
-			backWall,
-			leftWall,
-			rightWall,
+			//ceiling,
+			//backWall,
+			//leftWall,
+			//rightWall,
 
 			ball1,
 			//ball2,
@@ -125,8 +125,9 @@ public class Program
 		ILightSource[] lightSources = {
 			//new SquareLight(rnd, new Vector(-0.15, 0.5 - double.Epsilon, 1.35), new Vector(0.15,  0.5 - double.Epsilon, 1.35), new Vector(-0.15, 0.5 - double.Epsilon, 1.65), Le1),
 			//new SphereLight(new Vector(-0.15, 0.45, 8.35), new Vector(0.15,  0.45, 8.35), new Vector(-0.15, 0.45, 8.65), Le1),
-			new SphereLight(rnd, new Vector(   0.2, -0.4, 1.1), 0.1, Le1 * 3),
-			new SphereLight(rnd, new Vector(-0.1, 0.3, 1.3), 0.1, Le1 * 2),
+			new SphereLight(rnd, new Vector(   0.2, -0.4, 1.1), 0.1, Le1 * 2),
+			new SphereLight(rnd, new Vector(-0.3, 0, 3), 0.2, Le1 * 10),
+			new SphereLight(rnd, new Vector(2, 3, 6), 0.5, Le1 * 20),
 			//new SphereLight(rnd, new Vector(-0.3, -0.3, 1.5), 0.05, Le1),
 		};
 		

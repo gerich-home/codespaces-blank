@@ -12,7 +12,7 @@ public record class PhotonMapTracingEngine(
 
 	public Luminance L(in Ray ray)
 	{
-		HitPoint hp = sceneSetup.scene.Intersection(null, ray);
+		HitPoint hp = sceneSetup.scene.Intersection(ray);
 	
 		if (hp == null)
 		{
@@ -58,7 +58,7 @@ public record class PhotonMapTracingEngine(
 				cos_dir_normal *= linv;
 				cos_dir_lnormal *= linv;
 
-				HitPoint nhp = sceneSetup.scene.Intersection(hp.shape, current_point.RayAlong(directionToLight));
+				HitPoint nhp = sceneSetup.scene.Intersection(current_point.RayAlong(directionToLight));
 
 				if(nhp != null)
 				{
@@ -76,7 +76,7 @@ public record class PhotonMapTracingEngine(
 			
 			//Compute indirect luminancy
 			
-			RandomDirection rndd = current_hp.SampleDirection(ABSOPTION);
+			RandomDirection rndd = current_hp.SampleDirection();
 				
 			// the whole file was commented before
 			//if(rndd.hp == null)

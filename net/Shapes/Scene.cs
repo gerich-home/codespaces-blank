@@ -18,7 +18,7 @@ public class Scene : IShape
 
 	public ref readonly AABB AABB => ref aabb;
 
-	public HitPoint Intersection(IShape except, in Ray ray)
+	public HitPoint Intersection(in Ray ray)
 	{
 		var dirInv = new Vector(
 			1 / ray.direction.x,
@@ -41,7 +41,7 @@ public class Scene : IShape
 				continue;
 			}
 
-			var hitPoint = shape.Intersection(except, ray);
+			var hitPoint = shape.Intersection(ray);
 			if(hitPoint != null && (bestHitPoint == null || hitPoint.T < bestHitPoint.T))
 			{
 				bestHitPoint = hitPoint;

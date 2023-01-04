@@ -30,13 +30,8 @@ public class Triangle: IShape
 
 	public ref readonly AABB AABB => ref aabb;
 
-	public HitPoint Intersection(IShape except, in Ray ray)
+	public HitPoint Intersection(in Ray ray)
 	{
-		if (except == this)
-		{
-			return null;
-		}
-
 		double t = 0;
 		double t1 = 0;
 		double t2 = 0;
@@ -74,7 +69,7 @@ public class Triangle: IShape
 		
 		t = sa.DotProduct(normal) * factor;
 
-		if(t < double.Epsilon)
+		if(t < 0)
 		{
 			return null;
 		}

@@ -24,6 +24,7 @@ public class SpecularMaterial : IMaterial
 				var m2rs = rs * new Luminance(0, 0, 1);
 
 				return CompositeMaterial.Create(
+					rnd,
 					new SpecularMaterial(rnd, m1rs, n.r),
 					new SpecularMaterial(rnd, m2rs, n.b),
 					m1rs.Energy,
@@ -38,6 +39,7 @@ public class SpecularMaterial : IMaterial
 			var m2rs = rs * new Luminance(1, 0, 0);
 
 			return CompositeMaterial.Create(
+				rnd,
 				new SpecularMaterial(rnd, m1rs, n.g),
 				new SpecularMaterial(rnd, m2rs, n.r),
 				m1rs.Energy,
@@ -51,8 +53,10 @@ public class SpecularMaterial : IMaterial
 			var m3rs = rs * new Luminance(0, 0, 1);
 
 			return CompositeMaterial.Create(
+				rnd,
 				new SpecularMaterial(rnd, m1rs, n.r),
 				CompositeMaterial.Create(
+					rnd,
 					new SpecularMaterial(rnd, m2rs, n.g),
 					new SpecularMaterial(rnd, m3rs, n.b),
 					m2rs.Energy,
@@ -91,7 +95,7 @@ public class SpecularMaterial : IMaterial
 	// result.factor == BRDF(hitPoint, result.directionToLight) * cos(hitPoint.normal, result.directionToLight) / prob(result.direction)
 	// -> result.factor == rs * (n + 2) * cos(hitPoint.R, result.directionToLight) ^ n / (2 * PI) * cos(hitPoint.normal, result.directionToLight) / (cos(hitPoint.R, result.directionToLight) ^ n * (n + 1) / (2 * PI))
 	// -> result.factor == rs * (1 + 1 / (n + 1)) * cos(hitPoint.normal, result.directionToLight)
-	public RandomDirection SampleDirection(HitPoint hitPoint, double ksi)
+	public RandomDirection SampleDirection(HitPoint hitPoint)
 	{
 		var directionToLight = rnd.NextSemisphereDirectionPhong(n)
 			.Transform(hitPoint.Reflection);
@@ -105,4 +109,6 @@ public class SpecularMaterial : IMaterial
 
 		return new RandomDirection(factorPart * cosTheta, directionToLight);
 	}
+
+	public bool IsPerfect => false;
 }

@@ -24,19 +24,15 @@ public class Sphere : IShape
 
 	public ref readonly AABB AABB => ref aabb;
 
-	public HitPoint Intersection(IShape except, in Ray ray)
+	public HitPoint Intersection(in Ray ray)
 	{
-		if (except == this)
-		{
-			return null;
-		}
-
-		Vector ac = ray.start - center;
+		var ac = ray.start - center;
 		
-		double b = ac.DotProduct(ray.direction);
-		double c = ac.Norm - r2;
+		var b = ac.DotProduct(ray.direction);
 
-		double D = b * b - c;
+		var c = ac.Norm - r2;
+
+		var D = b * b - c;
 
 		if(D < 0)
 		{
@@ -44,13 +40,13 @@ public class Sphere : IShape
 		}
 
 		D = Math.Sqrt(D);
-		double t = -b - D;
+		var t = -b - D;
 		
-		if(t < double.Epsilon)
+		if(t < 0)
 		{
 			t = -b + D;
 		
-			if(t < double.Epsilon)
+			if(t < 0)
 			{
 				return null;
 			}

@@ -9,8 +9,9 @@ public class CompositeMaterial : IMaterial
 	public readonly double m2Factor;
 	public readonly IMaterial m1;
 	public readonly IMaterial m2;
+	public readonly Random rnd;
 
-	public static IMaterial Create(IMaterial m1, IMaterial m2, double m1Energy, double m2Energy)
+	public static IMaterial Create(Random rnd, IMaterial m1, IMaterial m2, double m1Energy, double m2Energy)
 	{
 		if (m1Energy == 0 && m2Energy == 0)
 		{
@@ -27,10 +28,10 @@ public class CompositeMaterial : IMaterial
 			return m2;
 		}
 
-		return new CompositeMaterial(m1, m2, m1Energy, m2Energy);
+		return new CompositeMaterial(rnd, m1, m2, m1Energy, m2Energy);
 	}
 
-	private CompositeMaterial(IMaterial m1, IMaterial m2, double m1Energy, double m2Energy)
+	private CompositeMaterial(Random rnd, IMaterial m1, IMaterial m2, double m1Energy, double m2Energy)
 	{
 		this.m1 = m1;
 		this.m2 = m2;
@@ -42,15 +43,18 @@ public class CompositeMaterial : IMaterial
 	public Luminance BRDF(HitPoint hitPoint, in Vector directionToLight) =>
 		m1.BRDF(hitPoint, directionToLight) + m2.BRDF(hitPoint, directionToLight);
 
-	public RandomDirection SampleDirection(HitPoint hitPoint, double ksi)
+	public RandomDirection SampleDirection(HitPoint hitPoint)
 	{
+		var ksi = rnd.NextDouble();
 		if (ksi < p1)
 		{
-			return m1.SampleDirection(hitPoint, ksi * m1Factor) * m1Factor;
+			return m1.SampleDirection(hitPoint) * m1Factor;
 		}
 		else
 		{
-			return m2.SampleDirection(hitPoint, ksi * m2Factor) * m2Factor;
+			return m2.SampleDirection(hitPoint) * m2Factor;
 		}
 	}
+
+	public bool IsPerfect => m1.IsPerfect && m2.IsPerfect;
 }

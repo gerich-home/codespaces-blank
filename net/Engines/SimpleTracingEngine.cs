@@ -1,4 +1,4 @@
-#define DEBUG_DEPTH
+// #define DEBUG_DEPTH
 
 using Engine;
 
@@ -12,14 +12,16 @@ public record class SimpleTracingEngine(
 	double absorptionProbability,
 	double reflectFactor
 ): IEngine {
+	const double tolerance = 1E-8;
+
 	public Luminance L(in Ray ray)
 	{
 		#if DEBUG_DEPTH
-		// output lumince of that depth only
-		const int DEPTH = 0;
+		// output luminace of that depth only
+		const int DEPTH = 2;
 		#endif
 
-		var rootHp = sceneSetup.scene.Intersection(null, ray);
+		var rootHp = sceneSetup.scene.Intersection(ray);
 	
 		if (rootHp == null)
 		{
@@ -59,24 +61,31 @@ public record class SimpleTracingEngine(
 			#endif
 
 			var hp = node.hp;
+			var isPerfect = hp.material.IsPerfect;
 
-            var ksi = rnd.NextDouble();
-
-            if (ksi < absorptionProbability)
-            {
-                continue;
-            }
-
-			for(int i = 0; i < reflectRaysCount; i++)
+			if(!isPerfect)
 			{
-				var rndd = hp.SampleDirection(rnd.NextDouble());
+				var ksi = rnd.NextDouble();
+
+				if (ksi < absorptionProbability)
+				{
+					continue;
+				}
+			}
+
+			var actualReflectRaysCount = isPerfect ? 1 : reflectRaysCount;
+			var factor = isPerfect ? 1 : reflectFactor;
+
+			for(int i = 0; i < actualReflectRaysCount; i++)
+			{
+				var rndd = hp.SampleDirection();
 
 				if (rndd.factor.IsZero)
 				{
 					continue;
 				}
 
-				var nextHp = sceneSetup.scene.Intersection(hp.shape, hp.RayAlong(rndd.directionToLight));
+				var nextHp = sceneSetup.scene.Intersection(hp.RayAlong(rndd.directionToLight, tolerance));
 
 				if (nextHp == null)
 				{
@@ -87,13 +96,13 @@ public record class SimpleTracingEngine(
 				{
 					parent = node,
 					hp = nextHp,
-					factor = rndd.factor * reflectFactor,
+					factor = rndd.factor * factor,
 
 					#if DEBUG_DEPTH
 					depth = node.depth + 1
 					#endif
 				};
-            	q.Enqueue(nextNode);
+				q.Enqueue(nextNode);
 				s.Push(nextNode);
 			}
         }
@@ -115,6 +124,11 @@ public record class SimpleTracingEngine(
 
     private Luminance ComputeDirectLuminance(HitPoint hp)
     {
+		if(hp.material.IsPerfect)
+		{
+			return Luminance.Zero;
+		}
+
 		var result = Enumerable
 			.Range(0, shadowRaysCount)
 			.Aggregate(Luminance.Zero, (l1, i) => l1 + ComputeDirectLuminanceForSingleRay(hp));
@@ -154,7 +168,7 @@ public record class SimpleTracingEngine(
 		var linv = 1 / l;
 		directionToLight *= linv;
 
-		var barrierHp = sceneSetup.scene.Intersection(hp.shape, hp.RayAlong(directionToLight));
+		var barrierHp = sceneSetup.scene.Intersection(hp.RayAlong(directionToLight, tolerance));
 
 		if (barrierHp != null && (barrierHp.T <= l - double.Epsilon))
 		{

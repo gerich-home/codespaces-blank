@@ -47,13 +47,8 @@ public class Plane : IShape
 
 	public ref readonly AABB AABB => ref aabb;
 
-	public HitPoint Intersection(IShape except, in Ray ray)
+	public HitPoint Intersection(in Ray ray)
 	{
-		if (except == this)
-		{
-			return null;
-		}
-
 		double divident = normal.DotProduct(ray.direction);
 
 		if(divident == 0)
