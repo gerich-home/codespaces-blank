@@ -1,4 +1,4 @@
-//#define HQ
+// #define HQ
 
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
@@ -13,8 +13,8 @@ namespace Engine;
 public class Program
 {
 #if HQ
-	const int W = 1280;
-	const int H = 1280;
+	const int W = 2400;
+	const int H = 2400;
 #else
 	const int W = 320;
 	const int H = 320;
@@ -45,6 +45,11 @@ public class Program
 		Luminance ks_red = Luminance.Zero;
 		Luminance n_red = Luminance.Zero;
 		IMaterial m_red = DiffuseSpecularMaterial.Create(rnd, kd_red, ks_red, n_red);
+		
+		Luminance kd_red2 = new Luminance(193, 41, 30) / 255;
+		Luminance ks_red2 = Luminance.Zero;
+		Luminance n_red2 = Luminance.Zero;
+		IMaterial m_red2 = DiffuseSpecularMaterial.Create(rnd, kd_red2, ks_red2, n_red2);
 		
 		Luminance kd_blue = new Luminance(0, 0, 1);
 		Luminance ks_blue = Luminance.Zero;
@@ -77,7 +82,7 @@ public class Program
 		IMaterial m3 = DiffuseSpecularMaterial.Create(rnd, kd3, ks3, n3);
 		
 		Luminance rrefract = new Luminance(1, 1, 1);
-		IMaterial m_refractor = new IdealRefractorMaterial(1.5);
+		var m_refractor = new IdealRefractorMaterial(1.5);
 		
 		ITexturedMaterial m_chess_wb = new CheckeredMaterial(4*2000, 4*200, m_white, m_black);
 
@@ -88,18 +93,18 @@ public class Program
 		IBody ceiling   = new Square(new Vector(-0.5,  0.5, 1), new Vector( 0.5,  0.5, 1), new Vector(-0.5,  0.5, 2)).WithMaterial(m_chess_wb);
 		IBody backWall  = new Square(new Vector(-2000, -2000, 200), new Vector(-2000,  0.5, 200), new Vector(2000, -0.5, 200)).WithMaterial(m_yellow);
 		IBody leftWall  = new Square(new Vector(-0.5,  0.5, 1), new Vector(-0.5,  0.5, 2), new Vector(-0.5, -0.5, 1)).WithMaterial(m_green);
-		IBody rightWall = new Square(new Vector( 0.5,  0.5, 1), new Vector( 0.5, -0.5, 1), new Vector( 0.5,  0.5, 2)).WithMaterial(m_blue);
+		IBody rightWall = new Square(new Vector( 3,  200, 1), new Vector( 3, -0.5, 1), new Vector( 3,  200, 200)).WithMaterial(m_red2);
 
-		IBody ball1 = new Sphere(new Vector(-0.7 + 0.4, -0.5 + 0.4, 1.5), 0.4).WithMaterial(m_refractor);
-		IBody ball2 = new Sphere(new Vector(0.2, 0, 3.2), 0.3).WithMaterial(m_refractor);
-		IBody ball3 = new Sphere(new Vector(0.3, -0.3, 1.5), 0.15).WithMaterial(m_refractor);
+		IBody ball1 = new Sphere(new Vector(-0.7 + 0.4, -0.5 + 0.4, 2), 0.4).WithMaterial(new SchlickCompositeMaterial(rnd, m_refractor));
+		IBody ball2 = new Sphere(new Vector(0.2, 0, 3.7), 0.3).WithMaterial(new SchlickCompositeMaterial(rnd, m_refractor));
+		IBody ball3 = new Sphere(new Vector(0.3, -0.3, 2), 0.15).WithMaterial(new SchlickCompositeMaterial(rnd, m_refractor));
 
 		IBody[] shapes = {
 			floor,
 			//ceiling,
 			//backWall,
 			//leftWall,
-			//rightWall,
+			rightWall,
 
 			ball1,
 			ball2,
@@ -133,9 +138,10 @@ public class Program
 		ILightSource[] lightSources = {
 			//new SquareLight(rnd, new Vector(-0.15, 0.5 - double.Epsilon, 1.35), new Vector(0.15,  0.5 - double.Epsilon, 1.35), new Vector(-0.15, 0.5 - double.Epsilon, 1.65), Le1),
 			//new SphereLight(new Vector(-0.15, 0.45, 8.35), new Vector(0.15,  0.45, 8.35), new Vector(-0.15, 0.45, 8.65), Le1),
-			new SphereLight(rnd, new Vector(   0.2, -0.4, 1.1), 0.1, Le1 * 4),
-			new SphereLight(rnd, new Vector(-1, 1, 4), 0.2, Le1 * 20),
-			new SphereLight(rnd, new Vector(2, 1, 6), 0.5, Le1 * 40),
+			new SphereLight(rnd, new Vector(   0.2, -0.4, 1.6), 0.1, Le1 * 4),
+			new SphereLight(rnd, new Vector(-1, 1, 4.5), 0.2, Le1 * 20),
+			new SphereLight(rnd, new Vector(2, 1, 6.5), 0.5, Le1 * 40),
+			new SphereLight(rnd, new Vector(-0.7 + 0.4 - 0.2, -0.5 + 0.4 + 0.45, 2 + 0.7), 0.2, Le1 * 4),
 			//new SphereLight(rnd, new Vector(-0.3, -0.3, 1.5), 0.05, Le1),
 		};
 		
