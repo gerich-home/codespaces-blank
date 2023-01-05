@@ -14,26 +14,19 @@ public record class SimpleTracingEngine(
 ): IEngine {
 	const double tolerance = 1E-8;
 
-	public Luminance L(in Ray ray)
+	public Luminance L(in Ray cameraRay)
     {
 #if DEBUG_DEPTH
 		// output luminace of that depth only
 		const int DEPTH = 2;
 #endif
 
-        var rootHp = sceneSetup.scene.Intersection(ray);
-        var lightHp = sceneSetup.lights.Intersection(ray);
-
-        var resultNode = new Node
-        {
-            luminance = Luminance.Zero,
-        };
+        var resultNode = new Node();
 
         var root = new Node
         {
             parent = resultNode,
-            hp = rootHp,
-			lightHp = lightHp,
+			ray = cameraRay,
             factor = Luminance.Unit,
 #if DEBUG_DEPTH
 			depth = 0
@@ -42,15 +35,12 @@ public record class SimpleTracingEngine(
 
         var q = new Queue<Node>();
         var s = new Stack<Node>();
-        if (rootHp != null)
-		{
-			q.Enqueue(root);
-		}
-        s.Push(root);
+        q.Enqueue(root);
 
         while (q.Count > 0)
         {
             var node = q.Dequeue();
+	        s.Push(node);
 
 #if DEBUG_DEPTH
 			if (node.depth == DEPTH)
@@ -59,7 +49,18 @@ public record class SimpleTracingEngine(
 			}
 #endif
 
-            var hp = node.hp;
+			ref var ray = ref node.ray;
+			var hp = sceneSetup.scene.Intersection(ray);
+			var lightHp = sceneSetup.lights.Intersection(ray);
+			
+
+#if DEBUG_DEPTH
+			var directLuminance = node.depth == DEPTH ? ComputeDirectLuminance(hp) : Luminance.Zero;
+#else
+            var directLuminance = ComputeDirectLuminance(hp);
+#endif
+
+			node.luminance = directLuminance + LightLuminance(hp, lightHp);
 
 			if(hp == null)
 			{
@@ -90,40 +91,23 @@ public record class SimpleTracingEngine(
                     continue;
                 }
 
-				var nextRay = hp.RayAlong(rndd.directionToLight, tolerance);
-                var nextHp = sceneSetup.scene.Intersection(nextRay);
-		        var nextLightHp = sceneSetup.lights.Intersection(nextRay);
-
                 var nextNode = new Node
                 {
                     parent = node,
-                    hp = nextHp,
-					lightHp = nextLightHp,
+                    ray = hp.RayAlong(rndd.directionToLight, tolerance),
                     factor = rndd.factor * factor,
-
 #if DEBUG_DEPTH
 					depth = node.depth + 1
 #endif
                 };
-                if (nextHp != null)
-                {
-	                q.Enqueue(nextNode);
-                }
-                s.Push(nextNode);
+				q.Enqueue(nextNode);
             }
         }
 
         while (s.Count > 0)
         {
             var node = s.Pop();
-
-#if DEBUG_DEPTH
-			var directLuminance = node.depth == DEPTH ? ComputeDirectLuminance(node.hp) : Luminance.Zero;
-#else
-            var directLuminance = ComputeDirectLuminance(node.hp);
-#endif
-			var l = LightLuminance(node.hp, node.lightHp);
-            node.parent.luminance += (node.luminance + directLuminance + l) * node.factor;
+            node.parent.luminance += node.luminance * node.factor;
         }
 
         return resultNode.luminance;
@@ -202,8 +186,7 @@ public record class SimpleTracingEngine(
 class Node
 {
 	public Node parent;
-	public BodyHitPoint hp;
-	public LightHitPoint lightHp;
+	public Ray ray;
 	public Luminance luminance = Luminance.Zero;
 	public Luminance factor;
 
