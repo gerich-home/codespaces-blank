@@ -1,4 +1,4 @@
-// #define HQ
+#define HQ
 
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
@@ -7,6 +7,7 @@ using Lights;
 using Shapes;
 using Engines;
 using Bodies;
+using System.Diagnostics;
 
 namespace Engine;
 
@@ -153,46 +154,58 @@ public class Program
 		return new SceneSetup(scene, diffuse, glossy, lights);
 	}
 
+    private Rasterizer CreateSceneRasterizer(Random rnd)
+    {
+        var sceneSetup = InitScene(rnd);
+
+        var engineFactory = new SimpleTracingEngineFactory(REFLECT_RAYS, SHADOW_RAYS, ABSOPTION);
+
+        var engine = engineFactory.CreateEngine(rnd, sceneSetup);
+        return new Rasterizer(rnd, PIXEL_SIZE, W, H, CAM_Z, CAM_SIZE, engine);
+    }
+
 	public static void Main()
 	{
 		new Program().Run();
 	}
 
 	public void Run()
-	{
-		var rnd = new Random();
-		var sceneSetup = InitScene(rnd);
+    {
+        var rnd = new Random();
+        var rasterizer = CreateSceneRasterizer(rnd);
 
-		var engineFactory = new SimpleTracingEngineFactory(REFLECT_RAYS, SHADOW_RAYS, ABSOPTION);
+        var L = new Luminance[W, H];
+        Directory.CreateDirectory("result");
+        for (int frame = 1; frame <= NFRAMES; frame++)
+        {
+            using (var image = new Image<Rgb24>(W, H))
+            {
+                image.ProcessPixelRows(accessor =>
+                {
+                    Stopwatch sw = new Stopwatch();
+                    sw.Start();
+                    for (int y = 0; y < H; y++)
+                    {
+                        Console.WriteLine($"frame {frame} - row {y}");
+                        var pixelRow = accessor.GetRowSpan(y);
+                        for (int x = 0; x < W; x++)
+                        {
+                            L[x, y] = L[x, y] * (frame - 1) / frame + rasterizer.ColorAtPixel(x, y) / frame;
+                            var (r, g, b) = L[x, y] * 255;
 
-		var engine = engineFactory.CreateEngine(rnd, sceneSetup);
-		var rasterizer = new Rasterizer(rnd, PIXEL_SIZE, W, H, CAM_Z, CAM_SIZE, engine);
+                            pixelRow[x] = new Rgb24(
+                                (byte)(Math.Min(r, 255)),
+                                (byte)(Math.Min(g, 255)),
+                                (byte)(Math.Min(b, 255))
+                            );
+                        }
+                    }
+                    sw.Stop();
+                    Console.WriteLine($"Frame {frame} took {sw.ElapsedMilliseconds / 1000.0} sec to render");
 
-		var L = new Luminance[W, H];
-		Directory.CreateDirectory("result");
-		for(int frame = 1; frame <= NFRAMES; frame++) {
-			using(var image = new Image<Rgb24>(W, H))
-			{
-				image.ProcessPixelRows(accessor => {
-					for(int y = 0; y < H; y++) {
-						Console.WriteLine($"frame {frame} - row {y}");
-						var pixelRow = accessor.GetRowSpan(y);
-						for(int x = 0; x < W; x++)
-						{
-							L[x, y] = L[x, y] * (frame - 1) / frame + rasterizer.ColorAtPixel(x, y) / frame;
-							var (r, g, b) = L[x, y] * 255;
-
-							pixelRow[x] = new Rgb24(
-								(byte)(Math.Min(r, 255)),
-								(byte)(Math.Min(g, 255)),
-								(byte)(Math.Min(b, 255))
-							);
-						}
-					}
-
-					image.SaveAsBmp($"result/{frame}.bmp");
-				});
-			}
-		}
-	}
+                    image.SaveAsBmp($"result/{frame}.bmp");
+                });
+            }
+        }
+    }
 }
