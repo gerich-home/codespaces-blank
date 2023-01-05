@@ -13,6 +13,14 @@ public record class SimpleTracingEngine(
 	double reflectFactor
 ): IEngine {
 	const double tolerance = 1E-8;
+	
+    List<Node> q = InitNodesStorage();
+	private static List<Node> InitNodesStorage()
+	{
+		var result = new List<Node>(300);
+		result.Add(new Node());
+		return result;
+	}
 
 	public Luminance L(in Ray cameraRay)
     {
@@ -21,11 +29,8 @@ public record class SimpleTracingEngine(
 		const int DEPTH = 2;
 #endif
 
-        var resultNode = new Node();
-
         var root = new Node
         {
-            parent = resultNode,
 			ray = cameraRay,
             factor = Luminance.Unit,
 #if DEBUG_DEPTH
@@ -33,14 +38,12 @@ public record class SimpleTracingEngine(
 #endif
         };
 
-        var q = new Queue<Node>();
-        var s = new Stack<Node>();
-        q.Enqueue(root);
+        q[0] = root;
+		int nodesCount = 1;
 
-        while (q.Count > 0)
+        for(var index = 0; index < nodesCount; index++)
         {
-            var node = q.Dequeue();
-	        s.Push(node);
+            var node = q[index];
 
 #if DEBUG_DEPTH
 			if (node.depth == DEPTH)
@@ -93,24 +96,33 @@ public record class SimpleTracingEngine(
 
                 var nextNode = new Node
                 {
-                    parent = node,
+                    parentIndex = index,
                     ray = hp.RayAlong(rndd.directionToLight, tolerance),
                     factor = rndd.factor * factor,
 #if DEBUG_DEPTH
 					depth = node.depth + 1
 #endif
                 };
-				q.Enqueue(nextNode);
+
+				nodesCount++;
+				if(q.Count < nodesCount)
+				{
+					q.Add(nextNode);
+				}
+				else
+				{
+					q[nodesCount - 1] = nextNode;
+				}
             }
         }
 
-        while (s.Count > 0)
+        for(var index = nodesCount - 1; index > 0; index--)
         {
-            var node = s.Pop();
-            node.parent.luminance += node.luminance * node.factor;
+            var node = q[index];
+            q[node.parentIndex].luminance += node.luminance * node.factor;
         }
 
-        return resultNode.luminance;
+        return root.luminance;
     }
 
     private static Luminance LightLuminance(BodyHitPoint? sceneHp, LightHitPoint lightHp)
@@ -185,9 +197,9 @@ public record class SimpleTracingEngine(
 
 class Node
 {
-	public Node parent;
+	public int parentIndex;
 	public Ray ray;
-	public Luminance luminance = Luminance.Zero;
+	public Luminance luminance;
 	public Luminance factor;
 
 	#if DEBUG_DEPTH
