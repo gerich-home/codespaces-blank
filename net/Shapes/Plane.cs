@@ -45,14 +45,14 @@ public class Plane : IShape
 
 	public ShapeHitPoint Intersection(in Ray ray)
 	{
-		double divident = normal.DotProduct(ray.direction);
+		var divident = normal.DotProduct(ray.direction);
 
 		if(divident == 0)
 		{
 			return null;
 		}
 
-		double t = (ray.start.DotProduct(normal) + d) / normal.DotProduct(ray.direction);
+		var t = (ray.start.DotProduct(normal) + d) / divident;
 
 		if(t < 0)
 		{

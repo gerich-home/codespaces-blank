@@ -13,7 +13,6 @@ public record class SimpleTracingEngineFactory(
 			sceneSetup,
 			reflectRaysCount,
 			shadowRaysCount,
-			absorptionProbability,
-			1.0 / (reflectRaysCount * (1 - absorptionProbability))
+			absorptionProbability
 		);
 }

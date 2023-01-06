@@ -7,8 +7,8 @@ public class Square: ITexturableShape
 	public readonly Vector a;
 	public readonly Vector ba;
 	public readonly Vector ca;
+	public readonly Vector normalMulArea;
 	public readonly Vector normal;
-	public readonly Vector n;
 
 	public readonly AABB aabb;
 
@@ -17,8 +17,8 @@ public class Square: ITexturableShape
 		this.a = a;
 		this.ba = b - a;
 		this.ca = c - a;
-		this.normal = (b - a).CrossProduct(c - a);
-		this.n = (b - a).CrossProduct(c - a).Normalized;
+		this.normalMulArea = (b - a).CrossProduct(c - a);
+		this.normal = normalMulArea.Normalized;
 		aabb = AABB.FromEdgePoints(
 			a,
 			a + ba, 
@@ -34,43 +34,37 @@ public class Square: ITexturableShape
 
 	public TexturableShapeHitPoint TexturableIntersection(in Ray ray)
 	{
-		double t = 0;
-		double t1 = 0;
-		double t2 = 0;
+		var divident = -ray.direction.DotProduct(normalMulArea);
 		
-
-		double divident = -ray.direction.DotProduct(normal);
-		
-		if(divident == 0)
+		if(divident <= 0) // <0 leads to ignoring intersections from inside
 		{
 			return null;
 		}
 
-		double factor = 1 / divident;
-
-		Vector sa = ray.start - a;
-		Vector saxdir = sa.CrossProduct(ray.direction);
-		t1 = -ba.DotProduct(saxdir) * factor;
-		
-		if((t1 < 0) || (1 < t1))
-		{
-			return null;
-		}
-					
-		t2 = ca.DotProduct(saxdir) * factor;
-		
-		if((t2 < 0) || (1 < t2))
-		{
-			return null;
-		}
-		
-		t = sa.DotProduct(normal) * factor;
+		var factor = 1 / divident;
+		var sa = ray.start - a;
+		var t = sa.DotProduct(normalMulArea) * factor;
 
 		if(t < 0)
 		{
 			return null;
 		}
 
-		return new TexturableShapeHitPoint(ray, t, n, t1, t2);
+		var saxdir = sa.CrossProduct(ray.direction);
+		var t1 = -ba.DotProduct(saxdir) * factor;
+		
+		if((t1 < 0) || (1 < t1))
+		{
+			return null;
+		}
+					
+		var t2 = ca.DotProduct(saxdir) * factor;
+		
+		if((t2 < 0) || (1 < t2))
+		{
+			return null;
+		}
+
+		return new TexturableShapeHitPoint(ray, t, normal, t1, t2);
 	}
 }

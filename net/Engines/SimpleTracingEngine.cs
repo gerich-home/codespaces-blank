@@ -1,4 +1,4 @@
-// #define DEBUG_DEPTH
+//#define DEBUG_DEPTH
 
 using Engine;
 
@@ -9,12 +9,11 @@ public record class SimpleTracingEngine(
 	SceneSetup sceneSetup,
 	int reflectRaysCount,
 	int shadowRaysCount,
-	double absorptionProbability,
-	double reflectFactor
+	double absorptionProbability
 ): IEngine {
 	const double tolerance = 1E-8;
 	
-    List<Node> q = InitNodesStorage();
+    readonly List<Node> q = InitNodesStorage();
 	private static List<Node> InitNodesStorage()
 	{
 		var result = new List<Node>(300);
@@ -25,14 +24,15 @@ public record class SimpleTracingEngine(
 	public Luminance L(in Ray cameraRay)
     {
 #if DEBUG_DEPTH
-		// output luminace of that depth only
-		const int DEPTH = 2;
+		// output luminance of that depth only
+		const int DEPTH = 1;
 #endif
 
         var root = new Node
         {
 			ray = cameraRay,
             factor = Luminance.Unit,
+			isDirect = true,
 #if DEBUG_DEPTH
 			depth = 0
 #endif
@@ -45,25 +45,24 @@ public record class SimpleTracingEngine(
         {
             var node = q[index];
 
+			ref var ray = ref node.ray;
+			var hp = sceneSetup.scene.Intersection(ray);
+			
+#if DEBUG_DEPTH
+			if(node.depth == DEPTH)
+#endif
+			{
+				var ll = node.isDirect ? LightLuminance(hp, sceneSetup.lights.Intersection(ray)) : Luminance.Zero;
+				var dl = ComputeDirectLuminance(hp);
+				node.luminance = ll + dl;
+			}
+
 #if DEBUG_DEPTH
 			if (node.depth == DEPTH)
 			{
 				continue;
 			}
 #endif
-
-			ref var ray = ref node.ray;
-			var hp = sceneSetup.scene.Intersection(ray);
-			var lightHp = sceneSetup.lights.Intersection(ray);
-			
-
-#if DEBUG_DEPTH
-			var directLuminance = node.depth == DEPTH ? ComputeDirectLuminance(hp) : Luminance.Zero;
-#else
-            var directLuminance = ComputeDirectLuminance(hp);
-#endif
-
-			node.luminance = directLuminance + LightLuminance(hp, lightHp);
 
 			if(hp == null)
 			{
@@ -72,18 +71,19 @@ public record class SimpleTracingEngine(
 
             var isPerfect = hp.Material.IsPerfect;
 
+			var actualAbsorptionProbability = absorptionProbability + (1 - absorptionProbability) * (1 - (1.0 / (1 + node.depth / 10.0)));
             if (!isPerfect)
             {
                 var ksi = rnd.NextDouble();
 
-                if (ksi < absorptionProbability)
+                if (ksi < actualAbsorptionProbability)
                 {
                     continue;
                 }
             }
 
             var actualReflectRaysCount = isPerfect ? 1 : reflectRaysCount;
-            var factor = isPerfect ? 1 : reflectFactor;
+            var factor = isPerfect ? 1 : 1 / (reflectRaysCount * (1 - actualAbsorptionProbability));
 
             for (int i = 0; i < actualReflectRaysCount; i++)
             {
@@ -96,12 +96,12 @@ public record class SimpleTracingEngine(
 
                 var nextNode = new Node
                 {
-                    parentIndex = index,
                     ray = hp.RayAlong(rndd.directionToLight, tolerance),
                     factor = rndd.factor * factor,
-#if DEBUG_DEPTH
-					depth = node.depth + 1
-#endif
+					depth = node.depth + 1,
+					parent = node,
+					hitPoint = hp,
+					isDirect = hp.Material.IsPerfect
                 };
 
 				nodesCount++;
@@ -119,7 +119,7 @@ public record class SimpleTracingEngine(
         for(var index = nodesCount - 1; index > 0; index--)
         {
             var node = q[index];
-            q[node.parentIndex].luminance += node.luminance * node.factor;
+            node.parent.luminance += node.luminance * node.factor;
         }
 
         return root.luminance;
@@ -183,7 +183,7 @@ public record class SimpleTracingEngine(
 
 		var barrierHp = sceneSetup.scene.Intersection(hp.RayAlong(directionToLight, tolerance));
 
-		if (barrierHp != null && (barrierHp.T <= l - double.Epsilon))
+		if (barrierHp != null && (barrierHp.T <= l - tolerance))
 		{
 			return Luminance.Zero;
 		}
@@ -197,12 +197,11 @@ public record class SimpleTracingEngine(
 
 class Node
 {
-	public int parentIndex;
 	public Ray ray;
 	public Luminance luminance;
 	public Luminance factor;
-
-	#if DEBUG_DEPTH
 	public int depth;
-	#endif
+	public Node parent;
+	public BodyHitPoint hitPoint;
+	public bool isDirect;
 }

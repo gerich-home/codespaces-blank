@@ -1,6 +1,6 @@
 namespace Engine;
 
-public record struct AABB(
+public readonly record struct AABB(
 	Vector min,
 	Vector max
 ) {
