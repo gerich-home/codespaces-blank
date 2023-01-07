@@ -21,8 +21,7 @@ public class Program
 	const int H = 256;
 #endif
 	const double CAM_Z = 0.0000001;
-	const double CAM_SIZE_X = (0.5 * CAM_Z / (1 + CAM_Z));
-	const double CAM_SIZE_Y = (0.5 * CAM_Z / (1 + CAM_Z));
+	const double CAM_SIZE = (0.5 * CAM_Z / (1 + CAM_Z));
 	const double PIXEL_SIZE = 1.05;
 	const int NFRAMES = 1000;
 	const int REFLECT_RAYS = 10;
@@ -267,7 +266,7 @@ public class Program
         var engineFactory = new SimpleTracingEngineFactory(REFLECT_RAYS, SHADOW_RAYS, ABSOPTION);
 
         var engine = engineFactory.CreateEngine(rnd, sceneSetup);
-        return new Rasterizer(rnd, PIXEL_SIZE, W, H, CAM_Z, CAM_SIZE_X, CAM_SIZE_Y, engine);
+        return new Rasterizer(rnd, PIXEL_SIZE, W, H, CAM_Z, CAM_SIZE, 1.5, 0.1, engine);
     }
 
 	public static void Main()
