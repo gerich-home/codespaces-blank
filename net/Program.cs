@@ -15,13 +15,14 @@ public class Program
 {
 #if HQ
 	const int W = 2400;
-	const int H = 2400;
+	const int H = 1920;
 #else
 	const int W = 320;
-	const int H = 320;
+	const int H = 256;
 #endif
 	const double CAM_Z = 0.0000001;
-	const double CAM_SIZE = (0.55 * CAM_Z / (1 + CAM_Z));
+	const double CAM_SIZE_X = (0.5 * CAM_Z / (1 + CAM_Z));
+	const double CAM_SIZE_Y = (0.5 * CAM_Z / (1 + CAM_Z));
 	const double PIXEL_SIZE = 1.05;
 	const int NFRAMES = 1000;
 	const int REFLECT_RAYS = 10;
@@ -210,22 +211,22 @@ public class Program
 
 		Luminance Le1 = Luminance.Unit;
 		
-		var floor     = new Square(new Vector(-0.5, -0.5, 1), new Vector(-0.5, -0.5, 2), new Vector( 0.5, -0.5, 1))
+		var floor     = new Square(new Vector(-0.5, -0.4, 1), new Vector(-0.5, -0.4, 2), new Vector( 0.5, -0.4, 1))
 			.WithMaterial(m_white);
-		var ceiling   = new Square(new Vector(-0.5,  0.5, 1), new Vector( 0.5,  0.5, 1), new Vector(-0.5,  0.5, 2))
+		var ceiling   = new Square(new Vector(-0.5,  0.4, 1), new Vector( 0.5,  0.4, 1), new Vector(-0.5,  0.4, 2))
 			.WithMaterial(m_white);
-		var backWall  = new Square(new Vector(-0.5, -0.5, 2), new Vector(-0.5,  0.5, 2), new Vector( 0.5, -0.5, 2))
+		var backWall  = new Square(new Vector(-0.5, -0.4, 2), new Vector(-0.5,  0.4, 2), new Vector( 0.5, -0.4, 2))
 			.WithMaterial(m_white);
-		var frontWall = new Square(new Vector(-0.5, -0.5, 1), new Vector( 0.5, -0.5, 1), new Vector(-0.5,  0.5, 1))
+		var frontWall = new Square(new Vector(-0.5, -0.4, 1), new Vector( 0.5, -0.4, 1), new Vector(-0.5,  0.4, 1))
 			.WithMaterial(m_white);
-		var leftWall  = new Square(new Vector(-0.5,  0.5, 1), new Vector(-0.5,  0.5, 2), new Vector(-0.5, -0.5, 1))
+		var leftWall  = new Square(new Vector(-0.5,  0.4, 1), new Vector(-0.5,  0.4, 2), new Vector(-0.5, -0.4, 1))
 			.WithMaterial(m_red);
-		var rightWall = new Square(new Vector( 0.5,  0.5, 1), new Vector( 0.5, -0.5, 1), new Vector( 0.5,  0.5, 2))
+		var rightWall = new Square(new Vector( 0.5,  0.4, 1), new Vector( 0.5, -0.4, 1), new Vector( 0.5,  0.4, 2))
 			.WithMaterial(m_blue);
 
-		var ball1 = new Sphere(new Vector(-0.2, -0.5 + 0.15, 1.6), 0.15)
+		var ball1 = new Sphere(new Vector(-0.2, -0.4 + 0.15, 1.6), 0.15)
 			.WithMaterial(new IdealMirrorMaterial());
-		var ball2 = new Sphere(new Vector(0.2, -0.5 + 0.15, 1.3), 0.15)
+		var ball2 = new Sphere(new Vector( 0.2, -0.4 + 0.15, 1.3), 0.15)
 			.WithMaterial(new SchlickCompositeMaterial(rnd, m_refractor));
 
 		IBody[] shapes = {
@@ -247,7 +248,7 @@ public class Program
 		};
 		
 		ILightSource[] lightSources = {
-			new SquareLight(rnd, new Vector(-0.15, 0.5 - 0.001, 1.35), new Vector(0.15,  0.5 - 0.001, 1.35), new Vector(-0.15, 0.5 - 0.001, 1.65), Le1 * 50),
+			new SquareLight(rnd, new Vector(-0.15, 0.4 - 0.001, 1.35), new Vector(0.15,  0.4 - 0.001, 1.35), new Vector(-0.15, 0.4 - 0.001, 1.65), Le1 * 30),
 		};
 		
 		var scene = new CompositeBody(shapes);
@@ -266,7 +267,7 @@ public class Program
         var engineFactory = new SimpleTracingEngineFactory(REFLECT_RAYS, SHADOW_RAYS, ABSOPTION);
 
         var engine = engineFactory.CreateEngine(rnd, sceneSetup);
-        return new Rasterizer(rnd, PIXEL_SIZE, W, H, CAM_Z, CAM_SIZE, engine);
+        return new Rasterizer(rnd, PIXEL_SIZE, W, H, CAM_Z, CAM_SIZE_X, CAM_SIZE_Y, engine);
     }
 
 	public static void Main()

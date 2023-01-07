@@ -6,7 +6,8 @@ public record class Rasterizer(
 	int width,
 	int height,
 	double cam_z,
-	double cam_size,
+	double cam_size_x,
+	double cam_size_y,
 	IEngine engine
 )
 {
@@ -15,8 +16,8 @@ public record class Rasterizer(
 		double px = x + pixelSize * (rnd.NextDouble() - 0.5);
 		double py = y + pixelSize * (rnd.NextDouble() - 0.5);
 
-		double lx = cam_size * ((double) 2 * px / width - 1);
-		double ly = cam_size * ((double) (height - 2 * py) / width);
+		double lx = cam_size_x * ((double) 2 * px / width - 1);
+		double ly = cam_size_y * ((double) (height - 2 * py) / width);
 		Vector start = new Vector(lx, ly, 0);
 		Vector direction = new Vector(lx, ly, cam_z).Normalized;
 

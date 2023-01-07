@@ -11,6 +11,12 @@ public record class SimpleTracingEngine(
 	int shadowRaysCount,
 	double absorptionProbability
 ): IEngine {
+
+#if DEBUG_DEPTH
+		// output luminance of that depth only
+		const int DEPTH = 4;
+#endif
+
 	const double tolerance = 1E-8;
 	
     readonly List<Node> q = InitNodesStorage();
@@ -23,11 +29,6 @@ public record class SimpleTracingEngine(
 
 	public Luminance L(in Ray cameraRay)
     {
-#if DEBUG_DEPTH
-		// output luminance of that depth only
-		const int DEPTH = 1;
-#endif
-
         var root = new Node
         {
 			ray = cameraRay,
