@@ -17,8 +17,8 @@ public record class Rasterizer(
 		var px = x + pixelSize * (rnd.NextDouble() - 0.5);
 		var py = y + pixelSize * (rnd.NextDouble() - 0.5);
 
-		var lx = camSize * width  * (  2 * px / width - 1);
-		var ly = camSize * height * (- 2 * py / height + 1);
+		var lx = camSize * ((double) 2 * px / width - 1);
+		var ly = camSize * ((double) (height - 2 * py) / width);
 
 		var cameraPlanePixelPosition = new Vector(lx, ly, 0);
 
