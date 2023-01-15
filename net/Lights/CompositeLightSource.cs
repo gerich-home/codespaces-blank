@@ -10,7 +10,7 @@ public class CompositeLightSource : ILightSource
 	public readonly Luminance le;
 	public readonly Luminance energy;
 
-	public static ILightSource Create(Random rnd, ILightSource[] lights)
+	public static ILightSource Create(Random rnd, params ILightSource[] lights)
 	{
 		if (lights.Length == 1)
 		{
@@ -99,11 +99,7 @@ public class CompositeLightSource : ILightSource
 
 	public LightHitPoint Intersection(in Ray ray)
 	{
-		var dirInv = new Vector(
-			1 / ray.direction.x,
-			1 / ray.direction.y,
-			1 / ray.direction.z
-		);
+		var dirInv = ray.InvDirection;
 		
 		if (!AABB.CanIntersect(ray, dirInv))
 		{

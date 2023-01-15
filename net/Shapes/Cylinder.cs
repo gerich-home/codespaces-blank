@@ -12,6 +12,15 @@ public class Cylinder : IShape
 	public readonly double maxY;
 	public readonly AABB aabb;
 
+    public static IShape CreateClosedCylinder(Vector bottomCenter, double r, double minY, double maxY)
+    {
+        return CompositeShape.Create(
+            new Cylinder(bottomCenter, r, minY, maxY)
+            //new Disc(bottomCenter with {y = minY}, -Vector.UnitY, r, true),
+            //new Disc(bottomCenter with {y = maxY}, Vector.UnitY, r, true)
+        );
+    }
+
 	public Cylinder(Vector bottomCenter, double r, double minY, double maxY)
 	{
 		this.bottomCenter = bottomCenter;
@@ -22,8 +31,8 @@ public class Cylinder : IShape
 		this.maxY = maxY;
 
 		aabb = new AABB(
-			(bottomCenter - Vector.Unit * r) with {y=double.MinValue},
-			(bottomCenter + Vector.Unit * r) with {y=double.MaxValue}
+			(bottomCenter - Vector.Unit * r) with {y=minY},
+			(bottomCenter + Vector.Unit * r) with {y=maxY}
 		);
 	}
 
@@ -80,6 +89,6 @@ public class Cylinder : IShape
             rinv * (a.z + t * ray.direction.z)
         );
 
-        return new ShapeHitPoint(ray, t, normal * Math.Sign(normal.DotProduct(ray.direction)));
+        return new ShapeHitPoint(ray, t, -normal * Math.Sign(normal.DotProduct(ray.direction)));
     }
 }

@@ -25,7 +25,7 @@ public class IdealRefractorMaterial: IMaterial
 		var sin2 = sin1 * (cos1 > 0 ? refractorness : refractornessInv);
 		if(sin2 > 1)
 		{
-			return new RandomDirection(Luminance.Zero, new Vector(1, 0, 0));
+			return new RandomDirection(Luminance.Zero, Vector.UnitX);
 		}
 		if (sin1 == 0 || cos1 == 0)
 		{

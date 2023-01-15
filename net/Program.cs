@@ -128,9 +128,9 @@ public class Program
 			//new SphereLight(rnd, new Vector(-0.3, -0.3, 1.5), 0.05, Le1),
 		};
 		
-		var scene = new CompositeBody(shapes);
-		var glossy = new CompositeBody(glossyShapes);
-		var diffuse = new CompositeBody(diffuseShapes);
+		var scene = CompositeBody.Create(shapes);
+		var glossy = CompositeBody.Create(glossyShapes);
+		var diffuse = CompositeBody.Create(diffuseShapes);
 		var lights = CompositeLightSource.Create(rnd, lightSources);
 
 		return new SceneSetup(scene, diffuse, glossy, lights);
@@ -232,9 +232,9 @@ public class Program
 			new SquareLight(rnd, new Vector(-0.15, 0.4 - 0.001, 1.35), new Vector(0.15,  0.4 - 0.001, 1.35), new Vector(-0.15, 0.4 - 0.001, 1.65), Le1 * 30),
 		};
 		
-		var scene = new CompositeBody(shapes);
-		var glossy = new CompositeBody(glossyShapes);
-		var diffuse = new CompositeBody(diffuseShapes);
+		var scene = CompositeBody.Create(shapes);
+		var glossy = CompositeBody.Create(glossyShapes);
+		var diffuse = CompositeBody.Create(diffuseShapes);
 		var lights = CompositeLightSource.Create(rnd, lightSources);
 
 		return new SceneSetup(scene, diffuse, glossy, lights);
@@ -314,8 +314,8 @@ public class Program
 		var ball1 = new Sphere(new Vector(-0.2, -0.4 + 0.15, 1.6), 0.15)
 			.WithMaterial(m_mirror);
 			
-		var cylinder1 = new Cylinder(new Vector(-0.6+0.22, -0.4 + 0.15, 1.3), 0.15, -0.35, -0.3)
-			.WithMaterial(m_mirror);
+		var cylinder1 = Cylinder.CreateClosedCylinder(new Vector(-0.5 + 0.1 + 0.05, -0.4 + 0.15, 1.3), 0.1, -0.35, -0.2)
+			.WithMaterial(m_yellow);
 
 		var ball2 = new Sphere(new Vector( 0.1, -0.4 + 0.15, 1.7), 0.15)
 			.WithMaterial(m_refractor);
@@ -323,10 +323,10 @@ public class Program
 		IBody[] shapes = {
 			floor,
 			//ceiling,
-			//backWall,
+			backWall,
 			//frontWall,
-			//leftWall,
-			//rightWall,
+			leftWall,
+			rightWall,
 
 			//ball1,
 			cylinder1,
@@ -343,9 +343,9 @@ public class Program
 			new SquareLight(rnd, new Vector(-0.15, 0.3 - 0.001, 1.35), new Vector(0.15,  0.3 - 0.001, 1.35), new Vector(-0.15, 0.3 - 0.001, 1.65), Le1 * 30),
 		};
 		
-		var scene = new CompositeBody(shapes);
-		var glossy = new CompositeBody(glossyShapes);
-		var diffuse = new CompositeBody(diffuseShapes);
+		var scene = CompositeBody.Create(shapes);
+		var glossy = CompositeBody.Create(glossyShapes);
+		var diffuse = CompositeBody.Create(diffuseShapes);
 		var lights = CompositeLightSource.Create(rnd, lightSources);
 
 		return new SceneSetup(scene, diffuse, glossy, lights);

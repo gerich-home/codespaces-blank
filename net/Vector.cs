@@ -9,6 +9,8 @@ public readonly record struct Vector(double x, double y, double z)
 
 	public static Vector Zero => new Vector(0, 0, 0);
 	public static Vector Unit => new Vector(1, 1, 1);
+	public static Vector UnitX => new Vector(1, 0, 0);
+	public static Vector UnitY => new Vector(0, 1, 0);
 	public static Vector UnitZ => new Vector(0, 0, 1);
 
 	public Vector Normalized => this / Length;
@@ -51,11 +53,11 @@ public readonly record struct Vector(double x, double y, double z)
 
 		Vector majorAxis;
 		if(Math.Abs(axis.x) < threshold)
-			majorAxis = new Vector(1, 0, 0);
+			majorAxis = UnitX;
 		else if(Math.Abs(axis.y) < threshold)
-			majorAxis = new Vector(0, 1, 0);
+			majorAxis = UnitY;
 		else
-			majorAxis = new Vector(0, 0, 1);
+			majorAxis = UnitZ;
 
 		var M1 = axis.CrossProduct(majorAxis).Normalized;
 		var M2 = axis.CrossProduct(M1);

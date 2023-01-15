@@ -8,7 +8,7 @@ public class PureBlackMaterial : IMaterial
 		Luminance.Zero;
 
 	public RandomDirection SampleDirection(BodyHitPoint hitPoint) =>
-		new RandomDirection(Luminance.Zero, new Vector(1, 0, 0));
+		new RandomDirection(Luminance.Zero, Vector.UnitX);
 
 	public bool IsPerfect => true;
 }

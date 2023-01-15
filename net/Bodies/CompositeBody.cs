@@ -1,13 +1,23 @@
 using Engine;
 
-namespace Shapes;
+namespace Bodies;
 
 public class CompositeBody : IBody
 {
 	public readonly IBody[] bodies;
 	public readonly AABB aabb;
+	
+	public static IBody Create(params IBody[] bodies)
+	{
+		if (bodies.Length == 1)
+		{
+			return new AABBBody(bodies[0]);
+		}
 
-	public CompositeBody(IBody[] bodies)
+		return new CompositeBody(bodies);
+	}
+
+	private CompositeBody(IBody[] bodies)
 	{
 		this.bodies = bodies;
 		aabb = bodies.Any() ?
@@ -20,11 +30,7 @@ public class CompositeBody : IBody
 
 	public BodyHitPoint Intersection(in Ray ray)
 	{
-		var dirInv = new Vector(
-			1 / ray.direction.x,
-			1 / ray.direction.y,
-			1 / ray.direction.z
-		);
+		var dirInv = ray.InvDirection;
 		
 		if (!AABB.CanIntersect(ray, dirInv))
 		{
