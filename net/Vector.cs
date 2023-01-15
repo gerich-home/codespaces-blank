@@ -9,6 +9,7 @@ public readonly record struct Vector(double x, double y, double z)
 
 	public static Vector Zero => new Vector(0, 0, 0);
 	public static Vector Unit => new Vector(1, 1, 1);
+	public static Vector UnitZ => new Vector(0, 0, 1);
 
 	public Vector Normalized => this / Length;
 
@@ -21,6 +22,9 @@ public readonly record struct Vector(double x, double y, double z)
 		
 	public static Vector operator -(in Vector a, in Vector b) =>
 		new Vector(a.x - b.x, a.y - b.y, a.z - b.z);
+		
+	public static Vector operator -(in Vector a) =>
+		new Vector(-a.x, -a.y, -a.z);
 		
 	public static Vector operator *(in Vector a, double factor) =>
 		new Vector(a.x * factor, a.y * factor, a.z * factor);
