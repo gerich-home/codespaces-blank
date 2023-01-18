@@ -9,8 +9,9 @@ public class Plane : IShape
 	public readonly Vector A;
 	public readonly AABB aabb;
 	public readonly bool oneSide;
+	public readonly bool isSolid;
 
-	public Plane(Vector normal, double d, bool oneSide = false)
+	public Plane(Vector normal, double d, bool oneSide = false, bool isSolid = false)
 	{
 		this.normal = normal;
 		this.d = d;
@@ -18,19 +19,21 @@ public class Plane : IShape
 				normal.y != 0 ? new Vector(0, -d / normal.y, 0) :
 				new Vector(0, 0, -d / normal.z);
 		this.oneSide = oneSide;
+		this.isSolid = isSolid;
 		aabb = AABB.MaxValue;
 	}
 
-	public Plane(Vector a, Vector b, Vector A, bool oneSide = false)
+	public Plane(Vector a, Vector b, Vector A, bool oneSide = false, bool isSolid = false)
 	{
 		this.normal = a.CrossProduct(b).Normalized;
 		this.A = A;
 		this.d = A.DotProduct(normal);
 		this.oneSide = oneSide;
+		this.isSolid = isSolid;
 		aabb = AABB.MaxValue;
 	}
 
-	public Plane(double a, double b, double c, double d, bool oneSide = false)
+	public Plane(double a, double b, double c, double d, bool oneSide = false, bool isSolid = false)
 	{
 		this.normal = new Vector(a, b, c).Normalized;
 		this.d = d;
@@ -42,6 +45,7 @@ public class Plane : IShape
 				: new Vector(0, 0, -d / c)
 			);
 		this.oneSide = oneSide;
+		this.isSolid = isSolid;
 		aabb = AABB.MaxValue;
 	}
 
@@ -63,6 +67,6 @@ public class Plane : IShape
 			return null;
 		}
 
-		return new ShapeHitPoint(ray, t, oneSide ? normal : (normal * Math.Sign(divident)));
+		return new ShapeHitPoint(ray, t, isSolid ? normal : (normal * Math.Sign(divident)));
 	}
 }

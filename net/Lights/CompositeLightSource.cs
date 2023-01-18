@@ -117,7 +117,7 @@ public class CompositeLightSource : ILightSource
 			}
 
 			var hitPoint = light.Intersection(ray);
-			if(hitPoint != null && (bestHitPoint == null || hitPoint.T < bestHitPoint.T))
+			if(bestHitPoint == null || hitPoint != null && hitPoint.T < bestHitPoint.T)
 			{
 				bestHitPoint = hitPoint;
 			}

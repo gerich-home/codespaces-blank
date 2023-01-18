@@ -12,8 +12,9 @@ public class Square: ITexturableShape
 
 	public readonly AABB aabb;
 	public readonly bool oneSide;
+	public readonly bool isSolid;
 
-	public Square(Vector a, Vector b, Vector c, bool oneSide = false)
+	public Square(Vector a, Vector b, Vector c, bool oneSide = false, bool isSolid = false)
 	{
 		this.a = a;
 		this.ba = b - a;
@@ -21,6 +22,7 @@ public class Square: ITexturableShape
 		this.baCrossCa = ba.CrossProduct(ca);
 		this.normal = baCrossCa.Normalized;
 		this.oneSide = oneSide;
+		this.isSolid = isSolid;
 		aabb = AABB.FromEdgePoints(
 			a,
 			a + ba, 
@@ -67,6 +69,6 @@ public class Square: ITexturableShape
 			return null;
 		}
 
-		return new TexturableShapeHitPoint(ray, t, oneSide ? normal : (normal * Math.Sign(divident)), t1, t2);
+		return new TexturableShapeHitPoint(ray, t, isSolid ? normal : (normal * Math.Sign(divident)), t1, t2);
 	}
 }

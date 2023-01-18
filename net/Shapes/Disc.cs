@@ -14,14 +14,16 @@ public class Disc: ITexturableShape
 
 	public readonly AABB aabb;
 	public readonly bool oneSide;
+	public readonly bool isSolid;
 
-	public Disc(Vector center, Vector normal, double radius, bool oneSide = false)
+	public Disc(Vector center, Vector normal, double radius, bool oneSide = false, bool isSolid = false)
 	{
 		this.a = center;
 		this.normal = normal;
 		this.radius = radius;
 		this.r2 = radius*radius;
 		this.oneSide = oneSide;
+		this.isSolid = isSolid;
 		aabb = new AABB(
 			center - Vector.Unit * radius,
 			center + Vector.Unit * radius
@@ -84,6 +86,6 @@ public class Disc: ITexturableShape
 			return null;
 		}
 
-		return new TexturableShapeHitPoint(ray, t, oneSide ? normal : (normal * Math.Sign(divident)), 0.5 * (t1 + 1), 0.5 * (t2 + 1));
+		return new TexturableShapeHitPoint(ray, t, isSolid ? normal : (normal * Math.Sign(divident)), 0.5 * (t1 + 1), 0.5 * (t2 + 1));
 	}
 }

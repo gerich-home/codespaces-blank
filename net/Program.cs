@@ -20,6 +20,7 @@ public class Program
 	const int W = 320;
 	const int H = 256;
 #endif
+	const int NUM_THREADS = 8;
 	const double CAM_Z = 0.0000001;
 	const double CAM_SIZE = (0.5 * CAM_Z / (1 + CAM_Z));
 	const double PIXEL_SIZE = 1.05;
@@ -294,16 +295,18 @@ public class Program
 		Luminance rrefract = new Luminance(1, 1, 1);
 		var m_refractor = new SchlickCompositeMaterial(rnd, new IdealRefractorMaterial(1.5));
 		
-		ITexturedMaterial m_chess_wb = new CheckeredMaterial(4*2000, 4*200, m_white, m_black);
+		ITexturedMaterial m_chess_wb = new CheckeredMaterial(20, 20, m_white, m_black);
 
 		Luminance Le1 = Luminance.Unit;
 		
-		var floor     = new Square(new Vector(-50, -0.4, -100), new Vector(-50, -0.4, 200), new Vector( 50, -0.4, -100))
-			.WithMaterial(m_white);
+		var floor     = new Square(new Vector(-0.5, -0.4, 1), new Vector(-0.5, -0.4, 2), new Vector( 0.5, -0.4, 1))
+			.WithMaterial(m_chess_wb);
+			//.WithMaterial(new GradientMaterial(new Luminance(1,0,0),new Luminance(0,1,0),new Luminance(0,0,1),new Luminance(1,1,1), l => new DiffuseMaterial(rnd, l)));
 		var ceiling   = new Square(new Vector(-0.5,  0.4, 1), new Vector( 0.5,  0.4, 1), new Vector(-0.5,  0.4, 2))
 			.WithMaterial(m_white);
 		var backWall  = new Square(new Vector(-0.5, -0.4, 2), new Vector(-0.5,  0.4, 2), new Vector( 0.5, -0.4, 2))
 			.WithMaterial(m_white);
+			//.WithMaterial(new PictureMaterial("input/kid.png", l => new DiffuseMaterial(rnd, l)));
 		var frontWall = new Square(new Vector(-0.5, -0.4, 1), new Vector( 0.5, -0.4, 1), new Vector(-0.5,  0.4, 1))
 			.WithMaterial(m_white);
 		var leftWall  = new Square(new Vector(-0.5,  0.4, 1), new Vector(-0.5,  0.4, 2), new Vector(-0.5, -0.4, 1))
@@ -314,11 +317,11 @@ public class Program
 		var ball1 = new Sphere(new Vector(-0.2, -0.4 + 0.15, 1.6), 0.15)
 			.WithMaterial(m_mirror);
 			
-		var cylinder1 = Cylinder.CreateClosedCylinder(new Vector(-0.5 + 0.1 + 0.05, -0.4 + 0.15, 1.3), 0.1, -0.35, -0.2)
-			.WithMaterial(m_yellow);
-
-		var ball2 = new Sphere(new Vector( 0.1, -0.4 + 0.15, 1.7), 0.15)
+		var cylinder1 = Cylinder.CreateClosedCylinder(new Vector(0, -0.4 + 0.1, 1.3), 0.1, -0.4 + 0.1, -0.4 + 0.1 + 0.1)
 			.WithMaterial(m_refractor);
+
+		var ball2 = new Sphere(new Vector(-0.5 + 0.1 + 0.05, -0.4 + 0.07, 1.3), 0.07)
+			.WithMaterial(m_mirror);
 
 		IBody[] shapes = {
 			floor,
@@ -330,7 +333,7 @@ public class Program
 
 			//ball1,
 			cylinder1,
-			//ball2,
+			ball2,
 		};
 		
 		IBody[] glossyShapes = {
@@ -370,7 +373,7 @@ public class Program
 
 	public void Run()
     {
-		const int threadCount = 8;
+		const int threadCount = NUM_THREADS;
 		var L = new Luminance[W, H];
 
         Directory.CreateDirectory("result");

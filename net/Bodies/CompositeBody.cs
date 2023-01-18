@@ -48,7 +48,7 @@ public class CompositeBody : IBody
 			}
 
 			var hitPoint = body.Intersection(ray);
-			if(hitPoint != null && (bestHitPoint == null || hitPoint.T < bestHitPoint.T))
+			if(bestHitPoint == null || hitPoint != null && hitPoint.T < bestHitPoint.T)
 			{
 				bestHitPoint = hitPoint;
 			}
