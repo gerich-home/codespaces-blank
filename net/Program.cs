@@ -1,4 +1,5 @@
 #define HQ
+#define ANIMATION
 
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
@@ -241,7 +242,7 @@ public class Program
 		return new SceneSetup(scene, diffuse, glossy, lights);
 	}
 
-	public SceneSetup InitRingScene(Random rnd)
+	public SceneSetup InitRingScene(Random rnd, int frame)
 	{
 		Luminance kd_black = Luminance.Zero;
 		Luminance ks_black = Luminance.Zero;
@@ -316,8 +317,12 @@ public class Program
 
 		var ball1 = new Sphere(new Vector(-0.2, -0.4 + 0.15, 1.6), 0.15)
 			.WithMaterial(m_mirror);
-			
-		var cylinder1 = Cylinder.CreateClosedCylinder(new Vector(0, -0.4 + 0.1, 1.3), 0.1, -0.4 + 0.1, -0.4 + 0.1 + 0.1)
+
+		var cylinder1 = Cylinder.CreateClosedCylinder(new Vector(0, 0, 0), 0.1, 0, 0.1)
+			.WithTransform(Matrix.RotateX((frame / 1000.0) * 90 * Math.PI / 180))
+			.WithTransform(Matrix.RotateZ((frame / 1000.0) * 180 * Math.PI / 180))
+			.WithTransform(Matrix.TranslateZ(1.3))
+			.WithTransform(Matrix.TranslateY(-0.3))
 			.WithMaterial(m_refractor);
 
 		var ball2 = new Sphere(new Vector(-0.5 + 0.1 + 0.05, -0.4 + 0.07, 1.3), 0.07)
@@ -354,11 +359,11 @@ public class Program
 		return new SceneSetup(scene, diffuse, glossy, lights);
 	}
 
-    private Rasterizer CreateSceneRasterizer(Random rnd)
+    private Rasterizer CreateSceneRasterizer(Random rnd, int frame)
     {
         //var sceneSetup = InitScene(rnd);
         //var sceneSetup = InitCornellRoomScene(rnd);
-		var sceneSetup = InitRingScene(rnd);
+		var sceneSetup = InitRingScene(rnd, frame);
 
         var engineFactory = new SimpleTracingEngineFactory(REFLECT_RAYS, SHADOW_RAYS, ABSOPTION);
 
@@ -418,20 +423,32 @@ public class Program
 			.Select(threadIndex => {
 				var t = new Thread(() => {
 					var rnd = new Random(threadIndex);
-					var rasterizer = CreateSceneRasterizer(rnd);
+#if ANIMATION
+#else
+					var rasterizer = CreateSceneRasterizer(rnd, 0);
+#endif
 					
 					barrier.SignalAndWait();
 
 					for (int frame = 1; frame <= NFRAMES; frame++)
 					{
+#if ANIMATION
+						var rasterizer = CreateSceneRasterizer(rnd, frame);
+#else
 						var a = (frame - 1) / ((double)frame);
 						var b = 1 / ((double)frame);
+#endif
+
 						for (int y = threadIndex; y < H; y+= threadCount)
 						{
 							//Console.WriteLine($"frame {frame} - thread {threadIndex} - row {y}");
 							for (int x = 0; x < W; x++)
 							{
+#if ANIMATION
+								L[x, y] = rasterizer.ColorAtPixel(x, y);
+#else
 								L[x, y] = L[x, y] * a + rasterizer.ColorAtPixel(x, y) * b;
+#endif
 							}
 						}
 						

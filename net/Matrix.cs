@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace Engine;
 
 public readonly record struct Matrix(
@@ -6,7 +8,21 @@ public readonly record struct Matrix(
 	double m31, double m32, double m33, double m34,
 	double m41, double m42, double m43, double m44
 ) {
-	public Matrix Identity =>
+	public Vector MultiplicateByPosition(in Vector b) =>
+		new Vector(
+			m11 * b.x + m12 * b.y + m13 * b.z + m14,
+			m21 * b.x + m22 * b.y + m23 * b.z + m24,
+			m31 * b.x + m32 * b.y + m33 * b.z + m34
+		);
+		
+	public Vector MultiplicateByDirection(in Vector b) =>
+		new Vector(
+			m11 * b.x + m12 * b.y + m13 * b.z,
+			m21 * b.x + m22 * b.y + m23 * b.z,
+			m31 * b.x + m32 * b.y + m33 * b.z
+		);
+
+	public static Matrix Identity =>
 		new Matrix(
 			1, 0, 0, 0,
 			0, 1, 0, 0,
@@ -14,7 +30,7 @@ public readonly record struct Matrix(
 			0, 0, 0, 1
 		);
 
-	public Matrix TranslateX(double x) =>
+	public static Matrix TranslateX(double x) =>
 		new Matrix(
 			1, 0, 0, x,
 			0, 1, 0, 0,
@@ -22,7 +38,7 @@ public readonly record struct Matrix(
 			0, 0, 0, 1
 		);
 
-	public Matrix TranslateY(double y) =>
+	public static Matrix TranslateY(double y) =>
 		new Matrix(
 			1, 0, 0, 0,
 			0, 1, 0, y,
@@ -30,7 +46,7 @@ public readonly record struct Matrix(
 			0, 0, 0, 1
 		);
 
-	public Matrix TranslateZ(double z) =>
+	public static Matrix TranslateZ(double z) =>
 		new Matrix(
 			1, 0, 0, 0,
 			0, 1, 0, 0,
@@ -38,7 +54,7 @@ public readonly record struct Matrix(
 			0, 0, 0, 1
 		);
 
-	public Matrix Translate(double x, double y, double z) =>
+	public static Matrix Translate(double x, double y, double z) =>
 		new Matrix(
 			1, 0, 0, x,
 			0, 1, 0, y,
@@ -46,7 +62,7 @@ public readonly record struct Matrix(
 			0, 0, 0, 1
 		);
 
-	public Matrix Translate(in Vector offset) =>
+	public static Matrix Translate(in Vector offset) =>
 		new Matrix(
 			1, 0, 0, offset.x,
 			0, 1, 0, offset.y,
@@ -54,7 +70,7 @@ public readonly record struct Matrix(
 			0, 0, 0, 1
 		);
 
-	public Matrix ScaleX(double sx) =>
+	public static Matrix ScaleX(double sx) =>
 		new Matrix(
 			sx, 0, 0, 0,
 			0, 1, 0, 0,
@@ -62,7 +78,7 @@ public readonly record struct Matrix(
 			0, 0, 0, 1
 		);
 
-	public Matrix ScaleY(double sy) =>
+	public static Matrix ScaleY(double sy) =>
 		new Matrix(
 			1, 0, 0, 0,
 			0, sy, 0, 0,
@@ -70,7 +86,7 @@ public readonly record struct Matrix(
 			0, 0, 0, 1
 		);
 
-	public Matrix ScaleZ(double sz) =>
+	public static Matrix ScaleZ(double sz) =>
 		new Matrix(
 			1, 0, 0, 0,
 			0, 1, 0, 0,
@@ -78,7 +94,7 @@ public readonly record struct Matrix(
 			0, 0, 0, 1
 		);
 
-	public Matrix Scale(double s) =>
+	public static Matrix Scale(double s) =>
 		new Matrix(
 			s, 0, 0, 0,
 			0, s, 0, 0,
@@ -86,7 +102,7 @@ public readonly record struct Matrix(
 			0, 0, 0, 1
 		);
 
-	public Matrix Scale(double sx, double sy, double sz) =>
+	public static Matrix Scale(double sx, double sy, double sz) =>
 		new Matrix(
 			sx, 0, 0, 0,
 			0, sy, 0, 0,
@@ -94,7 +110,7 @@ public readonly record struct Matrix(
 			0, 0, 0, 1
 		);
 
-	public Matrix Scale(in Vector s) =>
+	public static Matrix Scale(in Vector s) =>
 		new Matrix(
 			s.x, 0, 0, 0,
 			0, s.y, 0, 0,
@@ -102,39 +118,39 @@ public readonly record struct Matrix(
 			0, 0, 0, 1
 		);
 
-	public Matrix RotateX(double alpha)
+	public static Matrix RotateX(double alpha)
 	{
-		var (sin, cos) = Math.SinCos(alpha);
+		var (s, c) = Math.SinCos(alpha);
 
 		return new Matrix(
-			1, 0, 0, 0,
-			0, cos, -sin, 0,
-			0, sin, cos, 0,
-			0, 0, 0, 1
+			1, 0,  0, 0,
+			0, c, -s, 0,
+			0, s,  c, 0,
+			0, 0,  0, 1
 		);
 	}
 
-	public Matrix RotateY(double alpha)
+	public static Matrix RotateY(double alpha)
 	{
-		var (sin, cos) = Math.SinCos(alpha);
+		var (s, c) = Math.SinCos(alpha);
 
 		return new Matrix(
-			cos, 0, -sin, 0,
-			0, 1, 0, 0,
-			sin, 0, cos, 0,
-			0, 0, 0, 1
+			c, 0, -s, 0,
+			0, 1,  0, 0,
+			s, 0,  c, 0,
+			0, 0,  0, 1
 		);
 	}
 
-	public Matrix RotateZ(double alpha)
+	public static Matrix RotateZ(double alpha)
 	{
-		var (sin, cos) = Math.SinCos(alpha);
+		var (s, c) = Math.SinCos(alpha);
 
 		return new Matrix(
-			1, 0, 0, 0,
-			0, cos, -sin, 0,
-			0, sin, cos, 0,
-			0, 0, 0, 1
+			c, -s, 0, 0,
+			s,  c, 0, 0,
+			0,  0, 1, 0,
+			0,  0, 0, 1
 		);
 	}
 
@@ -313,18 +329,28 @@ public readonly record struct Matrix(
 			a.m41 * b.m13 + a.m42 * b.m23 + a.m43 * b.m33 + a.m44 * b.m43,
 			a.m41 * b.m14 + a.m42 * b.m24 + a.m43 * b.m34 + a.m44 * b.m44
 		);
+
+	private bool PrintMembers(StringBuilder builder)
+    {
+        builder.Append($"{m11:0.##} ");
+        builder.Append($"{m12:0.##} ");
+        builder.Append($"{m13:0.##} ");
+        builder.Append($"{m14:0.##} | ");
 		
-	public static Vector MultiplicateByPosition(in Matrix a, in Vector b) =>
-		new Vector(
-			a.m11 * b.x + a.m12 * b.y + a.m13 * b.z + a.m14,
-			a.m21 * b.x + a.m22 * b.y + a.m23 * b.z + a.m24,
-			a.m31 * b.x + a.m32 * b.y + a.m33 * b.z + a.m34
-		);
+        builder.Append($"{m21:0.##} ");
+        builder.Append($"{m22:0.##} ");
+        builder.Append($"{m23:0.##} ");
+        builder.Append($"{m24:0.##} | ");
 		
-	public static Vector MultiplicateByDirection(in Matrix a, in Vector b) =>
-		new Vector(
-			a.m11 * b.x + a.m12 * b.y + a.m13 * b.z,
-			a.m21 * b.x + a.m22 * b.y + a.m23 * b.z,
-			a.m31 * b.x + a.m32 * b.y + a.m33 * b.z
-		);
+        builder.Append($"{m31:0.##} ");
+        builder.Append($"{m32:0.##} ");
+        builder.Append($"{m33:0.##} ");
+        builder.Append($"{m34:0.##} | ");
+		
+        builder.Append($"{m41:0.##} ");
+        builder.Append($"{m42:0.##} ");
+        builder.Append($"{m43:0.##} ");
+        builder.Append($"{m44:0.##}");
+		return true;
+	}
 }
