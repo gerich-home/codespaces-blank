@@ -20,6 +20,21 @@ public readonly record struct AABB(
                 points.Max(p => p.z)
             )
         );
+
+    public IEnumerable<Vector> EdgePoints()
+    {
+        yield return min;
+        yield return new Vector(min.x, min.y, max.z);
+        yield return new Vector(min.x, max.y, min.z);
+        yield return new Vector(min.x, max.y, max.z);
+        yield return new Vector(max.x, min.y, min.z);
+        yield return new Vector(max.x, min.y, max.z);
+        yield return new Vector(max.x, max.y, min.z);
+        yield return max;
+    }
+    
+    public AABB Transform(Matrix matrix) =>
+        FromEdgePoints(EdgePoints().Select(point => matrix.MultiplicateByPosition(point)));
     
     public static AABB MaxValue =>
         new AABB(

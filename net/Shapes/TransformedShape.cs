@@ -16,7 +16,7 @@ public class TransformedShape : IShape
 		this.modelToWorldMatrix = modelToWorldMatrix;
 		this.worldToModelMatrix = modelToWorldMatrix.Inverse;
 		this.modelNormalToWorldNormalMatrix = worldToModelMatrix.Transpose;
-		aabb = AABB.MaxValue; // TODO: transform shape.AABB with modelToWorldMatrix!
+		aabb = shape.AABB.Transform(modelToWorldMatrix);
 	}
 
 	public ref readonly AABB AABB => ref aabb;

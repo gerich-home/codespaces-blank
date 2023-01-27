@@ -13,16 +13,7 @@ public class Cylinder : IShape
 	public readonly AABB aabb;
 	public readonly bool isSolid;
 
-    public static IShape CreateClosedCylinder(Vector bottomCenter, double r, double minY, double maxY)
-    {
-        return CompositeShape.Create(
-            new Cylinder(bottomCenter, r, minY, maxY, true),
-            new Disc(bottomCenter with {y = minY}, -Vector.UnitY, r, false, true),
-            new Disc(bottomCenter with {y = maxY}, Vector.UnitY, r, false, true)
-        );
-    }
-
-	private Cylinder(Vector bottomCenter, double r, double minY, double maxY, bool isSolid = false)
+	public Cylinder(Vector bottomCenter, double r, double minY, double maxY, bool isSolid = false)
 	{
 		this.bottomCenter = bottomCenter;
 		this.r = r;

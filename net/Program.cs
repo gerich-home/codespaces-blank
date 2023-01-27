@@ -1,4 +1,6 @@
 #define HQ
+//#define MQ
+
 #define ANIMATION
 
 using SixLabors.ImageSharp;
@@ -17,6 +19,9 @@ public class Program
 #if HQ
 	const int W = 2400;
 	const int H = 1920;
+#elif MQ
+	const int W = 1200;
+	const int H = 960;
 #else
 	const int W = 320;
 	const int H = 256;
@@ -28,6 +33,7 @@ public class Program
 	const int NFRAMES = 1000;
 	const int REFLECT_RAYS = 2;
 	const int SHADOW_RAYS = 10;
+	const int SAMPLES_PER_PIXEL = 5;
 	const double ABSOPTION = 0.7;
 
 	public SceneSetup InitScene(Random rnd)
@@ -318,14 +324,26 @@ public class Program
 		var ball1 = new Sphere(new Vector(-0.2, -0.4 + 0.15, 1.6), 0.15)
 			.WithMaterial(m_mirror);
 
-		var cylinder1 = Cylinder.CreateClosedCylinder(new Vector(0, 0, 0), 0.1, 0, 0.1)
+		var cube1 = ShapeBuilder.CreateUnitCube(isSolid: true)
+			//.WithTransform(Matrix.Scale(0.2))
 			.WithTransform(Matrix.RotateX((frame / 1000.0) * 90 * Math.PI / 180))
 			.WithTransform(Matrix.RotateZ((frame / 1000.0) * 180 * Math.PI / 180))
-			.WithTransform(Matrix.TranslateZ(1.3))
-			.WithTransform(Matrix.TranslateY(-0.3))
+			//.WithTransform(Matrix.RotateY(frame * 90 * Math.PI / 180))
+			.WithTransform(Matrix.TranslateZ(1.2))
+			.WithTransform(Matrix.TranslateY(-0.23))
 			.WithMaterial(m_refractor);
 
-		var ball2 = new Sphere(new Vector(-0.5 + 0.1 + 0.05, -0.4 + 0.07, 1.3), 0.07)
+		var cube2 = ShapeBuilder.CreateUnitCube(isOneSide: true)
+			//.WithTransform(Matrix.Scale(0.2))
+			.WithTransform(Matrix.RotateZ(-(frame / 1000.0) * 20 * Math.PI / 180))
+			.WithTransform(Matrix.RotateX(((frame - 100) / 1000.0) * 90 * Math.PI / 180))
+			.WithTransform(Matrix.RotateY(-((frame + 200) / 1000.0) * 200 * Math.PI / 180))
+			.WithTransform(Matrix.TranslateZ(1.6))
+			.WithTransform(Matrix.TranslateX(0.3))
+			.WithTransform(Matrix.TranslateY(-0.1))
+			.WithMaterial(m_mirror);
+
+		var ball2 = new Sphere(new Vector(-0.2 + 0.1 + 0.05, -0.4 + 0.07, 1.7), 0.07)
 			.WithMaterial(m_mirror);
 
 		IBody[] shapes = {
@@ -337,7 +355,8 @@ public class Program
 			rightWall,
 
 			//ball1,
-			cylinder1,
+			cube1,
+			cube2,
 			ball2,
 		};
 		
@@ -430,13 +449,15 @@ public class Program
 					
 					barrier.SignalAndWait();
 
+					const double samplesFactor = 1.0 / SAMPLES_PER_PIXEL;
+
 					for (int frame = 1; frame <= NFRAMES; frame++)
 					{
 #if ANIMATION
 						var rasterizer = CreateSceneRasterizer(rnd, frame);
 #else
 						var a = (frame - 1) / ((double)frame);
-						var b = 1 / ((double)frame);
+						var b = samplesFactor / ((double)frame);
 #endif
 
 						for (int y = threadIndex; y < H; y+= threadCount)
@@ -444,10 +465,17 @@ public class Program
 							//Console.WriteLine($"frame {frame} - thread {threadIndex} - row {y}");
 							for (int x = 0; x < W; x++)
 							{
+								var l = Luminance.Zero;
+
+								for (int sample = 0; sample < SAMPLES_PER_PIXEL; sample++)
+								{
+									l += rasterizer.ColorAtPixel(x, y);
+								}
+
 #if ANIMATION
-								L[x, y] = rasterizer.ColorAtPixel(x, y);
+								L[x, y] = l * samplesFactor;
 #else
-								L[x, y] = L[x, y] * a + rasterizer.ColorAtPixel(x, y) * b;
+								L[x, y] = L[x, y] * a + l * b;
 #endif
 							}
 						}
